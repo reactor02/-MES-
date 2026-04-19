@@ -1,6 +1,11 @@
 package P05_stock;
 import java.io.IOException;
 import java.sql.Date;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+
 import java.util.List;
 import java.util.Map;
 import javax.servlet.ServletException;
@@ -55,7 +60,7 @@ public class Controller extends HttpServlet {
                 if (i > 0) sb.append(",");
                 sb.append("{")
                   .append("\"lot_id\":"     ).append("\"").append(d.getLot_id()).append("\",")
-                  .append("\"lot_qty\":"    ).append(d.getLot_qty()).append(",")
+                  .append("\"remaining_qty\":").append(d.getLot_qty()).append(",")
                   .append("\"expiry_date\":").append("\"").append(d.getExpiry_date() != null ? d.getExpiry_date().toString() : "").append("\",")
                   .append("\"item_id\":"    ).append("\"").append(d.getItem_id()).append("\",")
                   .append("\"item_name\":"  ).append("\"").append(d.getItem_name() != null ? d.getItem_name() : "").append("\",")
@@ -164,7 +169,11 @@ public class Controller extends HttpServlet {
             dto.setVender_id(request.getParameter("vender_id"));
             dto.setItem_id(request.getParameter("item_id"));
             dto.setLot_qty(Integer.parseInt(request.getParameter("lot_qty")));
-            dto.setIo_time(Date.valueOf(request.getParameter("io_time")));
+            dto.setIo_qty(Integer.parseInt(request.getParameter("lot_qty")));
+            String ioTimeStr = request.getParameter("io_time");
+            ZonedDateTime kst = LocalDateTime.parse(ioTimeStr + "T00:00:00")
+                                             .atZone(ZoneId.of("Asia/Seoul"));
+            dto.setIo_time(Timestamp.from(kst.toInstant()));
 
             // 출고 시 기존 lot_id 사용
             String lotId = request.getParameter("lot_id");

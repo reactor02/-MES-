@@ -177,8 +177,8 @@
 									<td>${dto.lot_id}</td>
 									<td>${dto.spec}</td>
 									<td>${dto.unit}</td>
-									<td>${dto.lot_qty}</td>
-									<td>${dto.io_time}</td>
+									<td>${dto.io_qty}</td>
+									<td><fmt:formatDate value="${dto.io_time}" pattern="yyyy-MM-dd HH:mm" timeZone="Asia/Seoul"/></td>
 									<td><c:choose>
 											<c:when test="${empty dto.expiry_date}">-</c:when>
 											<c:otherwise>${dto.expiry_date}</c:otherwise>
@@ -419,6 +419,7 @@
 			</tr>
 		</tbody>
 	</table>
+	<div id="lotPagination" style="display:flex; justify-content:center; gap:6px; margin-top:10px;"></div>
 	<div class="modal-footer">
 		<button type="button" id="btnLotSearchCancel">닫기</button>
 	</div>
