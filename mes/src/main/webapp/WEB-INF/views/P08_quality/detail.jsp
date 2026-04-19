@@ -91,7 +91,7 @@
 				            <button type="button" class="buttonMain" <c:if test="${(empty dto.auth) || dto.auth < 2}">style="display: none;"</c:if> >계획 수정</button>
 				        </a>
 				        <a href="/mes/qcresultmodify?qcId=${qcInfo.qcId}">
-				            <button type="button" class="buttonSub">결과 수정</button>
+				            <button type="button" class="buttonSub" <c:if test="${(dto.auth < 2) && !(qcInfo.wId eq dto.empid)}">style="display: none;"</c:if> >결과 수정</button>
 				        </a>
 			        </c:if>
 		        </div>
@@ -113,7 +113,7 @@
 	            	<c:if test="${ qcInfo.qcStatus == 30 }">
 	            		<div class="finIo">
 	            			<span class="status qcFin">검사 완료</span>
-		            		<a href="/mes/fin?woId=${qcInfo.woId}&qcId=${qcInfo.qcId}&empId=${qcInfo.wId}&itemId=${qcInfo.itemId}&qty=<%= inQty %>&date=${qcInfo.eDate}" class="buttonMain">
+		            		<a href="/mes/fin?woId=${qcInfo.woId}&qcId=${qcInfo.qcId}&empId=${qcInfo.wId}&itemId=${qcInfo.itemId}&qty=<%= inQty %>&date=${qcInfo.eDate}" class="buttonMain" <c:if test="${(dto.auth < 2) && !(qcInfo.wId eq dto.empid)}">style="display: none;"</c:if> >
 		            			생산품 입고
 		            		</a>
 	            		</div>
