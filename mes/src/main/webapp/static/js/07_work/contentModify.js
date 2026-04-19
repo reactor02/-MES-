@@ -35,6 +35,17 @@ function submitContentModify() {
     const checkedStatus = document.querySelector('input[name="status"]:checked');
     const targetQty = Number(document.getElementById("woQty").value);
     const prevQty = Number(document.getElementById("prevQty").value);
+    const targetQtyEl = document.querySelector("#targetQty");
+	const targetQty = Number(targetQtyEl.value);
+	const maxQty = Number(targetQtyEl.max);
+	
+	if (!targetQty || targetQty <= 0) {
+	    return alert("목표 수량을 입력하세요");
+	}
+	
+	if (targetQty > maxQty) {
+	    return alert(`목표 수량은 ${maxQty} 이하만 입력할 수 있습니다.`);
+	}
 
     if (checkedStatus && checkedStatus.value === "30" && prevQty < targetQty) {
         alert("완료 수량이 목표 수량보다 적으면 작업을 완료할 수 없습니다");
