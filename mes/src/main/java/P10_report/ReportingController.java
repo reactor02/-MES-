@@ -14,8 +14,8 @@ import P01_auth.LoginDTO;
 import P01_auth.LoginService;
 import P02_dashboard.DashDTO;
 
-@WebServlet("/defectreporting")
-public class DefectReportingController extends HttpServlet {
+@WebServlet("/reporting")
+public class ReportingController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -96,7 +96,7 @@ public class DefectReportingController extends HttpServlet {
 		session.setAttribute("defect_report", defect_report);
 
 		// 세션이니 그냥 주소 바뀌게 ㄱㄱ.
-		request.getRequestDispatcher("/WEB-INF/views/P10_report/defectReporting.jsp").forward(request, response);
+		request.getRequestDispatcher("/WEB-INF/views/P10_report/reporting.jsp").forward(request, response);
 
 	}
 

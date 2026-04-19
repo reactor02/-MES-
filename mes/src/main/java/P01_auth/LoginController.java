@@ -25,6 +25,16 @@ public class LoginController extends HttpServlet {
 		request.setCharacterEncoding("UTF-8");
 //		response.setContentType("text/html; charset=UTF-8");
 		
+		
+		// 함수 모음집 소환
+		LoginService s = new LoginService();
+		// 데이터 바구니 소환
+		LoginDTO d = new LoginDTO();
+
+		// 전화번호. 숫자 21억 넘어서 long으로 저장.
+		long phone = 0;
+	
+		
 		//로그인으로
 		request.getRequestDispatcher("/WEB-INF/views/P01_auth/login.jsp").forward(request, response);
 			

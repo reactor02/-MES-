@@ -24,20 +24,34 @@ public class JoinController extends HttpServlet {
 		request.setCharacterEncoding("UTF-8");
 //		response.setContentType("text/html; charset=UTF-8");
 
+		// 함수 모음집 소환
+		LoginService s = new LoginService();
+		// 데이터 바구니 소환
+		LoginDTO d = new LoginDTO();
+
+		// 전화번호. 숫자 21억 넘어서 long으로 저장.
+		long phone = 0;
+		
+		
+		List<LoginDTO> selectd = s.selectd();
+		List<LoginDTO> selectm = s.selectm();
+		
+		
+		request.setAttribute("selectd", selectd);
+		request.setAttribute("selectm", selectm);
+
 		// 회원가입으로
 		request.getRequestDispatcher("/WEB-INF/views/P01_auth/join.jsp").forward(request, response);
 		return;
 
 	}
 
-
-
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		// TODO Auto-generated method stub
 
 		System.out.println("/join dopost 실행");
-		
+
 		// 주소 : http://localhost:8080/mes/login.jsp
 
 		// 한글깨짐 방지
@@ -67,9 +81,9 @@ public class JoinController extends HttpServlet {
 		// 회원가입 로직
 		if (join_name != null && join_pw != null && join_pw2 != null && join_mgr != null) {
 			System.out.println("/login doget.join 실행");
-			
-			//비밀번호 SHA-256 암호화
-			System.out.println("암호화 비밀번호 확인 : "+s.encrypt(join_pw));
+
+			// 비밀번호 SHA-256 암호화
+			System.out.println("암호화 비밀번호 확인 : " + s.encrypt(join_pw));
 
 			d.setEname(join_name);
 			d.setPhone(phone);

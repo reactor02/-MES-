@@ -29,25 +29,29 @@ public class StockDAO {
         try (
             Connection conn = getConn();
             PreparedStatement ps = conn.prepareStatement(
-                "SELECT COUNT(*) cnt FROM io i " +
-                "LEFT JOIN vendor v ON i.vendor_id = v.vendor_id " +
-                "JOIN item it       ON i.item_id   = it.item_id " +
-                "JOIN lot l         ON i.lot_id    = l.lot_id " +
-                "JOIN user_info u   ON i.emp_id    = u.emp_id " +
-                "WHERE 1=1 " +
-                "AND (? IS NULL OR i.io_type = ?) " +
-                "AND (? IS NULL OR v.vendor_id = ?) " +
-                "AND (? IS NULL OR it.g_id = ?) " +
-                "AND (? IS NULL OR it.item_id = ?) " +
-                "AND (? IS NULL OR i.io_time >= TO_DATE(?, 'YYYY-MM-DD')) " +
-                "AND (? IS NULL OR i.io_time <= TO_DATE(?, 'YYYY-MM-DD') + 1) " +
-                "AND (? IS NULL OR it.item_name LIKE ? OR it.item_id LIKE ?) " +
-                "AND (? IS NULL OR " +
-                "    (? = 'warn' AND l.expiry_date >= TRUNC(SYSDATE) AND l.expiry_date <= TRUNC(SYSDATE) + 10 " +
-                "     AND NVL((SELECT SUM(CASE WHEN io_type = 0 THEN lot_qty ELSE -lot_qty END) FROM io WHERE lot_id = l.lot_id), 0) > 0) OR " +
-                "    (? = 'over' AND l.expiry_date < TRUNC(SYSDATE) " +
-                "     AND NVL((SELECT SUM(CASE WHEN io_type = 0 THEN lot_qty ELSE -lot_qty END) FROM io WHERE lot_id = l.lot_id), 0) > 0) " +
-                ")"
+                "select count(*) cnt from io i " +
+                "left join vendor v on i.vendor_id = v.vendor_id " +
+                "join item it       on i.item_id   = it.item_id " +
+                "join lot l         on i.lot_id    = l.lot_id " +
+                "join user_info u   on i.emp_id    = u.emp_id " +
+                "where 1=1 " +
+                "and (? is null or i.io_type = ?) " +
+                "and (? is null or v.vendor_id = ?) " +
+                "and (? is null or it.g_id = ?) " +
+                "and (? is null or it.item_id = ?) " +
+                "and (? is null or i.io_time >= to_date(?, 'yyyy-mm-dd')) " +
+                "and (? is null or i.io_time <= to_date(?, 'yyyy-mm-dd') + 1) " +
+                "and (? is null or it.item_name like ? or it.item_id like ? or l.lot_id like ?) " +
+                // expiry 필터: 괄호 수정 + 출고 차단 + 잔여수량 > 0 조건
+                "and (? is null or (" +
+                "        (? = 'warn' and l.expiry_date >= trunc(sysdate) and l.expiry_date <= trunc(sysdate) + 10)" +
+                "     or (? = 'over' and l.expiry_date < trunc(sysdate))" +
+                ")) " +
+                "and (? is null or i.io_type = 0) " +
+                "and (? is null or nvl((" +
+                "    select sum(case when io_type = 0 then io_qty else -io_qty end) " +
+                "    from io where lot_id = l.lot_id" +
+                "), 0) > 0) "
             );
         ) {
             String ioType   = stockDTO.getFilterIoType();
@@ -67,8 +71,10 @@ public class StockDAO {
             ps.setString(idx++, itemId);   ps.setString(idx++, itemId);
             ps.setString(idx++, dateFrom); ps.setString(idx++, dateFrom);
             ps.setString(idx++, dateTo);   ps.setString(idx++, dateTo);
-            ps.setString(idx++, kwLike);   ps.setString(idx++, kwLike); ps.setString(idx++, kwLike);
-            ps.setString(idx++, expiry);   ps.setString(idx++, expiry); ps.setString(idx++, expiry);
+            ps.setString(idx++, kwLike); ps.setString(idx++, kwLike); ps.setString(idx++, kwLike); ps.setString(idx++, kwLike);
+            // expiry: IS NULL체크, warn비교, over비교, io_type차단, 잔여량>0
+            ps.setString(idx++, expiry); ps.setString(idx++, expiry); ps.setString(idx++, expiry);
+            ps.setString(idx++, expiry); ps.setString(idx++, expiry);
 
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) totalCount = rs.getInt("cnt");
@@ -84,13 +90,14 @@ public class StockDAO {
         try (
             Connection conn = getConn();
             PreparedStatement ps = conn.prepareStatement(
-                "SELECT * FROM ( " +
-                "    SELECT rownum AS rnum, e.* FROM ( " +
-                "        SELECT " +
+                "select * from ( " +
+                "    select rownum as rnum, e.* from ( " +
+                "        select " +
                 "            i.io_id, " +
                 "            i.io_time, " +
                 "            i.io_type, " +
                 "            i.io_reason, " +
+                "            i.io_qty, " +
                 "            v.vendor_id, " +
                 "            v.vendor_name, " +
                 "            it.item_id, " +
@@ -99,35 +106,37 @@ public class StockDAO {
                 "            it.unit, " +
                 "            it.spec, " +
                 "            l.lot_id, " +
-                "            l.lot_qty, " +
                 "            l.expiry_date, " +
 
                 "            u.ename, " +
                 "            u.dept_no, " +
                 "            u.retire, " +
                 "            u.emp_id " +
-                "        FROM io i " +
-                "        LEFT JOIN vendor v ON i.vendor_id = v.vendor_id " +
-                "        JOIN item it       ON i.item_id   = it.item_id " +
-                "        JOIN lot l         ON i.lot_id    = l.lot_id " +
-                "        JOIN user_info u   ON i.emp_id    = u.emp_id " +
-                "        WHERE 1=1 " +
-                "        AND (? IS NULL OR i.io_type = ?) " +
-                "        AND (? IS NULL OR v.vendor_id = ?) " +
-                "        AND (? IS NULL OR it.g_id = ?) " +
-                "        AND (? IS NULL OR it.item_id = ?) " +
-                "        AND (? IS NULL OR i.io_time >= TO_DATE(?, 'YYYY-MM-DD')) " +
-                "        AND (? IS NULL OR i.io_time <= TO_DATE(?, 'YYYY-MM-DD') + 1) " +
-                "        AND (? IS NULL OR it.item_name LIKE ? OR it.item_id LIKE ?) " +
-                "        AND (? IS NULL OR " +
-                "            (? = 'warn' AND l.expiry_date >= TRUNC(SYSDATE) AND l.expiry_date <= TRUNC(SYSDATE) + 10 " +
-                "             AND NVL((SELECT SUM(CASE WHEN io_type = 0 THEN lot_qty ELSE -lot_qty END) FROM io WHERE lot_id = l.lot_id), 0) > 0) OR " +
-                "            (? = 'over' AND l.expiry_date < TRUNC(SYSDATE) " +
-                "             AND NVL((SELECT SUM(CASE WHEN io_type = 0 THEN lot_qty ELSE -lot_qty END) FROM io WHERE lot_id = l.lot_id), 0) > 0) " +
-                "        ) " +
-                "        ORDER BY i.io_time DESC " +
+                "        from io i " +
+                "        left join vendor v on i.vendor_id = v.vendor_id " +
+                "        join item it       on i.item_id   = it.item_id " +
+                "        join lot l         on i.lot_id    = l.lot_id " +
+                "        join user_info u   on i.emp_id    = u.emp_id " +
+                "        where 1=1 " +
+                "        and (? is null or i.io_type = ?) " +
+                "        and (? is null or v.vendor_id = ?) " +
+                "        and (? is null or it.g_id = ?) " +
+                "        and (? is null or it.item_id = ?) " +
+                "        and (? is null or i.io_time >= to_date(?, 'yyyy-mm-dd')) " +
+                "        and (? is null or i.io_time <= to_date(?, 'yyyy-mm-dd') + 1) " +
+                "        and (? is null or it.item_name like ? or it.item_id like ? or l.lot_id like ?) " +
+                "        and (? is null or (" +
+                "                (? = 'warn' and l.expiry_date >= trunc(sysdate) and l.expiry_date <= trunc(sysdate) + 10)" +
+                "             or (? = 'over' and l.expiry_date < trunc(sysdate))" +
+                "        )) " +
+                "        and (? is null or i.io_type = 0) " +
+                "        and (? is null or nvl((" +
+                "            select sum(case when io_type = 0 then io_qty else -io_qty end) " +
+                "            from io where lot_id = l.lot_id" +
+                "        ), 0) > 0) " +
+                "        order by i.io_time desc " +
                 "    ) e " +
-                ") WHERE rnum >= ? AND rnum <= ?"
+                ") where rnum >= ? and rnum <= ?"
             );
         ) {
             // 필터 파라미터 바인딩
@@ -148,8 +157,10 @@ public class StockDAO {
             ps.setString(idx++, itemId);   ps.setString(idx++, itemId);
             ps.setString(idx++, dateFrom); ps.setString(idx++, dateFrom);
             ps.setString(idx++, dateTo);   ps.setString(idx++, dateTo);
-            ps.setString(idx++, kwLike);   ps.setString(idx++, kwLike); ps.setString(idx++, kwLike);
-            ps.setString(idx++, expiry);   ps.setString(idx++, expiry); ps.setString(idx++, expiry);
+            ps.setString(idx++, kwLike); ps.setString(idx++, kwLike); ps.setString(idx++, kwLike); ps.setString(idx++, kwLike);
+            // expiry: IS NULL체크, warn비교, over비교, io_type차단, 잔여량>0
+            ps.setString(idx++, expiry); ps.setString(idx++, expiry); ps.setString(idx++, expiry);
+            ps.setString(idx++, expiry); ps.setString(idx++, expiry);
 
             // 페이징
             ps.setInt(idx++, stockDTO.getStart());
@@ -159,9 +170,10 @@ public class StockDAO {
                 while (rs.next()) {
                     StockDTO dto = new StockDTO();
                     dto.setIo_id(rs.getString("io_id"));
-                    dto.setIo_time(rs.getDate("io_time"));
+                    dto.setIo_time(rs.getTimestamp("io_time"));
                     dto.setIo_type(rs.getInt("io_type"));
                     dto.setIo_reason(rs.getString("io_reason"));
+                    dto.setIo_qty(rs.getInt("io_qty"));
                     dto.setVender_id(rs.getString("vendor_id"));
                     dto.setVender_name(rs.getString("vendor_name"));
                     dto.setItem_id(rs.getString("item_id"));
@@ -171,7 +183,6 @@ public class StockDAO {
                     String specStr = rs.getString("spec");
                     dto.setSpec(rs.getString("spec"));
                     dto.setLot_id(rs.getString("lot_id"));
-                    dto.setLot_qty(rs.getInt("lot_qty"));
                     dto.setExpiry_date(rs.getDate("expiry_date"));
                     dto.setEname(rs.getString("ename"));
                     dto.setDept_no(rs.getString("dept_no"));
@@ -201,7 +212,7 @@ public class StockDAO {
             if (dto.getIo_type() == 0) {
                 // ���� �԰�: lot_seq�� �� LOT ID ���� ����������������������������
                 ps = conn.prepareStatement(
-                    "SELECT 'LOT_' || lot_seq.nextval AS lot_id FROM dual"
+                    "select 'lot_' || lot_seq.nextval as lot_id from dual"
                 );
                 rs = ps.executeQuery();
                 if (rs.next()) lotId = rs.getString("lot_id");
@@ -210,8 +221,8 @@ public class StockDAO {
 
                 // lot INSERT
                 ps = conn.prepareStatement(
-                    "INSERT INTO lot (lot_id, item_id, lot_qty, expiry_date, deleted) " +
-                    "VALUES (?, ?, ?, ?, 'N')"
+                    "insert into lot (lot_id, item_id, lot_qty, expiry_date) " +
+                    "values (?, ?, ?, ?)"
                 );
                 ps.setString(1, lotId);
                 ps.setString(2, dto.getItem_id());
@@ -220,9 +231,9 @@ public class StockDAO {
                 ps.executeUpdate();
                 ps.close();
 
-                // �԰� io_id ����
+                // 입고 io_id 생성
                 ps = conn.prepareStatement(
-                    "SELECT 'IN_' || in_seq.nextval AS io_id FROM dual"
+                    "select 'in_' || in_seq.nextval as io_id from dual"
                 );
                 rs = ps.executeQuery();
                 if (rs.next()) ioId = rs.getString("io_id");
@@ -230,7 +241,7 @@ public class StockDAO {
                 ps.close();
                 
                 ps = conn.prepareStatement(
-                	    "UPDATE stock SET stock_no = stock_no + ? WHERE item_id = ? AND deleted = 'N'"
+                	    "update stock set stock_no = stock_no + ? where item_id = ?"
                 	);
                 	ps.setInt(1, dto.getLot_qty());
                 	ps.setString(2, dto.getItem_id());
@@ -238,18 +249,12 @@ public class StockDAO {
                 	ps.close();
 
             } else {
-                // ���� ���: ���� LOT ���� ����������������������������������������������������
                 lotId = dto.getLot_id();
 
-                // ��� io_id ����
+                // 출고 io_id 생성
                 ps = conn.prepareStatement(
-                    "SELECT 'OUT_' || out_seq.nextval AS io_id FROM dual"
+                    "select 'out_' || out_seq.nextval as io_id from dual"
                 );
-                rs = ps.executeQuery();
-                if (rs.next()) ioId = rs.getString("io_id");
-                rs.close();
-                ps.close();
-                
                 rs = ps.executeQuery();
                 if (rs.next()) ioId = rs.getString("io_id");
                 rs.close();
@@ -257,7 +262,7 @@ public class StockDAO {
 
                 // �� ���� �߰�
                 ps = conn.prepareStatement(
-                    "UPDATE stock SET stock_no = stock_no - ? WHERE item_id = ? AND deleted = 'N'"
+                    "update stock set stock_no = stock_no - ? where item_id = ?"
                 );
                 ps.setInt(1, dto.getLot_qty());
                 ps.setString(2, dto.getItem_id());
@@ -266,19 +271,19 @@ public class StockDAO {
                 
             }
 
-            // ���� io INSERT (�԰�/��� ����) ������������������������������������������������
+            // io INSERT (입고/출고 공통)
             ps = conn.prepareStatement(
-                "INSERT INTO io (io_id, io_time, io_type, io_reason, vendor_id, item_id, lot_id, emp_id, deleted) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'N')"
+                "insert into io (io_id, io_time, io_type, io_reason, vendor_id, item_id, lot_id, emp_id, io_qty) " +
+                "values (?, sysdate + 9/24, ?, ?, ?, ?, ?, ?, ?)"
             );
             ps.setString(1, ioId);
-            ps.setDate(2, dto.getIo_time());
-            ps.setInt(3, dto.getIo_type());
-            ps.setString(4, dto.getIo_reason());
-            ps.setString(5, dto.getVender_id());
-            ps.setString(6, dto.getItem_id());
-            ps.setString(7, lotId);
-            ps.setString(8, dto.getEmp_id());
+            ps.setInt(2, dto.getIo_type());
+            ps.setString(3, dto.getIo_reason());
+            ps.setString(4, dto.getVender_id());
+            ps.setString(5, dto.getItem_id());
+            ps.setString(6, lotId);
+            ps.setString(7, dto.getEmp_id());
+            ps.setInt(8, dto.getIo_qty());
             ps.executeUpdate();
 
             conn.commit();
@@ -298,7 +303,7 @@ public class StockDAO {
         try (
             Connection conn = getConn();
             PreparedStatement ps = conn.prepareStatement(
-                "SELECT vendor_id, vendor_name FROM vendor"
+                "select vendor_id, vendor_name from vendor"
             );
             ResultSet rs = ps.executeQuery();
         ) {
@@ -319,7 +324,7 @@ public class StockDAO {
         try (
             Connection conn = getConn();
             PreparedStatement ps = conn.prepareStatement(
-                "SELECT item_id, item_name, g_id, spec, unit FROM item"
+                "select item_id, item_name, g_id, spec, unit from item"
             );
             ResultSet rs = ps.executeQuery();
         ) {
@@ -344,7 +349,7 @@ public class StockDAO {
         try (
             Connection conn = getConn();
             PreparedStatement ps = conn.prepareStatement(
-                "SELECT g_id FROM item GROUP BY g_id ORDER BY g_id"
+                "select g_id from item group by g_id order by g_id"
             );
             ResultSet rs = ps.executeQuery();
         ) {
@@ -365,7 +370,7 @@ public class StockDAO {
         try (
             Connection conn = getConn();
             PreparedStatement ps = conn.prepareStatement(
-                "SELECT " +
+                "select " +
                 "    i.io_id, " +
                 "    it.item_id, " +
                 "    it.item_name, " +
@@ -373,11 +378,11 @@ public class StockDAO {
                 "    it.unit, " +
                 "    l.lot_id, " +
                 "    l.lot_qty " +
-                "FROM io i " +
-                "JOIN item it  ON i.item_id   = it.item_id " +
-                "JOIN lot l    ON i.lot_id     = l.lot_id " +
-                "WHERE i.io_type = 0 " +
-                "ORDER BY i.io_time DESC"
+                "from io i " +
+                "join item it  on i.item_id   = it.item_id " +
+                "join lot l    on i.lot_id     = l.lot_id " +
+                "where i.io_type = 0 " +
+                "order by i.io_time desc"
             );
             ResultSet rs = ps.executeQuery();
         ) {
@@ -404,21 +409,25 @@ public class StockDAO {
         try (
             Connection conn = getConn();
             PreparedStatement ps = conn.prepareStatement(
-            		"SELECT l.lot_id, l.lot_qty, l.expiry_date, " +
+            		"select l.lot_id, l.expiry_date, " +
             		"       it.item_id, it.item_name, it.spec, it.unit, " +
-            		"       u.emp_id, u.ename " +
-            		"FROM lot l " +
-            		"JOIN item it ON l.item_id = it.item_id " +
-            		"JOIN user_info u ON u.emp_id = ( " +
-            		"    SELECT i2.emp_id FROM io i2 " +
-            		"    WHERE i2.lot_id = l.lot_id AND i2.io_type = 0 AND ROWNUM = 1 " +
+            		"       u.emp_id, u.ename, " +
+            		"       nvl(( " +
+            		"           select sum(case when io_type = 0 then io_qty else -io_qty end) " +
+            		"           from io where lot_id = l.lot_id " +
+            		"       ), 0) as remaining_qty " +
+            		"from lot l " +
+            		"join item it on l.item_id = it.item_id " +
+            		"join user_info u on u.emp_id = ( " +
+            		"    select i2.emp_id from io i2 " +
+            		"    where i2.lot_id = l.lot_id and i2.io_type = 0 and rownum = 1 " +
             		") " +
-            		"WHERE NVL(( " +
-            		"    SELECT SUM(CASE WHEN io_type = 0 THEN lot_qty ELSE -lot_qty END) " +
-            		"    FROM io WHERE lot_id = l.lot_id " +
+            		"where nvl(( " +
+            		"    select sum(case when io_type = 0 then io_qty else -io_qty end) " +
+            		"    from io where lot_id = l.lot_id " +
             		"), 0) > 0 " +
-            		"AND (it.item_name LIKE ? OR l.lot_id LIKE ?) " +
-            		"ORDER BY l.lot_id DESC"
+            		"and (it.item_name like ? or l.lot_id like ?) " +
+            		"order by l.lot_id desc"
             );
         ) {
             String kw = "%" + (keyword == null ? "" : keyword) + "%";
@@ -428,7 +437,7 @@ public class StockDAO {
                 while (rs.next()) {
                     StockDTO dto = new StockDTO();
                     dto.setLot_id(rs.getString("lot_id"));
-                    dto.setLot_qty(rs.getInt("lot_qty"));
+                    dto.setLot_qty(rs.getInt("remaining_qty"));
                     dto.setExpiry_date(rs.getDate("expiry_date"));
                     dto.setItem_id(rs.getString("item_id"));
                     dto.setItem_name(rs.getString("item_name"));
@@ -450,11 +459,11 @@ public class StockDAO {
         try (
             Connection conn = getConn();
             PreparedStatement ps = conn.prepareStatement(
-                "SELECT emp_id, ename, dept_no " +
-                "FROM user_info " +
-                "WHERE (retire = 0 OR retire IS NULL) " +
-                "AND (ename LIKE ? OR emp_id LIKE ?) " +
-                "ORDER BY ename"
+                "select emp_id, ename, dept_no " +
+                "from user_info " +
+                "where (retire = 0 or retire is null) " +
+                "and (ename like ? or emp_id like ?) " +
+                "order by ename"
             );
         ) {
             String kw = "%" + (keyword == null ? "" : keyword) + "%";
@@ -481,13 +490,13 @@ public class StockDAO {
         try (
             Connection conn = getConn();
             PreparedStatement ps = conn.prepareStatement(
-                "SELECT COUNT(*) cnt FROM lot l " +
-                "WHERE l.expiry_date IS NOT NULL " +
-                "AND l.expiry_date >= TRUNC(SYSDATE) " +
-                "AND l.expiry_date <= TRUNC(SYSDATE) + 10 " +
-                "AND NVL(( " +
-                "    SELECT SUM(CASE WHEN io_type = 0 THEN lot_qty ELSE -lot_qty END) " +
-                "    FROM io WHERE lot_id = l.lot_id " +
+                "select count(*) cnt from lot l " +
+                "where l.expiry_date is not null " +
+                "and l.expiry_date >= trunc(sysdate) " +
+                "and l.expiry_date <= trunc(sysdate) + 10 " +
+                "and nvl(( " +
+                "    select sum(case when io_type = 0 then io_qty else -io_qty end) " +
+                "    from io where lot_id = l.lot_id " +
                 "), 0) > 0"
             );
         ) {
@@ -506,12 +515,12 @@ public class StockDAO {
         try (
             Connection conn = getConn();
             PreparedStatement ps = conn.prepareStatement(
-                "SELECT COUNT(*) cnt FROM lot l " +
-                "WHERE l.expiry_date IS NOT NULL " +
-                "AND l.expiry_date < TRUNC(SYSDATE) " +
-                "AND NVL(( " +
-                "    SELECT SUM(CASE WHEN io_type = 0 THEN lot_qty ELSE -lot_qty END) " +
-                "    FROM io WHERE lot_id = l.lot_id " +
+                "select count(*) cnt from lot l " +
+                "where l.expiry_date is not null " +
+                "and l.expiry_date < trunc(sysdate) " +
+                "and nvl(( " +
+                "    select sum(case when io_type = 0 then io_qty else -io_qty end) " +
+                "    from io where lot_id = l.lot_id " +
                 "), 0) > 0"
             );
         ) {
@@ -529,7 +538,7 @@ public class StockDAO {
         try (
             Connection conn = getConn();
             PreparedStatement ps = conn.prepareStatement(
-                "SELECT stock_no FROM stock WHERE item_id = ? AND deleted = 'N'"
+                "select stock_no from stock where item_id = ?"
             );
         ) {
             ps.setString(1, itemId);

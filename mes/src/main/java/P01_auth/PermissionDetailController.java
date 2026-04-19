@@ -28,16 +28,12 @@ public class PermissionDetailController extends HttpServlet {
 		LoginService s = new LoginService();
 		// 데이터 바구니 소환
 		LoginDTO d = new LoginDTO();
-		
-		
-		//Paging 페이징
-		String empid = request.getParameter("empid");	
-		
 
-		
+		// Paging 페이징
+		String empid = request.getParameter("empid");
+
 		d = s.detail(empid);
-		
-	
+
 		// 세션 소환
 		HttpSession session = request.getSession();
 
@@ -52,6 +48,16 @@ public class PermissionDetailController extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		// TODO Auto-generated method stub
+
+		// 한글깨짐 방지
+		request.setCharacterEncoding("UTF-8");
+//				response.setContentType("text/html; charset=UTF-8");
+		// 함수 모음집 소환
+		LoginService s = new LoginService();
+		// 데이터 바구니 소환
+		LoginDTO d = new LoginDTO();
+		
+		
 
 	}
 

@@ -44,13 +44,13 @@
                         삭제
                     </button>
                 </c:if>
-                <%-- auth 2 이상 + complete != 1 일 때 답변완료 버튼 표시 --%>
+                <%-- auth 2 이상 + complete != 1 일 때 검토완료 버튼 표시 --%>
                 <c:if test="${dto.auth >= 2 && detail.complete != 1}">
                     <button class="btn btn-success btn-sm" id="btnComplete"
                             data-boardno="${detail.boardno}"
                             data-complete="${detail.complete}"
                             data-action="${pageContext.request.contextPath}/suggestion/detail">
-                        답변완료
+                        검토완료
                     </button>
                 </c:if>
             </div>

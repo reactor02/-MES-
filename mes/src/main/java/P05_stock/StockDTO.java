@@ -1,6 +1,7 @@
 package P05_stock;
 
 import java.sql.Date;
+import java.sql.Timestamp;
 
 public class StockDTO {
 	
@@ -15,7 +16,7 @@ public class StockDTO {
 	// ������� DTO
 	
 	private String io_id;
-	private Date io_time;
+	private Timestamp io_time;
 	private String deleted;
 	private int io_type;
 	private String io_reason;
@@ -32,9 +33,10 @@ public class StockDTO {
 	private String unit;
 	private String spec;
 	
-	// lot �ڵ�
+	// lot 코드
 	private String lot_id;
 	private int lot_qty;
+	private int io_qty;
 	private Date expiry_date;
 	private String lotdeleted;
 	
@@ -104,10 +106,10 @@ public class StockDTO {
 	public void setIo_id(String io_id) {
 		this.io_id = io_id;
 	}
-	public Date getIo_time() {
+	public Timestamp getIo_time() {
 		return io_time;
 	}
-	public void setIo_time(Date io_time) {
+	public void setIo_time(Timestamp io_time) {
 		this.io_time = io_time;
 	}
 	public String getDeleted() {
@@ -176,6 +178,12 @@ public class StockDTO {
 	}
 	public void setLot_qty(int lot_qty) {
 		this.lot_qty = lot_qty;
+	}
+	public int getIo_qty() {
+		return io_qty;
+	}
+	public void setIo_qty(int io_qty) {
+		this.io_qty = io_qty;
 	}
 	public Date getExpiry_date() {
 		return expiry_date;

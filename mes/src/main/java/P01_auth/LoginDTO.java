@@ -20,6 +20,7 @@ public class LoginDTO {
 
 	
 	int wo_qty;
+	int qc_qty;
 	int prev_qty;
 	
 	String woid;
@@ -43,6 +44,15 @@ public class LoginDTO {
 	
 	
 	
+	public int getQc_qty() {
+		return qc_qty;
+	}
+	
+	
+	
+	public void setQc_qty(int qc_qty) {
+		this.qc_qty = qc_qty;
+	}
 	
 	public String getDefect_id() {
 		return defect_id;

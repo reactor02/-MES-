@@ -26,30 +26,59 @@ public class ProdDAO {
         return conn;
     }
 
+    /* ── [공통] ResultSet → ProdDTO 매핑 ─────────────────── */
+    private ProdDTO mapRow(ResultSet rs) throws Exception {
+        ProdDTO dto = new ProdDTO();
+        dto.setPlanId(   rs.getString("plan_id")  );
+        dto.setPlanQty(  rs.getInt("plan_qty")    );
+        dto.setPrevQty(  rs.getInt("prev_qty")    );
+        dto.setPlanSdate(rs.getDate("plan_sdate") );
+        dto.setPlanEdate(rs.getDate("plan_edate") );
+        dto.setStatus(   rs.getInt("status")      );
+        dto.setItemId(   rs.getString("item_id")  );
+        dto.setEmpId(    rs.getString("emp_id")   );
+        dto.setItemName( rs.getString("item_name"));
+        dto.setEname(    rs.getString("ename")    );
+
+        int planQty = dto.getPlanQty();
+        int prevQty = dto.getPrevQty();
+        dto.setProgressPct(planQty > 0 ? (int)(prevQty * 100.0 / planQty) : 0);
+
+        return dto;
+    }
+
+    /* ── [공통] production_plan + item + user_info JOIN SELECT절 ── */
+    private String basePlanSelectSql() {
+        return new StringBuilder()
+            .append("SELECT pp.plan_id, ")
+            .append("       pp.plan_qty, ")
+            .append("       pp.prev_qty, ")
+            .append("       pp.plan_sdate, ")
+            .append("       pp.plan_edate, ")
+            .append("       pp.status, ")
+            .append("       pp.item_id, ")
+            .append("       pp.emp_id, ")
+            .append("       i.item_name, ")
+            .append("       u.ename ")
+            .append("FROM   production_plan pp ")
+            .append("JOIN   item      i ON pp.item_id = i.item_id ")
+            .append("JOIN   user_info u ON pp.emp_id  = u.emp_id ")
+            .toString();
+    }
+
     /* ── 목록 조회 (페이지네이션 + JOIN) ──────────────────── */
     public List<ProdDTO> selectAll(ProdDTO prodDTO) {
         List<ProdDTO> list = new ArrayList<>();
 
-        String sql =
-            "SELECT * FROM ( " +
-            "  SELECT rownum AS rnum, p.* FROM ( " +
-            "    SELECT pp.plan_id, " +
-            "           pp.plan_qty, " +
-            "           pp.prev_qty, " +
-            "           pp.plan_sdate, " +
-            "           pp.plan_edate, " +
-            "           pp.status, " +
-            "           pp.item_id, " +
-            "           pp.emp_id, " +
-            "           i.item_name, " +
-            "           u.ename " +
-            "    FROM   production_plan pp " +
-            "    JOIN   item      i ON pp.item_id = i.item_id " +
-            "    JOIN   user_info u ON pp.emp_id  = u.emp_id " +
-            "    ORDER  BY pp.plan_sdate DESC " +
-            "  ) p " +
-            ") " +
-            "WHERE rnum >= ? AND rnum <= ?";
+        String sql = new StringBuilder()
+            .append("SELECT * FROM ( ")
+            .append("  SELECT rownum AS rnum, p.* FROM ( ")
+            .append(basePlanSelectSql())
+            .append("    ORDER  BY pp.plan_sdate DESC ")
+            .append("  ) p ")
+            .append(") ")
+            .append("WHERE rnum >= ? AND rnum <= ?")
+            .toString();
 
         try (Connection conn = getConn();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -59,23 +88,7 @@ public class ProdDAO {
 
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
-                    ProdDTO dto = new ProdDTO();
-                    dto.setPlanId(   rs.getString("plan_id")  );
-                    dto.setPlanQty(  rs.getInt("plan_qty")    );
-                    dto.setPrevQty(  rs.getInt("prev_qty")    );
-                    dto.setPlanSdate(rs.getDate("plan_sdate") );
-                    dto.setPlanEdate(rs.getDate("plan_edate") );
-                    dto.setStatus(   rs.getInt("status")      );
-                    dto.setItemId(   rs.getString("item_id")  );
-                    dto.setEmpId(    rs.getString("emp_id")   );
-                    dto.setItemName( rs.getString("item_name"));
-                    dto.setEname(    rs.getString("ename")    );
-
-                    int planQty = dto.getPlanQty();
-                    int prevQty = dto.getPrevQty();
-                    dto.setProgressPct(planQty > 0 ? (int)(prevQty * 100.0 / planQty) : 0);
-
-                    list.add(dto);
+                    list.add(mapRow(rs));
                 }
             }
         } catch (Exception e) {
@@ -104,38 +117,17 @@ public class ProdDAO {
     public ProdDTO selectOne(String planId) {
         ProdDTO dto = null;
 
-        String sql =
-            "SELECT pp.plan_id, " +
-            "       pp.plan_qty, " +
-            "       pp.prev_qty, " +
-            "       pp.plan_sdate, " +
-            "       pp.plan_edate, " +
-            "       pp.status, " +
-            "       pp.item_id, " +
-            "       pp.emp_id, " +
-            "       i.item_name, " +
-            "       u.ename " +
-            "FROM   production_plan pp " +
-            "JOIN   item      i ON pp.item_id = i.item_id " +
-            "JOIN   user_info u ON pp.emp_id  = u.emp_id " +
-            "WHERE  pp.plan_id = ?";
+        String sql = new StringBuilder()
+            .append(basePlanSelectSql())
+            .append("WHERE  pp.plan_id = ?")
+            .toString();
 
         try (Connection conn = getConn();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, planId);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
-                    dto = new ProdDTO();
-                    dto.setPlanId(   rs.getString("plan_id")  );
-                    dto.setPlanQty(  rs.getInt("plan_qty")    );
-                    dto.setPrevQty(  rs.getInt("prev_qty")    );
-                    dto.setPlanSdate(rs.getDate("plan_sdate") );
-                    dto.setPlanEdate(rs.getDate("plan_edate") );
-                    dto.setStatus(   rs.getInt("status")      );
-                    dto.setItemId(   rs.getString("item_id")  );
-                    dto.setEmpId(    rs.getString("emp_id")   );
-                    dto.setItemName( rs.getString("item_name"));
-                    dto.setEname(    rs.getString("ename")    );
+                    dto = mapRow(rs);
                 }
             }
         } catch (Exception e) {
@@ -146,16 +138,16 @@ public class ProdDAO {
 
     /* ── 수정 (진행률 100% 시 status → 2 자동처리) ────────── */
     public int updatePlan(ProdDTO dto) {
-        // prev_qty >= plan_qty 이면 status=2(완료), 아니면 폼에서 넘어온 status 사용
-        String sql =
-            "UPDATE production_plan " +
-            "SET    item_id    = ?, " +
-            "       emp_id     = ?, " +
-            "       plan_qty   = ?, " +
-            "       plan_sdate = TO_DATE(?, 'YYYY-MM-DD'), " +
-            "       plan_edate = TO_DATE(?, 'YYYY-MM-DD'), " +
-            "       status     = CASE WHEN prev_qty >= ? THEN 2 ELSE ? END " +
-            "WHERE  plan_id    = ?";
+        String sql = new StringBuilder()
+            .append("UPDATE production_plan ")
+            .append("SET    item_id    = ?, ")
+            .append("       emp_id     = ?, ")
+            .append("       plan_qty   = ?, ")
+            .append("       plan_sdate = TO_DATE(?, 'YYYY-MM-DD'), ")
+            .append("       plan_edate = TO_DATE(?, 'YYYY-MM-DD'), ")
+            .append("       status     = CASE WHEN prev_qty >= ? THEN 2 ELSE ? END ")
+            .append("WHERE  plan_id    = ?")
+            .toString();
 
         int result = 0;
         try (Connection conn = getConn();
@@ -181,11 +173,12 @@ public class ProdDAO {
     public List<Map<String, String>> selectGroupList() {
         List<Map<String, String>> list = new ArrayList<>();
 
-        String sql =
-            "SELECT DISTINCT i.g_id, g.itemgroup_name " +
-            "FROM   item i " +
-            "JOIN   group_info g ON i.g_id = g.g_id " +
-            "ORDER  BY g.itemgroup_name";
+        String sql = new StringBuilder()
+            .append("SELECT DISTINCT i.g_id, g.itemgroup_name ")
+            .append("FROM   item i ")
+            .append("JOIN   group_info g ON i.g_id = g.g_id ")
+            .append("ORDER  BY g.itemgroup_name")
+            .toString();
 
         try (Connection conn = getConn();
              PreparedStatement ps = conn.prepareStatement(sql);
@@ -206,10 +199,11 @@ public class ProdDAO {
     public List<Map<String, String>> selectItemList() {
         List<Map<String, String>> list = new ArrayList<>();
 
-        String sql =
-            "SELECT item_id, item_name, g_id, unit, spec " +
-            "FROM   item " +
-            "ORDER  BY item_name";
+        String sql = new StringBuilder()
+            .append("SELECT item_id, item_name, g_id, unit, spec ")
+            .append("FROM   item ")
+            .append("ORDER  BY item_name")
+            .toString();
 
         try (Connection conn = getConn();
              PreparedStatement ps = conn.prepareStatement(sql);
@@ -233,18 +227,19 @@ public class ProdDAO {
     public List<Map<String, String>> selectEmpList(String keyword, int start, int end) {
         List<Map<String, String>> list = new ArrayList<>();
 
-        String sql =
-            "SELECT * FROM ( " +
-            "  SELECT rownum AS rnum, p.* FROM ( " +
-            "    SELECT u.emp_id, u.ename, d.dept_name " +
-            "    FROM   user_info u " +
-            "    JOIN   dept d ON u.dept_no = d.dept_no " +
-            "    WHERE  u.auth >= 2 " +
-            "    AND    (u.ename LIKE ? OR u.emp_id LIKE ?) " +
-            "    ORDER  BY u.ename " +
-            "  ) p " +
-            ") " +
-            "WHERE rnum >= ? AND rnum <= ?";
+        String sql = new StringBuilder()
+            .append("SELECT * FROM ( ")
+            .append("  SELECT rownum AS rnum, p.* FROM ( ")
+            .append("    SELECT u.emp_id, u.ename, d.dept_name ")
+            .append("    FROM   user_info u ")
+            .append("    JOIN   dept d ON u.dept_no = d.dept_no ")
+            .append("    WHERE  u.auth >= 2 ")
+            .append("    AND    (u.ename LIKE ? OR u.emp_id LIKE ?) ")
+            .append("    ORDER  BY u.ename ")
+            .append("  ) p ")
+            .append(") ")
+            .append("WHERE rnum >= ? AND rnum <= ?")
+            .toString();
 
         try (Connection conn = getConn();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -273,12 +268,13 @@ public class ProdDAO {
     public int selectEmpTotal(String keyword) {
         int total = 0;
 
-        String sql =
-            "SELECT COUNT(*) cnt " +
-            "FROM   user_info u " +
-            "JOIN   dept d ON u.dept_no = d.dept_no " +
-            "WHERE  u.auth >= 2 " +
-            "AND    (u.ename LIKE ? OR u.emp_id LIKE ?)";
+        String sql = new StringBuilder()
+            .append("SELECT COUNT(*) cnt ")
+            .append("FROM   user_info u ")
+            .append("JOIN   dept d ON u.dept_no = d.dept_no ")
+            .append("WHERE  u.auth >= 2 ")
+            .append("AND    (u.ename LIKE ? OR u.emp_id LIKE ?)")
+            .toString();
 
         try (Connection conn = getConn();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -298,11 +294,12 @@ public class ProdDAO {
     public String selectProcessIdByItemId(String itemId) {
         String processId = null;
 
-        String sql =
-            "SELECT process_id " +
-            "FROM   process " +
-            "WHERE  item_id = ? " +
-            "AND    ROWNUM = 1";
+        String sql = new StringBuilder()
+            .append("SELECT process_id ")
+            .append("FROM   process ")
+            .append("WHERE  item_id = ? ")
+            .append("AND    ROWNUM = 1")
+            .toString();
 
         try (Connection conn = getConn();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -320,11 +317,12 @@ public class ProdDAO {
     public List<Map<String, Object>> selectProcessStepList(String processId) {
         List<Map<String, Object>> list = new ArrayList<>();
 
-        String sql =
-            "SELECT seq, step_name " +
-            "FROM   process_step " +
-            "WHERE  process_id = ? " +
-            "ORDER  BY seq, process_step_id";
+        String sql = new StringBuilder()
+            .append("SELECT seq, step_name ")
+            .append("FROM   process_step ")
+            .append("WHERE  process_id = ? ")
+            .append("ORDER  BY seq, process_step_id")
+            .toString();
 
         try (Connection conn = getConn();
              PreparedStatement ps = conn.prepareStatement(sql)) {

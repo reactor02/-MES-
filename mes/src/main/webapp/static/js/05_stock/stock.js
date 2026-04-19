@@ -52,6 +52,7 @@ document.addEventListener('DOMContentLoaded', function () {
             <option value="구매입">구매입</option>
             <option value="생산입">생산입</option>
             <option value="QC통과">QC통과</option>
+            <option value="작업 후 잔여">작업 후 잔여</option>
         `;
 
         document.getElementById('modalTitle').textContent       = '입고 등록';
@@ -207,12 +208,23 @@ document.addEventListener('DOMContentLoaded', function () {
 
         } else if (ioType === '1') {
             // ── 출고 유효성 검사 ──
-            if (!ioTime) {
-                alert('출고일을 선택해주세요.');
+            const lotId  = document.getElementById('lot_id_hidden').value;
+            const empId  = document.getElementById('emp_id_hidden').value;
+
+            if (!lotId) {
+                alert('LOT번호를 검색하여 선택해주세요.');
                 e.preventDefault(); return;
             }
             if (!ioReason) {
                 alert('출고사유를 선택해주세요.');
+                e.preventDefault(); return;
+            }
+            if (!ioTime) {
+                alert('출고일을 선택해주세요.');
+                e.preventDefault(); return;
+            }
+            if (!empId) {
+                alert('작업자를 선택해주세요.');
                 e.preventDefault(); return;
             }
         }
@@ -237,49 +249,81 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     // LOT 목록 AJAX 조회
+    let lotAllData = [];
+    const LOT_PAGE_SIZE = 10;
+    let lotCurrentPage = 1;
+
     function fetchLotList(keyword) {
         fetch('/mes/io?action=getLotList&keyword=' + encodeURIComponent(keyword))
             .then(res => res.json())
             .then(data => {
-                if (data.length === 0) {
-                    lotSearchBody.innerHTML = '<tr><td colspan="8">검색 결과 없음</td></tr>';
-                    return;
-                }
-
-                lotSearchBody.innerHTML = '';
-                data.forEach(function (lot) {
-                    const tr = document.createElement('tr');
-                    tr.style.cursor = 'pointer';
-                    tr.innerHTML =
-                        '<td>' + lot.lot_id               + '</td>' +
-                        '<td>' + lot.item_id              + '</td>' +
-                        '<td>' + lot.item_name            + '</td>' +
-                        '<td>' + lot.spec                 + '</td>' +
-                        '<td>' + lot.unit                 + '</td>' +
-                        '<td>' + lot.lot_qty              + '</td>' +
-                        '<td>' + (lot.expiry_date || '-') + '</td>' +
-                        '<td><button type="button" class="btn-lot-select">선택</button></td>';
-
-                    tr.querySelector('.btn-lot-select').addEventListener('click', function () {
-                        document.getElementById('lot_id_display').value    = lot.lot_id;
-                        document.getElementById('lot_id_hidden').value     = lot.lot_id;
-                        document.getElementById('item_id_hidden').value    = lot.item_id;
-                        document.getElementById('item_name_display').value = lot.item_name;
-                        document.getElementById('spec').value              = lot.spec;
-                        document.getElementById('unit').value              = lot.unit;
-                        document.getElementById('lot_qty').value           = lot.lot_qty;
-                        document.getElementById('expiry_date').value       = lot.expiry_date || '';
-                        document.getElementById('empName').value           = lot.ename;
-                        document.getElementById('emp_id_hidden').value     = lot.emp_id;
-                        lotSearchModal.close();
-                    });
-
-                    lotSearchBody.appendChild(tr);
-                });
+                lotAllData = data;
+                lotCurrentPage = 1;
+                renderLotPage(lotCurrentPage);
             })
             .catch(function (err) {
                 console.error('LOT 검색 실패:', err);
             });
+    }
+
+    function renderLotPage(page) {
+        const body       = lotSearchBody;
+        const pagination = document.getElementById('lotPagination');
+        body.innerHTML   = '';
+        pagination.innerHTML = '';
+
+        if (lotAllData.length === 0) {
+            body.innerHTML = '<tr><td colspan="8">검색 결과 없음</td></tr>';
+            return;
+        }
+
+        const totalPages = Math.ceil(lotAllData.length / LOT_PAGE_SIZE);
+        const start      = (page - 1) * LOT_PAGE_SIZE;
+        const pageData   = lotAllData.slice(start, start + LOT_PAGE_SIZE);
+
+        pageData.forEach(function (lot) {
+            const tr = document.createElement('tr');
+            tr.style.cursor = 'pointer';
+            tr.innerHTML =
+                '<td>' + lot.lot_id               + '</td>' +
+                '<td>' + lot.item_id              + '</td>' +
+                '<td>' + lot.item_name            + '</td>' +
+                '<td>' + lot.spec                 + '</td>' +
+                '<td>' + lot.unit                 + '</td>' +
+                '<td>' + lot.remaining_qty        + '</td>' +
+                '<td>' + (lot.expiry_date || '-') + '</td>' +
+                '<td><button type="button" class="btn-lot-select">선택</button></td>';
+
+            tr.querySelector('.btn-lot-select').addEventListener('click', function () {
+                document.getElementById('lot_id_display').value    = lot.lot_id;
+                document.getElementById('lot_id_hidden').value     = lot.lot_id;
+                document.getElementById('item_id_hidden').value    = lot.item_id;
+                document.getElementById('item_name_display').value = lot.item_name;
+                document.getElementById('spec').value              = lot.spec;
+                document.getElementById('unit').value              = lot.unit;
+                document.getElementById('lot_qty').value           = lot.remaining_qty;
+                document.getElementById('expiry_date').value       = lot.expiry_date || '';
+                document.getElementById('empName').value           = lot.ename;
+                document.getElementById('emp_id_hidden').value     = lot.emp_id;
+                lotSearchModal.close();
+            });
+
+            body.appendChild(tr);
+        });
+
+        // 페이지네이션 버튼 렌더링
+        for (let i = 1; i <= totalPages; i++) {
+            const btn = document.createElement('button');
+            btn.type      = 'button';
+            btn.textContent = i;
+            btn.style.cssText = 'padding:4px 10px; border-radius:5px; border:1px solid #d0d5dd; cursor:pointer; font-size:13px;'
+                + (i === page ? 'background:#4a4a6a; color:#fff; font-weight:700;' : 'background:#fff; color:#555;');
+            btn.addEventListener('click', function () {
+                lotCurrentPage = i;
+                renderLotPage(lotCurrentPage);
+            });
+            pagination.appendChild(btn);
+        }
     }
 
     // LOT 검색 팝업 닫기

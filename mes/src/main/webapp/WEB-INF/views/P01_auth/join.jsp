@@ -20,7 +20,7 @@
 
 <link rel="stylesheet" href="/mes/static/css/P00_layout/snb.css">
 <script src="/mes/static/js/00_layout/snb.js"></script>
- <link rel="stylesheet" href="/mes/static/css/P01_auth/join.css">
+<link rel="stylesheet" href="/mes/static/css/P01_auth/join.css">
 </head>
 
 <body>
@@ -43,33 +43,47 @@
 				</div>
 				<form method="post" action="/mes/join" id="join-form">
 					<div class="center">
-					
-					 <div class="messege">
-			      </div>
-			      
+
+						<div class="messege"></div>
+
 						<input type="text" class="input-1 radius" name="join_name"
 							placeholder="이름"><br> <input type="text"
 							class="input-1 radius" name="join_phone" placeholder="연락처"><br>
 
 						<div class="chain">
-							<input type="text" class="input-2 radius" name="join_dept"
-								placeholder="부서번호"><br> <input type="text"
-								class="input-2 radius" name="join_mgr" placeholder="상사 사원번호"><br>
-							<input type="text" class="input-2 radius" name="join_license"
-								placeholder="자격증"><br>
+							<select name="join-dept" class="input-2 radius">
+								<c:forEach var="d" items="${ selectd }">
+									<option>${ d.deptname }</option>
+								</c:forEach>
+							</select><br> <select name="join-mgr" class="input-2 radius">
+								<c:forEach var="m" items="${ selectm }">
+									<option>${ m.empid }</option>
+								</c:forEach>
+							</select><br> <input type="text" class="input-2 radius"
+								name="join_license" placeholder="자격증"><br>
 						</div>
-						
-						<br> <input type="password" class="input-1 radius"
-							name="join_pw" placeholder="비밀번호를 입력해주세요."
-							required
-							title="8 ~ 16자의 영문, 숫자, 특수문자를 모두 포함해야 합니다."
-							pattern="(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&_])[A-Za-z\d@$!%*#?_&]{8,16}">
-						  
-						     <div class="pw-m up"></div> 
-						    <input type="password" class="input-1 radius"
-							name="join_pw2" placeholder="비밀번호 확인" 
-							>
-							<div class="pw2-m up"></div> <br>
+
+						<br>
+						<div style=" width: 100%; position: relative; padding-left : 10px;">
+
+							<input type="password" id="pw1" class="input-1 radius" name="join_pw"
+								placeholder="8 ~ 16자의 영문, 숫자, 특수문자를 모두 포함해야 합니다." required
+								title="8 ~ 16자의 영문, 숫자, 특수문자를 모두 포함해야 합니다."
+								pattern="(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&_])[A-Za-z\d@$!%*#?_&]{8,16}">
+							<span id="btn1"
+								style="position: absolute; right: 20px; top: 5px; cursor: pointer;">
+								👁️ </span>
+						</div>
+						<div class="pw-m up"></div>
+
+						<div style=" width : 100%; position: relative; padding-left : 10px;">
+							<input type="password" id="pw2" class="input-1 radius" name="join_pw2"
+								placeholder="비밀번호 확인"> <span id="btn2"
+								style="position: absolute; right: 20px; top: 5px; cursor: pointer;">
+								👁️ </span>
+						</div>
+						<div class="pw2-m up"></div>
+						<br>
 						<button type="submit" class="buttonMain" name="join_btn">회원가입</button>
 						<br>
 					</div>
@@ -214,6 +228,27 @@
 		        			
 		}
 	})
+	
+	
+	function setupPasswordToggle(inputSelector, buttonSelector) {
+    const btn = document.querySelector(buttonSelector);
+    const input = document.querySelector(inputSelector);
+
+    // 요소가 잘 찾아졌는지 확인 후 이벤트 등록
+    if(btn && input) {
+        btn.addEventListener('click', () => {
+            const isPassword = input.type === 'password';
+            input.type = isPassword ? 'text' : 'password';
+            btn.textContent = isPassword ? '🙈' : '👁️';
+        });
+    } else {
+        console.error("요소를 찾을 수 없습니다:", inputSelector, buttonSelector);
+    }
+}
+
+// HTML에 작성한 ID와 정확히 일치시켜 호출
+setupPasswordToggle('#pw1', '#btn1');
+setupPasswordToggle('#pw2', '#btn2');
 	
 	</script>
 

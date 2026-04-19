@@ -2215,13 +2215,14 @@ public class QcDAO {
 	    PreparedStatement ps = null;
 
 	    try {
-	        String query = "INSERT INTO io (io_id, io_type, io_reason, item_id, lot_id, emp_id, io_time) "
-	                + "values('in_'||in_seq.nextval, 0, '생산', ?, ?, ?, sysdate)";
+	        String query = "INSERT INTO io (io_id, io_type, io_reason, item_id, lot_id, emp_id, io_time, io_qty) "
+	                + "values('in_'||in_seq.nextval, 0, '생산', ?, ?, ?, sysdate, ?)";
 
 	        ps = conn.prepareStatement(query);
 	        ps.setString(1, dto.getItemId());
 	        ps.setString(2, dto.getLotId());
 	        ps.setString(3, dto.getEmpId());
+	        ps.setDouble(4,  dto.getQty());
 
 	        return ps.executeUpdate();
 
