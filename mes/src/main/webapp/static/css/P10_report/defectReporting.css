@@ -51,14 +51,14 @@ header {
 } 
 .box-type2 {
 	width : 49%;
-	height : 170px;
+	height : 200px;
 	padding : 0px 10px;
 	 
 	flex-shirink : 0;
 } 
 .box-type2-1 {
 	width : 49%;
-	height : 300px;
+	height : 420px;
 	padding : 0px 10px;
 	 
 	flex-shirink : 0;
@@ -184,7 +184,7 @@ element.style {
 }
 .box-type3 {
 	width : 100%;
-	height : 380px;
+	height : 410px;
 	padding : 5px 10px;
 	margin : 10px 0px;
 	
@@ -193,4 +193,26 @@ element.style {
 .next form {
 	width : 100%
 }
+
+.big {
+    /* 텍스트 크기 및 굵기 */
+    font-size: 3.5rem;   /* 숫자를 아주 크게 */
+    font-weight: 900;   /* 아주 두껍게 */
+    
+    /* 정렬 설정 */
+    text-align: center; /* 가로 중앙 */
+    display: block;     /* 한 줄 전체 차지 */
+    
+    /* 여백 조절 */
+    padding:  0;    /* 위아래 여백을 줘서 박스에 꽉 차게 함 */
+    margin: 0;
+    
+    /* 줄바꿈 및 가독성 */
+    line-height: 1.2;
+    letter-spacing: -2px;
+}
+
+/* 색상만 따로 지정 */
+.lightgrey { color: #888; }
+.green { color: #2e7d32; }
 

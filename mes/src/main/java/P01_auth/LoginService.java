@@ -272,6 +272,27 @@ public class LoginService {
 	}
 	
 	
+	public List<LoginDTO> selectd() {
+		System.out.println("/dashboard service.d() 실행 ");
+		
+		//실무 함수 소환
+		LoginDAO a = new LoginDAO();
+		
+		//로그인 함수 실행결과 리턴
+		return a.selectd();				
+	}
+	public List<LoginDTO> selectm() {
+		System.out.println("/dashboard service.selectm() 실행 ");
+		
+		//실무 함수 소환
+		LoginDAO a = new LoginDAO();
+		
+		//로그인 함수 실행결과 리턴
+		return a.selectm();				
+	}
+	
+	
+	
 	
 	public static String encrypt(String password) {
 	    try {
