@@ -78,6 +78,7 @@
 								    <option value="10" ${param.status == '10' ? 'selected' : ''}>작업 전</option>
 								    <option value="20" ${param.status == '20' ? 'selected' : ''}>작업 중</option>
 								    <option value="30" ${param.status == '30' ? 'selected' : ''}>작업 완료</option>
+								    <option value="35" ${param.status == '35' ? 'selected' : ''}>검사 대기</option>
 								    <option value="40" ${param.status == '40' ? 'selected' : ''}>검사 완료</option>
 								    <option value="60" ${param.status == '60' ? 'selected' : ''}>입고 완료</option>
 								    <option value="50" ${param.status == '50' ? 'selected' : ''}>보류</option>
@@ -128,6 +129,9 @@
 			                		</c:if>
 			                		<c:if test="${ i.woStatus == 30 }">
 			                			<span class="status finish">작업 완료</span>
+			                		</c:if>
+			                		<c:if test="${ i.woStatus == 35 }">
+			                			<span class="status qcFin">검사 대기</span>
 			                		</c:if>
 			                		<c:if test="${ i.woStatus == 40 }">
 			                			<span class="status qcFin">검사 완료</span>

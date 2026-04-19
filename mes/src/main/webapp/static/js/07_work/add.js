@@ -47,8 +47,8 @@ function fetchPlan() {
             document.querySelector("#progressQty").value = `${data.prevQty} / ${data.planQty}`;
             document.querySelector("#director").value = `${data.dName} (${data.dId})`;
 
-            document.querySelector("input[name='workDate']").min = data.sDate;
-            document.querySelector("input[name='workDate']").max = data.eDate;
+            document.querySelector("#workDate").min = data.sDate;
+            document.querySelector("#workDate").max = data.eDate;
 
             const targetQtyEl = document.querySelector("#targetQty");
             const remainQty = Number(data.planQty) - Number(data.prevQty);
@@ -257,4 +257,21 @@ function handleTargetQtyInput(e) {
     }
 
     el.value = num;
+}
+
+function clampNumber(el) {
+    let val = el.value;
+
+    if (val === '') return '';
+
+    let num = Number(val);
+    if (isNaN(num)) return '';
+
+    const min = el.min !== '' ? Number(el.min) : -Infinity;
+    const max = el.max !== '' ? Number(el.max) : Infinity;
+
+    if (num < min) return min;
+    if (num > max) return max;
+
+    return num;
 }

@@ -137,8 +137,9 @@ public class QcAddController extends HttpServlet {
 	    
 	    QcService service = new QcService();
 	    int result = service.addQc(addDTO);
+	    int woStatus = service.woStatus(addDTO);
 
-	    System.out.println(result);
+	    System.out.println(result + ", " + woStatus);
 	    
 	}
 

@@ -90,11 +90,15 @@ public class QcModifyController extends HttpServlet {
 	    response.setContentType("application/json; charset=UTF-8");
 	    
 	    String qcId = request.getParameter("qcId");
+	    String woId = request.getParameter("woId");
+	    
+	    System.out.println(woId);
 	    
 	    QcService service = new QcService();
 	    int result = service.deleteQc(qcId);
+	    int woStatus = service.delWoStatus(woId);
 
-	    System.out.println(result);
+	    System.out.println(result + ", " + woStatus);
 		
 		response.sendRedirect("/mes/qclist");
 	}

@@ -41,6 +41,7 @@
 			<form id="qcForm" method="post" action="/mes/qcmodify">
 				<input type="hidden" name="cmd" id="actionType">
 				<input type=hidden name="qcId" value="${qcInfo.qcId}">
+				<input type=hidden name="woId" value="${qcInfo.woId}">
 				<div class="page-header">
 					<div>
 						<h2>검사계획 수정</h2>

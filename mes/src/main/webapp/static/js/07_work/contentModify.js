@@ -2,8 +2,6 @@ window.addEventListener("load", () => {
     init();
 });
 
-let debounceTimer;
-
 function init() {
     bind();
 }
@@ -15,7 +13,7 @@ function bind() {
 function clampNumber(el) {
     let val = el.value;
 
-    // 빈 값 허용 (지우는 동작 방해하지 않기)
+    // 빈 값 허용
     if (val === '') return '';
 
     let num = Number(val);
@@ -33,23 +31,28 @@ function clampNumber(el) {
 function submitContentModify() {
     const form = document.getElementById("contentModify");
     const checkedStatus = document.querySelector('input[name="status"]:checked');
-    const targetQty = Number(document.getElementById("woQty").value);
-    const prevQty = Number(document.getElementById("prevQty").value);
-    const targetQtyEl = document.querySelector("#targetQty");
-	const targetQty = Number(targetQtyEl.value);
-	const maxQty = Number(targetQtyEl.max);
-	
-	if (!targetQty || targetQty <= 0) {
-	    return alert("목표 수량을 입력하세요");
-	}
-	
-	if (targetQty > maxQty) {
-	    return alert(`목표 수량은 ${maxQty} 이하만 입력할 수 있습니다.`);
-	}
 
-    if (checkedStatus && checkedStatus.value === "30" && prevQty < targetQty) {
-        alert("완료 수량이 목표 수량보다 적으면 작업을 완료할 수 없습니다");
-        return;
+    const woQty = Number(document.getElementById("woQty").value); // 목표 수량
+    const prevQtyEl = document.getElementById("prevQty");
+    const prevQtyStr = prevQtyEl.value.trim();
+    const prevQty = prevQtyStr === "" ? 0 : Number(prevQtyStr);
+
+    // 작업완료일 때만 완료 수량 필수
+    if (checkedStatus && checkedStatus.value === "30") {
+        if (completedQtyStr === "") {
+            alert("완료 수량을 입력하세요");
+            return;
+        }
+
+        if (isNaN(completedQty) || completedQty <= 0) {
+            alert("완료 수량을 올바르게 입력하세요");
+            return;
+        }
+
+        if (completedQty < woQty) {
+            alert("완료 수량이 목표 수량보다 적으면 작업을 완료할 수 없습니다");
+            return;
+        }
     }
 
     form.submit();
