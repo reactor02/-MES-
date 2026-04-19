@@ -60,7 +60,8 @@
 								</div>
 								<div class="mp-chain">
 									<span>연락처</span> <input type="text" name="mp_phone"
-										class="input-3 radius" value="<fmt:formatNumber value='${dto.phone}' pattern='00000000000' groupingUsed='false'/>">
+										class="input-3 radius"
+										value="<fmt:formatNumber value='${dto.phone}' pattern='00000000000' groupingUsed='false'/>">
 								</div>
 								<div class="mp-chain">
 									<span>부서</span>
@@ -92,6 +93,35 @@
 							<h3>내 작업</h3>
 							<span>내 작업 지시서 보여주기</span>
 						</div>
+						
+							<div class="box-type3 radius">
+								<h3>내 작업 지시서</h3>
+								<div class="short-box">
+								    <c:if test="${ empty mywork }">
+								    <div>최근 한 작업이 없습니다!</div>
+								    </c:if>
+									<c:forEach var="l" items="${ mywork }">
+										<div>
+											<a href="/mes/workorder?woId=${ l.woid }">${ l.woid } : ${ l.planid } : ${ l.workdate } : ${ l.content } : ${ l.prev_qty } : ${ l.wo_qty }</a>
+											<div class='buttonMain small'>${ l.wostatusname }
+											</div>
+										</div>
+									</c:forEach>
+
+
+
+
+								</div>
+								<div class="next">
+									<c:forEach var="m" begin="1" end="${ page_no }">
+									  <form method="get" action="mypage">
+										<button name="mywork_btn" value="${ m }" class="buttonMain">${ m }</button>
+									  </form>
+									</c:forEach>
+								</div>
+							</div>
+					
+					
 					</div>
 				</div>
 			</div>

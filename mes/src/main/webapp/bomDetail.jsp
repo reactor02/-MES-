@@ -10,7 +10,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>BOM 관리 상세</title>
+<title>BOM 관리 상세페이지</title>
 
 <link rel="stylesheet"
 	href="${pageContext.request.contextPath}/static/css/P00_common/common.css">
@@ -93,7 +93,8 @@
 													<td>${detail.unit}</td>
 													<td>
 														<div class="bom-detail-action-group">
-															<button type="button" class="bom-detail-edit-btn"
+															<button type="button"
+																class="bom-detail-edit-btn"
 																data-bom-detail-id="${detail.bom_detail_id}"
 																data-child-item-id="${detail.child_item_id}"
 																data-ea="${detail.ea}"
@@ -109,7 +110,7 @@
 																<input type="hidden" name="bom_id"
 																	value="${bomInfo.bom_id}">
 																<button type="submit" class="bom-delete-btn"
-																	onclick="return confirm('삭제하시겠습니까?');">
+																	onclick="return confirm('정말 삭제하시겠습니까?');">
 																	삭제
 																</button>
 															</form>
@@ -128,7 +129,8 @@
 						<c:choose>
 							<c:when test="${not empty totalPage and totalPage > 0 and not empty bomInfo}">
 								<c:forEach var="i" begin="1" end="${totalPage}">
-									<a href="${pageContext.request.contextPath}/bomDetail?bomId=${bomInfo.bom_id}&page=${i}&size=${size}"
+									<a
+										href="${pageContext.request.contextPath}/bomDetail?bomId=${bomInfo.bom_id}&page=${i}&size=${size}"
 										class="${page == i ? 'active' : ''}">
 										${i}
 									</a>
@@ -177,8 +179,8 @@
 					<div class="bom-detail-form-row second-row">
 						<div class="bom-detail-form-group small">
 							<label>개수</label>
-							<input type="number" id="add_ea" name="ea"
-								class="bom-detail-input" min="0.0000001" step="any" required>
+							<input type="text" id="add_ea" name="ea"
+								class="bom-detail-input" placeholder="개수를 입력하세요" required>
 						</div>
 
 						<div class="bom-detail-form-group small">
@@ -230,8 +232,8 @@
 					<div class="bom-detail-form-row second-row">
 						<div class="bom-detail-form-group small">
 							<label>개수</label>
-							<input type="number" id="edit_ea" name="ea"
-								class="bom-detail-input" min="0.0000001" step="any" required>
+							<input type="text" id="edit_ea" name="ea"
+								class="bom-detail-input" placeholder="개수를 입력하세요" required>
 						</div>
 
 						<div class="bom-detail-form-group small">

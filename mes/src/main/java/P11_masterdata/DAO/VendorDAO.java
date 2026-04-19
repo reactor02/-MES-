@@ -265,4 +265,194 @@ public class VendorDAO {
 
 		return result;
 	}
+	public List<VendorDTO> selectVendorPageList(VendorDTO vendorDTO) {
+		List<VendorDTO> list = new ArrayList<VendorDTO>();
+
+		Connection conn = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+
+		try {
+			Context ctx = new InitialContext();
+			DataSource dataFactory = (DataSource) ctx.lookup("java:/comp/env/jdbc/oracle");
+			conn = dataFactory.getConnection();
+
+			String keyword = vendorDTO.getKeyword();
+			String vendorType = vendorDTO.getVendorType();
+
+			String query = "";
+			query += "select * ";
+			query += "from ( ";
+			query += "    select row_number() over (order by nvl(to_number(regexp_substr(vendor_id, '[0-9]+$')), 0) desc, vendor_id desc) rn, ";
+			query += "           vendor_id, vendor_name, vendor_type, phone_no, addr, emp_id ";
+			query += "    from vendor ";
+			query += "    where 1=1 ";
+
+			if (vendorType != null && !vendorType.trim().equals("")) {
+				query += "      and vendor_type = ? ";
+			}
+			if (keyword != null && !keyword.trim().equals("")) {
+				query += "      and vendor_name like ? ";
+			}
+
+			query += ") ";
+			query += "where rn between ? and ?";
+
+			ps = conn.prepareStatement(query);
+
+			int idx = 1;
+
+			if (vendorType != null && !vendorType.trim().equals("")) {
+				ps.setString(idx++, vendorType);
+			}
+			if (keyword != null && !keyword.trim().equals("")) {
+				ps.setString(idx++, "%" + keyword.trim() + "%");
+			}
+
+			ps.setInt(idx++, vendorDTO.getStart());
+			ps.setInt(idx, vendorDTO.getEnd());
+
+			rs = ps.executeQuery();
+
+			while (rs.next()) {
+				VendorDTO dto = new VendorDTO();
+				dto.setVendor_id(rs.getString("vendor_id"));
+				dto.setVendor_name(rs.getString("vendor_name"));
+				dto.setVendor_type(rs.getString("vendor_type"));
+				dto.setPhone_no(rs.getString("phone_no"));
+				dto.setAddr(rs.getString("addr"));
+				dto.setEmp_id(rs.getString("emp_id"));
+				list.add(dto);
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (rs != null) try { rs.close(); } catch (SQLException e) { e.printStackTrace(); }
+			if (ps != null) try { ps.close(); } catch (SQLException e) { e.printStackTrace(); }
+			if (conn != null) try { conn.close(); } catch (SQLException e) { e.printStackTrace(); }
+		}
+
+		return list;
+	}
+
+	public int selectVendorTotalCount(VendorDTO vendorDTO) {
+		Connection conn = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+
+		int count = 0;
+
+		try {
+			Context ctx = new InitialContext();
+			DataSource dataFactory = (DataSource) ctx.lookup("java:/comp/env/jdbc/oracle");
+			conn = dataFactory.getConnection();
+
+			String keyword = vendorDTO.getKeyword();
+			String vendorType = vendorDTO.getVendorType();
+
+			String query = "";
+			query += "select count(*) cnt ";
+			query += "from vendor ";
+			query += "where 1=1 ";
+
+			if (vendorType != null && !vendorType.trim().equals("")) {
+				query += "  and vendor_type = ? ";
+			}
+			if (keyword != null && !keyword.trim().equals("")) {
+				query += "  and vendor_name like ? ";
+			}
+
+			ps = conn.prepareStatement(query);
+
+			int idx = 1;
+
+			if (vendorType != null && !vendorType.trim().equals("")) {
+				ps.setString(idx++, vendorType);
+			}
+			if (keyword != null && !keyword.trim().equals("")) {
+				ps.setString(idx++, "%" + keyword.trim() + "%");
+			}
+
+			rs = ps.executeQuery();
+
+			if (rs.next()) {
+				count = rs.getInt("cnt");
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (rs != null) try { rs.close(); } catch (SQLException e) { e.printStackTrace(); }
+			if (ps != null) try { ps.close(); } catch (SQLException e) { e.printStackTrace(); }
+			if (conn != null) try { conn.close(); } catch (SQLException e) { e.printStackTrace(); }
+		}
+
+		return count;
+	}
+
+	public int selectVendorTotalCountAll() {
+		Connection conn = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+
+		int count = 0;
+
+		try {
+			Context ctx = new InitialContext();
+			DataSource dataFactory = (DataSource) ctx.lookup("java:/comp/env/jdbc/oracle");
+			conn = dataFactory.getConnection();
+
+			String query = "select count(*) cnt from vendor";
+			ps = conn.prepareStatement(query);
+			rs = ps.executeQuery();
+
+			if (rs.next()) {
+				count = rs.getInt("cnt");
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (rs != null) try { rs.close(); } catch (SQLException e) { e.printStackTrace(); }
+			if (ps != null) try { ps.close(); } catch (SQLException e) { e.printStackTrace(); }
+			if (conn != null) try { conn.close(); } catch (SQLException e) { e.printStackTrace(); }
+		}
+
+		return count;
+	}
+
+	public int selectVendorTypeCount(String vendorType) {
+		Connection conn = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+
+		int count = 0;
+
+		try {
+			Context ctx = new InitialContext();
+			DataSource dataFactory = (DataSource) ctx.lookup("java:/comp/env/jdbc/oracle");
+			conn = dataFactory.getConnection();
+
+			String query = "select count(*) cnt from vendor where vendor_type = ?";
+			ps = conn.prepareStatement(query);
+			ps.setString(1, vendorType);
+
+			rs = ps.executeQuery();
+
+			if (rs.next()) {
+				count = rs.getInt("cnt");
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (rs != null) try { rs.close(); } catch (SQLException e) { e.printStackTrace(); }
+			if (ps != null) try { ps.close(); } catch (SQLException e) { e.printStackTrace(); }
+			if (conn != null) try { conn.close(); } catch (SQLException e) { e.printStackTrace(); }
+		}
+
+		return count;
+	}
+
 }

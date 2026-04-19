@@ -137,28 +137,37 @@ public class DashboardController extends HttpServlet {
 		System.out.println("spage_no : "+spage_no);
 		
 		
-
+        //불량 유형별 차트 자료
 		List<DashDTO> list = s.defect();
+		
+		//일일 작업량과 목표수량 
 		List<DashDTO> work_order = s.work_order();
+		
+		//알람 조회
 		List<DashDTO> a = s.a(empid, astart_no, acountPageNo);
+		
+		//공지사항 페이징
 		List<DashDTO> notice = s.notice(nstart_no, ncountPageNo);
+		
+		//건의 사항 페이징
 		List<DashDTO> suggestion = s.suggestion(sstart_no, scountPageNo);
 
 	
 
 		// 세션으로 보내기
+		//불량 차트 자료
 		session.setAttribute("list", list);
-		
+		//공지사항 
 		session.setAttribute("npage_no", npage_no);
 		session.setAttribute("notice", notice);
-		
+		//작업 차트
 		session.setAttribute("work", work_order);
-		
+		//알람
 		session.setAttribute("apage_no", apage_no);
 		session.setAttribute("alarms", a);
-		
+		//작업량
 		System.out.println("work : "+work_order);
-		
+		//건의사항
 		session.setAttribute("spage_no", spage_no);
 		session.setAttribute("suggestion", suggestion);
 

@@ -102,7 +102,9 @@
 						</div>
 						<div class="next">
 							<c:forEach var="m" begin="1" end="${ apage_no }">
-								<button name="n_btn" value="${ m }" class="buttonMain">${ m }</button>
+							<form method="get" action="dashboard">
+								<button name="a_btn" value="${ m }" class="buttonMain">${ m }</button>
+						    </form>
 							</c:forEach>
 						</div>
 					</div>
@@ -121,7 +123,9 @@
 					</div>
 					<div class="next">
 						<c:forEach var="m" begin="1" end="${ npage_no }">
+						<form method="get" action="dashboard">
 							<button name="n_btn" value="${ m }" class="buttonMain">${ m }</button>
+						</form>
 						</c:forEach>
 					</div>
 				</div>
@@ -143,7 +147,9 @@
 					</div>
 					<div class="next">
 						<c:forEach var="m" begin="1" end="${ spage_no }">
-							<button name="s_btn" value="${ m  }" class="buttonMain">${ m }</button>
+						<form method="get" action="dashboard">
+							<button name="s_btn" value="${ m  }" class="buttonMain">${ m }</button>						
+						</form>
 						</c:forEach>
 					</div>
 				</div>

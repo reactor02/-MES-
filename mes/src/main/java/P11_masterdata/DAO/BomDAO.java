@@ -6,11 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -364,7 +360,7 @@ public class BomDAO {
 	public int updateBom(BomDTO bomDTO) {
 		Connection conn = null;
 		PreparedStatement ps = null;
-		int update_result = -1;
+		int updateResult = -1;
 
 		try {
 			conn = getConnection();
@@ -378,14 +374,14 @@ public class BomDAO {
 			ps.setString(1, bomDTO.getParent_item_id());
 			ps.setString(2, bomDTO.getBom_id());
 
-			update_result = ps.executeUpdate();
+			updateResult = ps.executeUpdate();
 
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
 			close(ps, conn);
 		}
-		return update_result;
+		return updateResult;
 	}
 
 	public BomDTO selectBomInfo(String bomId) {
@@ -595,28 +591,12 @@ public class BomDAO {
 		try {
 			conn = getConnection();
 
-			Set<String> allowedIds = getAllowedChildItemIds(parentItemId);
-
 			String query = "";
 			query += "SELECT item_id, item_name, unit, g_id ";
 			query += "FROM item ";
-			query += "WHERE g_id IN (10, 20) ";
-
-			if (!allowedIds.isEmpty()) {
-				query += "AND item_id IN (";
-				query += String.join(",", Collections.nCopies(allowedIds.size(), "?"));
-				query += ") ";
-			}
-
-			query += "ORDER BY item_name ASC";
+			query += "ORDER BY item_id ASC";
 
 			ps = conn.prepareStatement(query);
-
-			int index = 1;
-			for (String itemId : allowedIds) {
-				ps.setString(index++, itemId);
-			}
-
 			rs = ps.executeQuery();
 
 			while (rs.next()) {
@@ -642,65 +622,39 @@ public class BomDAO {
 			return false;
 		}
 
-		Set<String> allowedIds = getAllowedChildItemIds(parentItemId);
-
-		if (allowedIds.isEmpty()) {
-			return true;
-		}
-
-		return allowedIds.contains(childItemId);
+		return existsItemId(childItemId);
 	}
 
-	private Set<String> getAllowedChildItemIds(String parentItemId) {
-		Set<String> set = new LinkedHashSet<String>();
+	private boolean existsItemId(String itemId) {
+		Connection conn = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
 
-		if (parentItemId == null || parentItemId.trim().equals("")) {
-			return set;
+		boolean exists = false;
+
+		try {
+			conn = getConnection();
+
+			String query = "";
+			query += "SELECT COUNT(*) cnt ";
+			query += "FROM item ";
+			query += "WHERE item_id = ?";
+
+			ps = conn.prepareStatement(query);
+			ps.setString(1, itemId);
+			rs = ps.executeQuery();
+
+			if (rs.next()) {
+				exists = rs.getInt("cnt") > 0;
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			close(rs, ps, conn);
 		}
 
-		switch (parentItemId) {
-		case "semi_1001":
-		case "semi_1002":
-			set.add("raw_1001");
-			break;
-
-		case "semi_1003":
-			set.addAll(Arrays.asList("semi_1001", "raw_1002", "raw_1008"));
-			break;
-
-		case "semi_1004":
-			set.addAll(Arrays.asList("semi_1002", "raw_1002", "raw_1010"));
-			break;
-
-		case "semi_1005":
-			set.addAll(Arrays.asList("semi_1001", "raw_1003", "raw_1008"));
-			break;
-
-		case "semi_1006":
-			set.addAll(Arrays.asList("semi_1002", "raw_1003", "raw_1010"));
-			break;
-
-		case "fin_1006":
-			set.addAll(Arrays.asList("semi_1003", "raw_1009"));
-			break;
-
-		case "fin_1005":
-			set.addAll(Arrays.asList("semi_1004", "raw_1011"));
-			break;
-
-		case "fin_1004":
-			set.addAll(Arrays.asList("semi_1005", "raw_1009"));
-			break;
-
-		case "fin_1003":
-			set.addAll(Arrays.asList("semi_1006", "raw_1011"));
-			break;
-
-		default:
-			break;
-		}
-
-		return set;
+		return exists;
 	}
 
 	public int insertBomDetail(BomDTO bomDTO) {
@@ -710,8 +664,7 @@ public class BomDAO {
 		int result = -1;
 
 		try {
-			String parentItemId = selectParentItemIdByBomId(bomDTO.getBom_id());
-			if (!isValidChildItem(parentItemId, bomDTO.getChild_item_id())) {
+			if (!isValidChildItem(null, bomDTO.getChild_item_id())) {
 				return 0;
 			}
 
@@ -745,8 +698,7 @@ public class BomDAO {
 		int result = -1;
 
 		try {
-			String parentItemId = selectParentItemIdByBomId(bomDTO.getBom_id());
-			if (!isValidChildItem(parentItemId, bomDTO.getChild_item_id())) {
+			if (!isValidChildItem(null, bomDTO.getChild_item_id())) {
 				return 0;
 			}
 

@@ -216,6 +216,61 @@ public class LoginService {
 		return a.a(empid, astart_no, acountPageNo);				
 	}
 	
+	public int wread(String empid) {
+		System.out.println("/login service.wread() 실행 ");
+		
+		//실무 함수 소환
+		LoginDAO a = new LoginDAO();
+		
+		//로그인 함수 실행결과 리턴
+		return a.wread(empid);				
+	}
+	
+	public List<LoginDTO> mywork(String empid, int astart_no, int acountPageNo) {
+		System.out.println("/dashboard service.mywork() 실행 ");
+		
+		//실무 함수 소환
+		LoginDAO a = new LoginDAO();
+		
+		//로그인 함수 실행결과 리턴
+		return a.mywork(empid, astart_no, acountPageNo);				
+	}
+	
+	
+	
+	
+	public int dread() {
+		System.out.println("/login service.dread() 실행 ");
+		
+		//실무 함수 소환
+		LoginDAO a = new LoginDAO();
+		
+		//로그인 함수 실행결과 리턴
+		return a.dread();				
+	}
+	
+	public List<LoginDTO> defect_report(int astart_no, int acountPageNo) {
+		System.out.println("/dashboard service.defect_report() 실행 ");
+		
+		//실무 함수 소환
+		LoginDAO a = new LoginDAO();
+		
+		//로그인 함수 실행결과 리턴
+		return a.defect_report(astart_no, acountPageNo);				
+	}
+	
+	
+	
+	public List<LoginDTO> dMonthChart() {
+		System.out.println("/dashboard service.dMonthChart() 실행 ");
+		
+		//실무 함수 소환
+		LoginDAO a = new LoginDAO();
+		
+		//로그인 함수 실행결과 리턴
+		return a.dMonthChart();				
+	}
+	
 	
 	
 	public static String encrypt(String password) {

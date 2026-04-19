@@ -39,12 +39,11 @@ public class BomDetailAddController extends HttpServlet {
 		}
 
 		BomDAO bomDAO = new BomDAO();
-		String parentItemId = bomDAO.selectParentItemIdByBomId(bomId);
 
 		if (bomId == null || bomId.trim().equals("")
 				|| childItemId == null || childItemId.trim().equals("")
 				|| ea.compareTo(BigDecimal.ZERO) <= 0
-				|| !bomDAO.isValidChildItem(parentItemId, childItemId)) {
+				|| !bomDAO.isValidChildItem(null, childItemId)) {
 			response.sendRedirect(request.getContextPath() + "/bomDetail?bomId=" + bomId);
 			return;
 		}

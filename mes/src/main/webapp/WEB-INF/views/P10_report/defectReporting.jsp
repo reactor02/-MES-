@@ -148,21 +148,28 @@
 
 
 					
-					<div class="box-type1 radius">
-						<h3>부적합 보고서</h3>
-						<div class="short-box">
-						<c:forEach var="n" items="${ notice }" >
-	                         <div><a>${ n.nboardno }  :  ${ n.ntitle }</a></div>
-	                    </c:forEach>
-	                    
-					       
-						</div>
-	                       <div class="next">
-					         <c:forEach var="m" begin="0" end="${ npage_no }">
-						          <button name="n_btn" value="${ m == 0 ? 1 : m }" class="buttonMain">${ m == 0 ? 1 : m }</button>
-					         </c:forEach>
-					       </div>
+					<div class="box-type3 radius">
+					<h3>부적합 보고서</h3>
+					<div class="short-box">
+						<c:forEach var="d" items="${ defect_report }">
+							<div>
+								<a href="http://localhost:8080/mes/qcdetail?qcId=${ d.qc_id }">${ d.defect_id } : ${ d.defect_cnt } : ${ d.dtype_name } : ${ d.solution } : ${ d.qc_id } : ${ d.woid } : ${ d.qc_sdate } :${ d.qc_edate } : ${ d.defect_cnt } :</a>
+								<div class='buttonMain small'>${ d.solution }
+								</div>
+							</div>
+						</c:forEach>
 					</div>
+					
+					
+						<form method="get" action="defectreporting">
+					<div class="next">
+						<c:forEach var="m" begin="1" end="${ page_no }">
+							<button name="d_btn" value="${ m  }" class="buttonMain small">${ m }</button>						
+						</c:forEach>
+					</div>
+						</form>
+				</div>
+
 					
 				</div>
 			</div>
@@ -228,6 +235,63 @@
 		 }
 	 });
 	 
+	 
+	 
+	 
+	// 월간 불량 배열 바구니 생성
+	const month_d_type = [];
+	
+	//db에서 받아온 리스트를 반복문으로 바구니에 차례대로 넣고있음.
+	<c:forEach var="d" items="${ defect_report }" >
+	 month_d_type.push("${ d.dtype_name }")
+	</c:forEach>
+	
+	 
+	 //이제 집계를 할 json바구니 생성
+	 const month_counts = {};
+	 
+	 //반복문으로 배열 바구니에 있는걸 json에서 개수 카운팅하기
+	 //불량 원인이 없으면 새로 생성하고, 있으면, 개수 1 추가하는 로직.
+	 month_d_type.forEach(c => {
+		 month_counts[c] = (month_counts[c] || 0) +1;
+	 })
+	 
+	 //확인.
+	 console.log('Month_d_type : ', month_d_type)
+	 console.log('Month_counts : ', month_counts)
+	 
+	 //위에 있는 차트 그려질 곳 특정
+	 const monthChart = document.querySelector('#month-defect-chart').getContext('2d');;
+	 
+	 //차트 그리기 그릴곳, 조건들?
+	 new Chart(monthChart, {
+		 type: 'bar',
+		 data: {
+			 labels: Object.keys(month_counts),
+			 datasets: [{
+				 label : '월간 불량 발생 건수',
+				 data : Object.values(month_counts),
+				 backgroundColor: [
+					 'rgba(255, 99, 132, 0.8)', // 막대 색상들 (자동 반복됨)
+	                  'rgba(54, 162, 235, 0.8)',
+	                  'rgba(255, 206, 86, 0.8)',
+	                  'rgba(75, 192, 192, 0.8)',
+	                  'rgba(153, 102, 255, 0.8)'
+				 ],
+				 borderColor: 'rgba(0, 0, 0, 0.5)',
+				 borderWidth: 1
+			 }]
+		 },
+		 options: {
+			 responsive: true,
+			 scales: {
+				 y: {
+					 beginAtZero: true,
+		             ticks: {stepSize: 1}
+				 }
+			 }
+		 }
+	 });
 	
 	 
 	 

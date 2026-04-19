@@ -1,5 +1,9 @@
 @charset "EUC-KR";
 
+.content {
+	width : 100%;
+}
+
 header {
 	width: 100%;
 	height: 100%;
@@ -33,13 +37,12 @@ header {
 }
 
 .box-type4 {
-	width: 100%;
+	width: 49%;
 	height: 800px;
 	padding: 0px 10px;
-	margin: 0px 15px;
 	flex-shirink: 0;
-	padding: 0px 60px;
-	margin : 30px 20px;
+	padding: 0px 30px;
+	
 }
 
 .radius {
@@ -88,4 +91,58 @@ header {
 }
 .gray {
 	background-color : lightgrey;
+}
+
+.short-box {
+	width : 100%;
+	height : 400px;
+	padding : 0px 5px;
+	display : flex;
+	flex-direction : column;
+	justify-content : space-between;
+	font-size : 0.9em;
+}
+.short-box > div {
+	 display: flex;
+    align-items: center;       /* 세로 중앙 정렬 */
+    justify-content: space-between; /* 번호+제목은 왼쪽, 버튼은 오른쪽 끝 */
+    gap: 10px;                 /* 아이템 사이 간격 */
+    margin-bottom: 20px;        /* 항목 간 줄 간격 */
+    width: 100%;               /* 부모 너비에 맞춤 */
+}
+.short-box a {
+    flex: 1;                   /* 남는 공간을 제목이 다 차지하게 함 */
+    white-space: nowrap;       /* 줄바꿈 금지 */
+    overflow: hidden;          /* 넘치는 글자 숨김 */
+    text-overflow: ellipsis;    /* 넘치면 ... 표시 */
+    text-decoration: none;     /* 링크 밑줄 제거 (선택) */
+    color: #333;               /* 글자 색상 (선택) */
+    display: block;            /* 크기 계산을 위해 블록화 */
+}
+.short-box .buttonMain.small {
+    flex-shrink: 0;            /* 제목이 길어도 버튼이 찌그러지지 않게 고정 */
+    white-space: nowrap;       /* 버튼 안의 글자 줄바꿈 방지 */
+    /* 버튼 크기가 너무 크다면 여기서 조정 가능 */
+    padding: 2px 8px; 
+    font-size: 12px;
+}
+.next {
+    height : 20px;
+    display : flex;
+    justify-content : center;
+}
+.small {
+	width : 60px;
+	text-align : center;
+}
+.box-type3 {
+	width : 90%;
+	height : 550px;
+	padding : 5px 10px;
+	margin : 10px 20px;
+	
+	flex-shirink : 0;
+} 
+h3 {
+	margin-bottom : 40px;
 }

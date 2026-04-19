@@ -1,12 +1,14 @@
 package P01_auth;
 
 import java.io.IOException;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 @WebServlet("/mypage")
 public class MypageController extends HttpServlet {
@@ -22,6 +24,74 @@ public class MypageController extends HttpServlet {
 		// 한글깨짐 방지
 		request.setCharacterEncoding("UTF-8");
 //		response.setContentType("text/html; charset=UTF-8");
+		
+		// 한글깨짐 방지
+				request.setCharacterEncoding("UTF-8");
+//						response.setContentType("text/html; charset=UTF-8");
+
+				// 함수 모음집 소환
+				LoginService s = new LoginService();
+				// 데이터 바구니 소환
+				LoginDTO d = new LoginDTO();
+
+				// 전화번호. 숫자 21억 넘어서 long으로 저장.
+				long phone = 0;
+				
+				
+				// 세션 소환
+				HttpSession session = request.getSession();
+				
+				
+		        // 2. 세션에서 값 꺼내기 (로그인 시 저장했던 이름으로)
+			    
+			    // getAttribute는 Object를 반환하므로 적절하게 형변환(Casting)이 필요합니다.
+			    LoginDTO l = (LoginDTO) session.getAttribute("dto");
+			    String empid = l.getEmpid();
+			    
+			    if (empid != null) {
+			        System.out.println("현재 로그인된 아이디: " + empid);
+			    }
+				
+				
+				//Paging 페이징
+						String page = request.getParameter("mywork_btn");
+						System.out.println("page : " + page);
+						
+						//처음은 1로 스타트되게
+						if(page == null) {
+							page = "1";
+						}
+						// 한 페이지당 보여줄 개수
+						int countPage = 5;
+						
+						//시작 번호 1이면 0. 2면 5. 3이면 10.
+						int start_no = (Integer.parseInt(page) - 1) * countPage;
+					    
+						System.out.println("start_no : " +start_no);
+						
+						int countPageNo = start_no + countPage;
+						System.out.println(" countPageNo : " + countPageNo );
+						
+						
+						
+
+						// 함수 소환 후 결과(전체 사원수)를 인트에 저장.
+						int count = s.wread(empid);
+						
+						int page_no = (int)Math.ceil((double)count/countPage);
+						System.out.println("page_no : "+page_no);
+						
+						
+						// 함수 소환 후 결과를 리스트에 저장.
+						List<LoginDTO> mywork = s.mywork(empid, start_no, countPageNo);
+						
+
+						
+
+						// 세션으로 보내기
+						session.setAttribute("page_no", page_no);
+						session.setAttribute("mywork", mywork);
+				
 
 		// 마이페이지로
 		request.getRequestDispatcher("/WEB-INF/views/P01_auth/mypage.jsp").forward(request, response);
@@ -46,6 +116,11 @@ public class MypageController extends HttpServlet {
 
 		// 전화번호. 숫자 21억 넘어서 long으로 저장.
 		long phone = 0;
+		
+		
+
+		
+		
 
 		// 이 값들이 있다면 정보 수정으로
 		String mp_empid = request.getParameter("mp_empid");
@@ -97,6 +172,9 @@ public class MypageController extends HttpServlet {
 			} else if ((mp_pw != null && mp_pw2 != null) && !mp_pw.equals(mp_pw2) && mp_pw.length() > 0) {
 				// 비밀번호가 일치하지 않으면 null 실행
 				d.setPassword(null);
+				
+				// 세션 소환
+				HttpSession session = request.getSession();
 
 				System.out.println("비밀번호가 서로 일치하지 않습니다.");
 				request.setAttribute("error", "비밀번호가 서로 일치하지 않습니다. 비밀번호 변경에 실패했습니다.");

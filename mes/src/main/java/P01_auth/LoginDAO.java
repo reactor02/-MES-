@@ -1403,4 +1403,443 @@ public class LoginDAO {
 	}
 	
 	
+	
+	public int wread(String empid) {
+		System.out.println("/login DAO.dread 실행");
+
+		int count = 0;
+
+		Connection conn = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+
+		try {
+			// JNDI 방식
+			// connection.xml 맨 아래에 있는 DB정보로 커넥션 풀을 가져온다. Server 폴더에 있다. 기억!
+			Context ctx = new InitialContext();
+
+			// DataSource : 커넥션 풀 관리자
+			DataSource dataFactory = (DataSource) ctx.lookup("java:/comp/env/jdbc/oracle");
+
+			// DB접속(그런데 이제 커넥션 풀로.)
+			conn = dataFactory.getConnection();
+
+			// SQL 준비
+			String query = " SELECT *  ";
+		           query += " FROM Work_order w ";
+		           query += " LEFT OUTER JOIN wo_status s ON w.wostatus_no = s.wostatus_no ";
+		           query += " WHERE w.emp_id = ? ";
+		           query += " ORDER BY w.workdate ASC ";
+				   
+
+			ps = conn.prepareStatement(query);
+			ps.setString(1, empid);
+			
+
+			// SQL 실행 및 결과 확보
+			rs = ps.executeQuery();
+
+			// 결과 활용
+			
+			
+			while (rs.next()) {
+				
+				//숫자세기
+				count++;
+				
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (rs != null) {
+				try {
+					rs.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			if (ps != null) {
+				try {
+					ps.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+
+		}
+		System.out.println(" wread 함수 실행 : " + count);
+		return count;
+
+	}
+	
+	
+	
+	public List<LoginDTO> mywork(String empid, int astart_no, int acountPageNo) {
+		System.out.println("/mypage DAO.mywork 실행");
+		
+		List<LoginDTO> list = new ArrayList<LoginDTO>();
+		
+		Connection conn = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		
+		try {
+			// JNDI 방식
+			// connection.xml 맨 아래에 있는 DB정보로 커넥션 풀을 가져온다. Server 폴더에 있다. 기억!
+			Context ctx = new InitialContext();
+			
+			// DataSource : 커넥션 풀 관리자
+			DataSource dataFactory = (DataSource) ctx.lookup("java:/comp/env/jdbc/oracle");
+			
+			// DB접속(그런데 이제 커넥션 풀로.)
+			conn = dataFactory.getConnection();
+			
+			String query = " SELECT * FROM ( ";
+	           query += " SELECT rownum AS rn, a.* FROM ( ";
+	           query += " SELECT * ";
+	           query += " FROM Work_order w ";
+	           query += " LEFT OUTER JOIN wo_status s ON w.wostatus_no = s.wostatus_no ";
+	           query += " WHERE w.emp_id = ? ";
+	           query += " ORDER BY w.workdate DESC ";
+	           query += " ) a WHERE rownum <= ? ";
+	           query += " ) WHERE rn > ? "; 
+
+	           ps = conn.prepareStatement(query);
+	           ps.setString(1, empid);
+	           ps.setInt(2, acountPageNo);
+	           ps.setInt(3, astart_no);
+			
+			
+			// SQL 실행 및 결과 확보
+			rs = ps.executeQuery();
+			
+			// 결과 활용
+			
+			while (rs.next()) {
+				LoginDTO dto = new LoginDTO();
+				
+				//바구니에 담기
+				dto.setWo_qty(rs.getInt("wo_qty"));				
+				dto.setPrev_qty(rs.getInt("prev_qty"));				
+				dto.setWoid(rs.getString("wo_id"));				
+				dto.setWorkdate(rs.getDate("workdate"));				
+				dto.setPlanid(rs.getString("plan_id"));				
+				dto.setContent(rs.getString("content"));				
+				dto.setWostatusname(rs.getString("wostatus_name"));				
+				
+				//바구니를 리스트에 싣기
+				list.add(dto);
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (rs != null) {
+				try {
+					rs.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			if (ps != null) {
+				try {
+					ps.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			
+		}
+		System.out.println("mywork 함수 실행 : " + list.size());
+		return list;
+		
+	}
+	
+	
+	
+	
+	
+	public int dread() {
+		System.out.println("/login DAO.dread 실행");
+
+		int count = 0;
+
+		Connection conn = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+
+		try {
+			// JNDI 방식
+			// connection.xml 맨 아래에 있는 DB정보로 커넥션 풀을 가져온다. Server 폴더에 있다. 기억!
+			Context ctx = new InitialContext();
+
+			// DataSource : 커넥션 풀 관리자
+			DataSource dataFactory = (DataSource) ctx.lookup("java:/comp/env/jdbc/oracle");
+
+			// DB접속(그런데 이제 커넥션 풀로.)
+			conn = dataFactory.getConnection();
+
+			// SQL 준비
+			String query = " SELECT dtype_name, solution FROM defect d  ";
+		           query += " LEFT OUTER JOIN quality_check q ON d.qc_id = q.qc_id ";
+		           query += " LEFT OUTER JOIN defect_type t ON d.dtype_no = t.dtype_no ";
+		       
+
+			ps = conn.prepareStatement(query);
+
+			
+
+			// SQL 실행 및 결과 확보
+			rs = ps.executeQuery();
+
+			// 결과 활용
+			
+			
+			while (rs.next()) {
+				
+				//숫자세기
+				count++;
+				
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (rs != null) {
+				try {
+					rs.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			if (ps != null) {
+				try {
+					ps.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+
+		}
+		System.out.println(" dread 함수 실행 : " + count);
+		return count;
+
+	}
+	
+	
+	
+	public List<LoginDTO> defect_report(int astart_no, int acountPageNo) {
+		System.out.println("/loginDAO.defect_report 실행");
+		
+		List<LoginDTO> list = new ArrayList<LoginDTO>();
+		
+		Connection conn = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		
+		try {
+			// JNDI 방식
+			// connection.xml 맨 아래에 있는 DB정보로 커넥션 풀을 가져온다. Server 폴더에 있다. 기억!
+			Context ctx = new InitialContext();
+			
+			// DataSource : 커넥션 풀 관리자
+			DataSource dataFactory = (DataSource) ctx.lookup("java:/comp/env/jdbc/oracle");
+			
+			// DB접속(그런데 이제 커넥션 풀로.)
+			conn = dataFactory.getConnection();
+			
+			String query = " SELECT * FROM ( ";
+	           query += " SELECT rownum AS rn, a.* FROM ( ";
+	           query += " SELECT * FROM defect d ";
+	           query += " LEFT OUTER JOIN quality_check q ON d.qc_id = q.qc_id ";
+	           query += " LEFT OUTER JOIN defect_type t ON d.dtype_no = t.dtype_no ";
+	           query += " ORDER BY q.qc_edate DESC ";
+	           query += " ) a WHERE rownum <= ? ";
+	           query += " ) WHERE rn > ? "; 
+
+	           ps = conn.prepareStatement(query);
+	           ps.setInt(1, acountPageNo);
+	           ps.setInt(2, astart_no);
+			
+			
+			// SQL 실행 및 결과 확보
+			rs = ps.executeQuery();
+			
+			// 결과 활용
+			
+			while (rs.next()) {
+				LoginDTO dto = new LoginDTO();
+				
+				//바구니에 담기
+				dto.setDefect_id(rs.getString("defect_id"));				
+				dto.setDefect_cnt(rs.getString("defect_cnt"));				
+				dto.setSolution(rs.getString("solution"));				
+				dto.setQc_id(rs.getString("qc_id"));				
+				dto.setQc_sdate(rs.getDate("qc_sdate"));				
+				dto.setQc_edate(rs.getDate("qc_edate"));				
+				dto.setDtype_name(rs.getString("dtype_name"));				
+				dto.setWoid(rs.getString("wo_id"));				
+							
+				
+				//바구니를 리스트에 싣기
+				list.add(dto);
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (rs != null) {
+				try {
+					rs.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			if (ps != null) {
+				try {
+					ps.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			
+		}
+		System.out.println("defect_report 함수 실행 : " + list.size());
+		return list;
+		
+	}
+	
+	
+	
+	
+	public List<LoginDTO> dMonthChart() {
+		System.out.println("/loginDAO.dMonthChart 실행");
+		
+		List<LoginDTO> list = new ArrayList<LoginDTO>();
+		
+		Connection conn = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		
+		try {
+			// JNDI 방식
+			// connection.xml 맨 아래에 있는 DB정보로 커넥션 풀을 가져온다. Server 폴더에 있다. 기억!
+			Context ctx = new InitialContext();
+			
+			// DataSource : 커넥션 풀 관리자
+			DataSource dataFactory = (DataSource) ctx.lookup("java:/comp/env/jdbc/oracle");
+			
+			// DB접속(그런데 이제 커넥션 풀로.)
+			conn = dataFactory.getConnection();
+			
+			// SQL 준비
+						String query = " SELECT dtype_name, solution FROM defect d  ";
+					           query += " LEFT OUTER JOIN quality_check q ON d.qc_id = q.qc_id ";
+					           query += " LEFT OUTER JOIN defect_type t ON d.dtype_no = t.dtype_no ";
+
+	           ps = conn.prepareStatement(query);
+	          
+			
+			
+			// SQL 실행 및 결과 확보
+			rs = ps.executeQuery();
+			
+			// 결과 활용
+			
+			while (rs.next()) {
+				LoginDTO dto = new LoginDTO();
+				
+				//바구니에 담기
+								
+				dto.setDtype_name(rs.getString("dtype_name"));				
+				dto.setDefect_cnt(rs.getString("defect_cnt"));				
+				dto.setSolution(rs.getString("solution"));				
+						
+							
+				
+				//바구니를 리스트에 싣기
+				list.add(dto);
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (rs != null) {
+				try {
+					rs.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			if (ps != null) {
+				try {
+					ps.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			
+		}
+		System.out.println("dMonthChart 함수 실행 : " + list.size());
+		return list;
+		
+	}
+	
+	
+	
+	
+	
+	
+	
 }
