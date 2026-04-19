@@ -15,8 +15,9 @@
 <script src="/mes/static/js/00_layout/snb.js"></script>
 <link rel="stylesheet" href="/mes/static/css/P03_suggestion/suggestion.css">
 
-<%-- TinyMCE CDN: suggestion.js보다 먼저 로드 --%>
-<script src="https://cdn.jsdelivr.net/npm/tinymce@6/tinymce.min.js" referrerpolicy="origin"></script>
+<%-- Quill CDN: suggestion.js보다 먼저 로드 --%>
+<link href="https://cdn.quilljs.com/1.3.7/quill.snow.css" rel="stylesheet">
+<script src="https://cdn.quilljs.com/1.3.7/quill.min.js"></script>
 <script src="/mes/static/js/03_suggestion/suggestion.js"></script>
 </head>
 <body>
