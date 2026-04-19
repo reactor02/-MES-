@@ -4,14 +4,15 @@
 	box-sizing: border-box;
 }
 
-html, body {
+html,
+body {
 	height: 100%;
 	margin: 0;
 	padding: 0;
 }
 
 body {
-	font-family: 'Malgun Gothic', '맑은 고딕', sans-serif;
+	font-family: "Malgun Gothic", "맑은 고딕", sans-serif;
 	color: #333;
 	background: #fff;
 }
@@ -20,6 +21,7 @@ body {
 	display: flex;
 	min-height: 100vh;
 	padding-top: 0;
+	min-width: 0;
 }
 
 .snbContent {
@@ -35,7 +37,7 @@ body {
 	justify-content: center;
 	align-items: flex-start;
 	min-width: 0;
-	padding: 30px 24px;
+	padding: 30px 24px 40px;
 	background: #fff;
 }
 
@@ -51,41 +53,41 @@ body {
 	display: flex;
 	justify-content: space-between;
 	align-items: flex-start;
-	margin-bottom: 24px;
 	gap: 16px;
+	margin-bottom: 24px;
 }
 
 .page-header h1 {
 	margin: 0;
-	font-size: 35px;
+	font-size: 44px;
 	font-weight: 900;
 	color: #111;
-	letter-spacing: -1px;
-	line-height: 1.1;
-	text-shadow:
-		0 0 0 #111,
-		0.5px 0 0 #111,
-		-0.5px 0 0 #111,
-		0 0.5px 0 #111,
-		0 -0.5px 0 #111;
+	letter-spacing: -0.03em;
+	line-height: 1.08;
 }
 
 .page-header p {
-	margin-top: 8px;
+	margin: 10px 0 0;
 	font-size: 14px;
 	color: #777;
+	line-height: 1.5;
 }
 
 .btn-add {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	height: 44px;
+	padding: 0 20px;
 	background: #6a8df6;
 	color: #fff;
 	border: 1px solid #c7d2fe;
-	border-radius: 6px;
-	padding: 11px 20px;
+	border-radius: 8px;
 	font-size: 14px;
-	font-weight: 600;
+	font-weight: 700;
 	cursor: pointer;
 	white-space: nowrap;
+	transition: background 0.2s ease;
 }
 
 .btn-add:hover {
@@ -103,65 +105,69 @@ body {
 	flex: 1;
 	background: #fff;
 	border: 1px solid #dfe3e8;
-	border-radius: 6px;
+	border-radius: 10px;
 	padding: 24px 20px;
 	min-height: 120px;
 }
 
 .summary-title {
 	font-size: 18px;
-	font-weight: 700;
+	font-weight: 800;
 	color: #222;
-	margin-bottom: 24px;
+	margin-bottom: 22px;
 }
 
 .summary-value {
 	font-size: 40px;
-	font-weight: 800;
+	font-weight: 900;
 	color: #111;
+	line-height: 1;
 }
 
 /* 목록 */
 .list-section {
 	background: #fff;
 	border: 1px solid #dfe3e8;
-	border-radius: 6px;
+	border-radius: 12px;
 	padding: 24px 24px 20px;
 }
 
 .list-section h2 {
 	margin: 0 0 18px 0;
 	font-size: 28px;
-	font-weight: 800;
+	font-weight: 900;
 	color: #111;
+	line-height: 1.2;
 }
 
 .vendor-error-message {
 	margin-bottom: 16px;
 	padding: 12px 14px;
 	border: 1px solid #f1b3b3;
-	border-radius: 6px;
+	border-radius: 8px;
 	background: #fff3f3;
 	color: #b42318;
 	font-size: 13px;
 	font-weight: 600;
 }
 
-/* 검색/필터 */
+/* 검색 / 필터 */
 .filter-row {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
 	gap: 12px;
 	margin-bottom: 16px;
+	width: 100%;
+	min-width: 0;
 }
 
 .filter-row select {
 	min-width: 110px;
-	height: 38px;
+	height: 40px;
 	padding: 0 12px;
 	border: 1px solid #d0d5dd;
-	border-radius: 6px;
+	border-radius: 8px;
 	background: #fff;
 	font-size: 13px;
 	color: #555;
@@ -173,18 +179,22 @@ body {
 	display: flex;
 	align-items: center;
 	gap: 8px;
+	min-width: 0;
+	max-width: 100%;
 }
 
 .search-wrap input {
 	width: 260px;
-	height: 38px;
+	height: 40px;
 	padding: 0 12px;
 	border: 1px solid #d0d5dd;
-	border-radius: 6px;
+	border-radius: 8px;
 	font-size: 13px;
 	outline: none;
 	color: #333;
 	background: #fff;
+	min-width: 0;
+	max-width: 100%;
 }
 
 .search-wrap input::placeholder {
@@ -192,16 +202,21 @@ body {
 }
 
 .btn-search {
-	height: 38px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	height: 40px;
 	padding: 0 16px;
 	background: #6a8df6;
 	color: #fff;
 	border: 1px solid #c7d2fe;
-	border-radius: 6px;
+	border-radius: 8px;
 	font-size: 13px;
-	font-weight: 600;
+	font-weight: 700;
 	cursor: pointer;
 	white-space: nowrap;
+	transition: background 0.2s ease;
+	flex-shrink: 0;
 }
 
 .btn-search:hover {
@@ -213,17 +228,18 @@ body {
 	margin-top: 8px;
 	background: #fff;
 	border: 1px solid #dfe3e8;
-	border-radius: 6px;
+	border-radius: 12px;
 	padding: 0 14px;
-	overflow: hidden;
+	overflow-x: auto;
+	overflow-y: hidden;
 }
 
 table {
 	width: 100%;
+	min-width: 760px;
 	border-collapse: collapse;
 	table-layout: fixed;
 	background: #fff;
-	min-width: 0;
 }
 
 thead tr {
@@ -234,7 +250,7 @@ th {
 	padding: 16px 10px;
 	text-align: center;
 	font-size: 14px;
-	font-weight: 700;
+	font-weight: 800;
 	color: #222;
 	border-bottom: 1px solid #d8dde5;
 	white-space: nowrap;
@@ -250,6 +266,7 @@ td {
 	word-break: keep-all;
 	white-space: normal;
 	vertical-align: middle;
+	line-height: 1.6;
 }
 
 tbody tr:last-child td {
@@ -260,59 +277,6 @@ tbody tr:hover {
 	background: #fafbfc;
 }
 
-/* 테이블 */
-.table-wrap {
-	margin-top: 8px;
-	background: #fff;
-	border: 1px solid #dfe3e8;
-	border-radius: 6px;
-	padding: 0 14px;
-	overflow: hidden;
-}
-
-table {
-	width: 100%;
-	border-collapse: collapse;
-	table-layout: fixed;
-	background: #fff;
-	min-width: 0;
-}
-
-thead tr {
-	background: #fff;
-}
-
-th {
-	padding: 16px 10px;
-	text-align: center;
-	font-size: 14px;
-	font-weight: 700;
-	color: #222;
-	border-bottom: 1px solid #d8dde5;
-	white-space: nowrap;
-	vertical-align: middle;
-}
-
-td {
-	padding: 16px 10px;
-	font-size: 13px;
-	color: #444;
-	text-align: center;
-	border-bottom: 1px solid #eceff3;
-	word-break: keep-all;
-	white-space: normal;
-	vertical-align: middle;
-}
-
-tbody tr:last-child td {
-	border-bottom: none;
-}
-
-tbody tr:hover {
-	background: #fafbfc;
-}
-
-/* 전부 가운데 정렬 */
 thead th:nth-child(1),
 thead th:nth-child(2),
 thead th:nth-child(3),
@@ -328,42 +292,6 @@ tbody td:nth-child(6) {
 	text-align: center;
 }
 
-/* 관리 버튼도 정확히 가운데 */
-.action-btns {
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	width: 100%;
-	margin: 0 auto;
-	gap: 0;
-}
-
-.icon-btn {
-	background: none;
-	border: none;
-	cursor: pointer;
-	font-size: 13px;
-	font-weight: 700;
-	padding: 0;
-	text-align: center;
-}
-
-.icon-btn.edit {
-	color: #444;
-}
-
-.icon-btn.edit:hover {
-	color: #2f6fe0;
-}
-
-/* 연락처, 분류, 관리는 가운데 */
-tbody td:nth-child(3),
-tbody td:nth-child(4),
-tbody td:nth-child(6) {
-	text-align: center;
-}
-
-/* 마지막 컬럼 확실히 가운데 */
 thead th:last-child,
 tbody td:last-child {
 	text-align: center;
@@ -380,8 +308,8 @@ tbody td:last-child {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	min-width: 70px;
-	padding: 5px 10px;
+	min-width: 74px;
+	padding: 6px 10px;
 	border-radius: 999px;
 	font-size: 12px;
 	font-weight: 700;
@@ -397,7 +325,7 @@ tbody td:last-child {
 	background: #7c8aa5;
 }
 
-/* 버튼 */
+/* 관리 버튼 */
 .action-btns {
 	display: flex;
 	justify-content: center;
@@ -431,18 +359,19 @@ tbody td:last-child {
 	justify-content: center;
 	gap: 6px;
 	padding: 20px 0 6px;
+	flex-wrap: wrap;
 }
 
 .pagination a {
 	display: inline-block;
-	min-width: 24px;
+	min-width: 28px;
 	text-align: center;
 	padding: 4px 6px;
-	border-radius: 4px;
+	border-radius: 6px;
 	font-size: 13px;
 	color: #555;
 	text-decoration: none;
-	transition: background 0.15s;
+	transition: background 0.15s ease;
 }
 
 .pagination a:hover {
@@ -464,13 +393,14 @@ tbody td:last-child {
 	background: rgba(0, 0, 0, 0.35);
 	justify-content: center;
 	align-items: center;
+	padding: 20px;
 }
 
 .edit_vendor_modal_popup {
 	width: 720px;
-	max-width: calc(100% - 40px);
+	max-width: calc(100% - 20px);
 	background: #fff;
-	border-radius: 8px;
+	border-radius: 12px;
 	padding: 32px 28px 26px;
 	box-shadow: 0 14px 30px rgba(0, 0, 0, 0.12);
 	display: flex;
@@ -481,7 +411,7 @@ tbody td:last-child {
 .edit_vendor_modal_title {
 	margin: 0 0 22px 0;
 	font-size: 24px;
-	font-weight: 800;
+	font-weight: 900;
 	color: #111;
 }
 
@@ -531,10 +461,10 @@ tbody td:last-child {
 
 .edit_vendor_info {
 	width: 100%;
-	height: 38px;
+	height: 40px;
 	border: 1px solid #d0d5dd;
 	background: #fff;
-	border-radius: 6px;
+	border-radius: 8px;
 	padding: 0 12px;
 	font-size: 13px;
 	color: #333;
@@ -560,6 +490,7 @@ tbody td:last-child {
 	gap: 14px;
 	margin-top: 32px;
 	text-align: center;
+	flex-wrap: wrap;
 }
 
 .edit_vendor_close_btn,
@@ -568,12 +499,12 @@ tbody td:last-child {
 	justify-content: center;
 	align-items: center;
 	min-width: 96px;
-	height: 38px;
-	padding: 0;
+	height: 40px;
+	padding: 0 18px;
 	border: none;
-	border-radius: 6px;
+	border-radius: 8px;
 	font-size: 14px;
-	font-weight: 600;
+	font-weight: 700;
 	line-height: 1;
 	text-align: center;
 	cursor: pointer;
@@ -608,13 +539,14 @@ tbody td:last-child {
 	align-items: center;
 	background-color: rgba(0, 0, 0, 0.35);
 	z-index: 1000;
+	padding: 20px;
 }
 
 .add_vendor_modal_popup {
 	width: 720px;
-	max-width: 90%;
+	max-width: calc(100% - 20px);
 	background: #fff;
-	border-radius: 8px;
+	border-radius: 12px;
 	padding: 32px 28px;
 	box-shadow: 0 18px 34px rgba(0, 0, 0, 0.14);
 	border: 1px solid #e5e7eb;
@@ -623,7 +555,7 @@ tbody td:last-child {
 .add_vendor_modal_title {
 	margin: 0 0 24px;
 	font-size: 24px;
-	font-weight: 800;
+	font-weight: 900;
 	color: #111;
 }
 
@@ -673,7 +605,7 @@ tbody td:last-child {
 	height: 40px;
 	padding: 0 12px;
 	border: 1px solid #d0d5dd;
-	border-radius: 6px;
+	border-radius: 8px;
 	font-size: 14px;
 	color: #222;
 	background-color: #fff;
@@ -701,6 +633,7 @@ tbody td:last-child {
 	gap: 14px;
 	margin-top: 34px;
 	text-align: center;
+	flex-wrap: wrap;
 }
 
 .add_vendor_close_btn,
@@ -709,12 +642,12 @@ tbody td:last-child {
 	justify-content: center;
 	align-items: center;
 	min-width: 96px;
-	height: 38px;
-	padding: 0;
+	height: 40px;
+	padding: 0 18px;
 	border: none;
-	border-radius: 6px;
+	border-radius: 8px;
 	font-size: 14px;
-	font-weight: 600;
+	font-weight: 700;
 	line-height: 1;
 	text-align: center;
 	cursor: pointer;
@@ -740,6 +673,7 @@ tbody td:last-child {
 	background-color: #597fe9;
 }
 
+/* 태블릿 */
 @media (max-width: 1024px) {
 	.summary-cards {
 		flex-wrap: wrap;
@@ -754,44 +688,130 @@ tbody td:last-child {
 		align-items: stretch;
 	}
 
+	.filter-row select {
+		width: 100%;
+	}
+
 	.search-wrap {
-		justify-content: space-between;
+		width: 100%;
+		max-width: 100%;
+	}
+
+	.search-wrap input {
+		width: 100%;
 	}
 }
 
+/* 모바일 */
 @media (max-width: 768px) {
+	.layout_snb {
+		display: block;
+		min-height: auto;
+	}
+
+	.snbContent {
+		width: 100%;
+		max-width: 100%;
+		min-width: 0;
+	}
+
 	.content {
-		padding: 20px 16px;
+		padding: 20px 16px 28px;
+		width: 100%;
+		overflow-x: hidden;
+	}
+
+	.page-wrapper {
+		width: 100%;
+		max-width: 100%;
+		min-width: 0;
 	}
 
 	.page-top {
 		flex-direction: column;
 		align-items: stretch;
+		width: 100%;
 	}
 
-	.page-header h1 {
-		font-size: 30px;
+	.btn-add {
+		display: flex;
+		width: 100%;
+		max-width: 100%;
+		min-width: 0;
+	}
+
+	.summary-cards {
+		flex-direction: column;
+		gap: 12px;
 	}
 
 	.summary-box {
 		min-width: 100%;
+		padding: 20px 18px;
+		min-height: 100px;
+	}
+
+	.list-section {
+		padding: 18px 16px 16px;
+		width: 100%;
+		overflow: hidden;
+	}
+
+	.filter-row {
+		flex-direction: column;
+		align-items: stretch;
+		width: 100%;
+		gap: 10px;
+	}
+
+	.filter-row select {
+		width: 100%;
+		max-width: 100%;
+		min-width: 0;
 	}
 
 	.search-wrap {
+		display: flex;
 		flex-direction: column;
 		align-items: stretch;
+		width: 100%;
+		max-width: 100%;
+		min-width: 0;
+		gap: 10px;
 	}
 
-	.search-wrap input,
-	.btn-search,
-	.btn-add {
+	.search-wrap input {
 		width: 100%;
+		max-width: 100%;
+		min-width: 0;
+		flex: none;
+	}
+
+	.btn-search {
+		display: flex;
+		width: 100%;
+		max-width: 100%;
+		min-width: 0;
+		flex: none;
+		align-self: stretch;
+		margin: 0;
+	}
+
+	.table-wrap {
+		padding: 0 10px;
+		border-radius: 10px;
+	}
+
+	table {
+		min-width: 720px;
 	}
 
 	.add_vendor_modal_popup,
 	.edit_vendor_modal_popup {
-		width: 92%;
+		width: 100%;
+		max-width: 100%;
 		padding: 24px 18px;
+		border-radius: 12px;
 	}
 
 	.add_vendor_form_row,
@@ -809,5 +829,50 @@ tbody td:last-child {
 	.edit_vendor_form_group.small {
 		width: 100%;
 		flex: 1;
+	}
+
+	.add_vendor_btn_area,
+	.edit_vendor_btn_area {
+		flex-direction: column;
+	}
+
+	.add_vendor_close_btn,
+	.add_vendor_save_btn,
+	.edit_vendor_close_btn,
+	.edit_vendor_save_btn {
+		width: 100%;
+		max-width: 100%;
+		min-width: 0;
+	}
+}
+
+/* 작은 모바일 */
+@media (max-width: 480px) {
+	.content {
+		padding: 16px 12px 24px;
+		width: 100%;
+	}
+
+	.page-wrapper {
+		width: 100%;
+		max-width: 100%;
+	}
+
+	.list-section {
+		padding: 16px 12px 14px;
+	}
+
+	.filter-row,
+	.search-wrap,
+	.search-wrap input,
+	.btn-search,
+	.btn-add {
+		width: 100%;
+		max-width: 100%;
+		min-width: 0;
+	}
+
+	table {
+		min-width: 680px;
 	}
 }

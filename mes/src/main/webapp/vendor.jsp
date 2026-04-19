@@ -237,7 +237,7 @@
 					<div class="add_vendor_form_group small">
 						<label>연락처</label> <input type="text" id="add_phone_no"
 							class="add_vendor_info" name="phone_no" min="0"
-							placeholder="숫자만 입력">
+							placeholder="연락처를 입력하세요">
 					</div>
 
 					<div class="add_vendor_form_group name-group">
