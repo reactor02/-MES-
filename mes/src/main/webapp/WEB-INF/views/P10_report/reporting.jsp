@@ -37,110 +37,92 @@
 
 
 			<div class="snb-bro">
-				<div class="title-box">
-					<h1>부적합 보고서</h1>
-					<h7>부적합 발생 현황 및 시정조치 관리</h7>
-				</div>
-				<div class="board-box">
-				
-				
-				<div class="box-type4 radius">
-				        <div>
-				        <h3>검사 ID : ${ param.qc_id } <br>검사 종료일 : ${ param.qc_edate }</h3>
-				        </div>						
-						<div class="weather">
-							
-						</div>
-					</div>
-					
-				    <div class="box-type4 radius">
-						<div class="chart-1 weather" >
-							<h3>품질 기준</h3>
-							<h4>성상 & 포장상태 : 육안 검사 & 누설 검사</h4>
-							<h4>알콜함량 & 성분분석 : 63% ~ 77%, 5mL 이상</h4>
-							<h4>미생물 한도 시험 : 오염이 없어야함.</h4>
-							<h4>포장밀봉상태 : 누설시험 진행</h4>
-						</div>
-					</div>
-					
-				    <div class="box-type4 radius">
-						<div class="chart-1 weather">
-						<h3>당시 클린룸 상태</h3>
-							<h4>미세먼지 : 452,000</h4>
-							<h4>온도 : 21 도</h4>
-							<h4>습도 : 53 %</h4>
-							<h4>차압 : 15 Pa</h4>
-						</div>
-					</div>
-				
-				
-					
-					<div class="box-type2 radius">
-						<h3>검사 전</h3>
-						<div class="big lightgrey">
-						${ param.qc_qty } 개
-						</div>
-					</div>
-					
-					<div class="box-type2 radius">
-						<h3>검사 완료</h3>
-						<div class="big green">
-						${ param.qc_clear } 개 
-						</div>
-						
-					</div>
-				
-				
-				    
-				
-				<div class="box-type2-1 radius">
-						<div  style="width: 100%; ">						
-						<div style="width : 100%; height : 400px; ">
-							<canvas id="defect-type-chart"></canvas>
-						</div>
-						</div>
-					</div>
-					
-					<div class="box-type2-1 radius">
-						<div style="width: 100%; display : flex; flex-direction : column; justify-content : space-evenly;">							
-						<div style="height : 390px;">
-							<canvas id="month-defect-chart"></canvas>
-						</div>
-						</div>
-					</div>
-					
+    <!-- 상단 타이틀 -->
+    <div class="title-box">
+        <h1>공정 종합 리포트</h1>
+        <h7>실시간 생산 효율 및 품질 분석 현황</h7>
+    </div>
 
+    <div class="board-box">
+        
+        <!-- 1. 종합 생산 효율 (KPI) -->
+        <div class="box-type2 radius">
+            <h3>목표 대비 달성률</h3>
+            <div class="big green">
+                92 <span style="font-size: 1.5rem;">%</span>
+            </div>
+            <h4 style="text-align:center; color:#888;">계획: 1,000 / 실적: 920</h4>
+        </div>
 
-					
-					<div class="box-type3 radius">
-					<h3>부적합 보고서</h3>
-					<div class="short-box">
-						<c:forEach var="d" items="${ defect_report }">
-							<div>
-								<a href="http://localhost:8080/mes/defectreporting?defect_id=${ d.defect_id }&solution=${ d.solution }&qc_qty=100&qc_clear=${ 100 - (d.defect_cnt) }&qc_id=${ d.qc_id }&dtype_name=${ d.dtype_name }&qc_edate=${ d.qc_edate }&defect_cnt=${ d.defect_cnt }">${ d.defect_id } : ${ d.defect_cnt } : ${ d.dtype_name } : ${ d.solution } : ${ d.qc_id } : ${ d.woid } : ${ d.qc_sdate } :${ d.qc_edate } : ${ d.defect_cnt } :</a>
-								<div class='buttonMain small'>${ d.solution }
-								</div>
-							</div>
-						</c:forEach>
-					</div>
-					
-					
-						<form method="get" action="defectreporting">
-					<div class="next">
-						<c:forEach var="m" begin="1" end="${ page_no }">
-							<button name="d_btn" value="${ m  }" class="buttonMain small">${ m }</button>						
-						</c:forEach>
-					</div>
-						</form>
-				</div>
+        <div class="box-type2 radius">
+            <h3>공정 양품률 (Yield)</h3>
+            <div class="big green">
+                98.5 <span style="font-size: 1.5rem;">%</span>
+            </div>
+            <h4 style="text-align:center; color:#888;">전체 920건 중 906건 합격</h4>
+        </div>
 
-					
-				</div>
-			</div>
+        <!-- 2. 설비 가동 상태 (실시간) -->
+        <div class="box-type4 radius">
+            <div class="chart-1 weather">
+                <h3>설비 가동 현황</h3>
+                <div style="display: flex; justify-content: space-around; align-items: center; height: 100px;">
+                    <div style="text-align: center;">
+                        <h4 style="color: #2ecc71;">● 가동 중</h4>
+                        <p>Line A, Line C</p>
+                    </div>
+                    <div style="text-align: center;">
+                        <h4 style="color: #e74c3c;">● 비가동</h4>
+                        <p>Line B (점검)</p>
+                    </div>
+                </div>
+            </div>
+        </div>
 
+        <!-- 3. 품질 및 환경 상관관계 분석 (차트 영역) -->
+        <div class="box-type2-1 radius" style="height: 450px;">
+            <div style="width: 100%;">
+                <h3>시간대별 불량 발생 & 온도 변화</h3>
+                <div style="height : 350px;">
+                    <!-- 여기에 불량 건수와 온도를 같이 보여주는 콤보 차트 배치 -->
+                    <canvas id="quality-env-chart"></canvas>
+                </div>
+            </div>
+        </div>
 
-		</div>
-	</div>
+        <!-- 4. 주요 불량 원인 파레토 (Top 5) -->
+        <div class="box-type2-1 radius" style="height: 450px;">
+            <div style="width: 100%;">
+                <h3>주요 불량 원인 (TOP 5)</h3>
+                <div style="height : 350px;">
+                    <!-- 기존에 만드신 막대 그래프를 활용하여 불량 빈도 순 정렬 -->
+                    <canvas id="top-defect-chart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- 하단 상세 리스트 또는 조치 이력 -->
+        <div class="box-type3 radius">
+            <h3>실시간 공정 이슈 및 시정조치 이력</h3>
+            <div class="short-box">
+                <!-- 테이블 형태로 구성하면 더 좋습니다 -->
+                <div style="display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid #eee;">
+                    <span>[장비] Line B 메인 모터 과열</span>
+                    <span>2026-04-18 14:20</span>
+                    <span class="buttonMain small">조치완료</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid #eee;">
+                    <span>[품질] 함침액 점도 기준 초과</span>
+                    <span>2026-04-18 15:45</span>
+                    <span class="buttonMain small" style="background:#e67e22;">확인중</span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+    </div>
+</div>
 
 
 

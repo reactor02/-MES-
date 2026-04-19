@@ -1774,7 +1774,7 @@ public class LoginDAO {
 			conn = dataFactory.getConnection();
 			
 			// SQL 준비
-						String query = " SELECT dtype_name, solution FROM defect d  ";
+						String query = " SELECT t.dtype_name, d.solution, d.defect_cnt FROM defect d  ";
 					           query += " LEFT OUTER JOIN quality_check q ON d.qc_id = q.qc_id ";
 					           query += " LEFT OUTER JOIN defect_type t ON d.dtype_no = t.dtype_no ";
 
@@ -1835,6 +1835,166 @@ public class LoginDAO {
 		return list;
 		
 	}
+	
+	
+	public List<LoginDTO> selectd() {
+		System.out.println("/loginDAO.selectd 실행");
+		
+		List<LoginDTO> list = new ArrayList<LoginDTO>();
+		
+		Connection conn = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		
+		try {
+			// JNDI 방식
+			// connection.xml 맨 아래에 있는 DB정보로 커넥션 풀을 가져온다. Server 폴더에 있다. 기억!
+			Context ctx = new InitialContext();
+			
+			// DataSource : 커넥션 풀 관리자
+			DataSource dataFactory = (DataSource) ctx.lookup("java:/comp/env/jdbc/oracle");
+			
+			// DB접속(그런데 이제 커넥션 풀로.)
+			conn = dataFactory.getConnection();
+			
+			String query = " SELECT  DISTINCT d.dept_name FROM user_info u ";
+	           query += " LEFT OUTER JOIN dept d ON u.dept_no = d.dept_no ";
+	           
+
+	           ps = conn.prepareStatement(query);
+	           
+			
+			
+			// SQL 실행 및 결과 확보
+			rs = ps.executeQuery();
+			
+			// 결과 활용
+			
+			while (rs.next()) {
+				LoginDTO dto = new LoginDTO();
+				
+				//바구니에 담기
+				dto.setDeptname(rs.getString("dept_name"));				
+							
+				
+				//바구니를 리스트에 싣기
+				list.add(dto);
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (rs != null) {
+				try {
+					rs.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			if (ps != null) {
+				try {
+					ps.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			
+		}
+		System.out.println("selectd 함수 실행 : " + list.size());
+		return list;
+		
+	}
+	
+	public List<LoginDTO> selectm() {
+		System.out.println("/loginDAO.selectm 실행");
+		
+		List<LoginDTO> list = new ArrayList<LoginDTO>();
+		
+		Connection conn = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		
+		try {
+			// JNDI 방식
+			// connection.xml 맨 아래에 있는 DB정보로 커넥션 풀을 가져온다. Server 폴더에 있다. 기억!
+			Context ctx = new InitialContext();
+			
+			// DataSource : 커넥션 풀 관리자
+			DataSource dataFactory = (DataSource) ctx.lookup("java:/comp/env/jdbc/oracle");
+			
+			// DB접속(그런데 이제 커넥션 풀로.)
+			conn = dataFactory.getConnection();
+			
+			String query = " SELECT * FROM user_info u ";
+	           query += " LEFT OUTER JOIN dept d ON u.dept_no = d.dept_no ";
+	           query += " where auth >= 2 ";
+	           
+	           
+
+	           ps = conn.prepareStatement(query);
+	           
+			
+			
+			// SQL 실행 및 결과 확보
+			rs = ps.executeQuery();
+			
+			// 결과 활용
+			
+			while (rs.next()) {
+				LoginDTO dto = new LoginDTO();
+				
+				//바구니에 담기
+				dto.setEmpid(rs.getString("emp_id"));				
+							
+				
+				//바구니를 리스트에 싣기
+				list.add(dto);
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (rs != null) {
+				try {
+					rs.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			if (ps != null) {
+				try {
+					ps.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			
+		}
+		System.out.println("selectm 함수 실행 : " + list.size());
+		return list;
+		
+	}
+	
 	
 	
 	

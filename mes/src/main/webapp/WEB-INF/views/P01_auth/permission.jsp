@@ -40,10 +40,10 @@
 				<div class="box-type4 radius">
 					<div class="mp-title">
 						<div class="model-close">
-                            <h2>권한 관리</h2>
+                            <h2>사용자 관리</h2>
 		                    
 	                    </div>
-						<span>권한 부여 및 수정</span>
+						<span>사용자 관리 및 수정</span>
 					</div>
 					<form method="get" action="permission">
 					
