@@ -99,7 +99,8 @@ public class LoginAuthFilter implements Filter {
                 || path.endsWith(".js")
                 || path.endsWith(".png")
                 || path.endsWith(".jpg")
-                || path.endsWith(".jpeg");
+                || path.endsWith(".jpeg")
+                || path.endsWith("/joinResult.jsp");
     }
 
     private int getRequiredAuth(String path) {

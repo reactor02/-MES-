@@ -46,7 +46,6 @@ document.addEventListener("DOMContentLoaded", function () {
         if (!selectElement || !unitInput) {
             return;
         }
-
         unitInput.value = getSelectedUnit(selectElement);
     }
 
@@ -59,21 +58,6 @@ document.addEventListener("DOMContentLoaded", function () {
         }
         if (addUnitInput) {
             addUnitInput.value = "";
-        }
-    }
-
-    function resetEditModal() {
-        if (editBomDetailIdInput) {
-            editBomDetailIdInput.value = "";
-        }
-        if (editChildItemSelect) {
-            editChildItemSelect.value = "";
-        }
-        if (editEaInput) {
-            editEaInput.value = "";
-        }
-        if (editUnitInput) {
-            editUnitInput.value = "";
         }
     }
 
@@ -127,12 +111,10 @@ document.addEventListener("DOMContentLoaded", function () {
                 editEaInput.value = ea;
             }
 
-            if (editUnitInput) {
-                if (editChildItemSelect && editChildItemSelect.value !== "") {
-                    setUnitFromSelect(editChildItemSelect, editUnitInput);
-                } else {
-                    editUnitInput.value = unit;
-                }
+            if (editChildItemSelect && editChildItemSelect.value !== "") {
+                setUnitFromSelect(editChildItemSelect, editUnitInput);
+            } else if (editUnitInput) {
+                editUnitInput.value = unit;
             }
 
             openModal(editModal);

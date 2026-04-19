@@ -23,7 +23,7 @@ public class ProdController extends HttpServlet {
 
         request.setCharacterEncoding("UTF-8");
         response.setContentType("text/html;charset=UTF-8");
-
+        System.out.println(request.getServletPath());
         String pathInfo = request.getPathInfo();
         if (pathInfo == null) pathInfo = "/list";
 
@@ -138,18 +138,18 @@ public class ProdController extends HttpServlet {
                 dto.setEmpId (request.getParameter("empId"));
 
                 // 목표수량
-                try { dto.setPlanQty(Integer.parseInt(request.getParameter("planQty"))); } catch (Exception e) {}
+                try { dto.setPlanQty(Integer.parseInt(request.getParameter("planQty"))); } catch (Exception e) {e.printStackTrace();}
 
                 // 날짜: String → java.sql.Date
-                try { dto.setPlanSdate(Date.valueOf(request.getParameter("planSdate"))); } catch (Exception e) {}
-                try { dto.setPlanEdate(Date.valueOf(request.getParameter("planEdate"))); } catch (Exception e) {}
+                try { dto.setPlanSdate(Date.valueOf(request.getParameter("planSdate"))); } catch (Exception e) {e.printStackTrace();}
+                try { dto.setPlanEdate(Date.valueOf(request.getParameter("planEdate"))); } catch (Exception e) {e.printStackTrace();}
 
                 // 상태 (detail 수정 모달에서만 넘어옴, list 수정 시엔 현재 DB 값 유지)
                 // CASE WHEN prev_qty >= plan_qty THEN 2 ELSE ? END 에서 ? 에 들어갈 값
                 // list 수정 모달엔 status 셀렉트가 없으므로 기본값 처리
                 String statusParam = request.getParameter("status");
                 if (statusParam != null && !statusParam.isEmpty()) {
-                    try { dto.setStatus(Integer.parseInt(statusParam)); } catch (Exception e) {}
+                    try { dto.setStatus(Integer.parseInt(statusParam)); } catch (Exception e) {e.printStackTrace();}
                 } else {
                     // status 파라미터가 없으면 현재 DB 값 유지를 위해 상세 조회 후 세팅
                     ProdDTO current = prodService.getPlanDetail(dto.getPlanId());

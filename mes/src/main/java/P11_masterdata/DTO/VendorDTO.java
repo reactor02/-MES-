@@ -7,22 +7,15 @@ public class VendorDTO {
 	String phone_no;
 	String addr;
 	String emp_id;
-	
+
 	int size;
 	int page;
-	
-	public int getSize() {
-		return size;
-	}
-	public void setSize(int size) {
-		this.size = size;
-	}
-	public int getPage() {
-		return page;
-	}
-	public void setPage(int page) {
-		this.page = page;
-	}
+	int start;
+	int end;
+
+	String keyword;
+	String vendorType;
+
 	public String getVendor_id() {
 		return vendor_id;
 	}
@@ -59,6 +52,40 @@ public class VendorDTO {
 	public void setEmp_id(String emp_id) {
 		this.emp_id = emp_id;
 	}
-	
-	
+	public int getSize() {
+		return size;
+	}
+	public void setSize(int size) {
+		this.size = size;
+	}
+	public int getPage() {
+		return page;
+	}
+	public void setPage(int page) {
+		this.page = page;
+	}
+	public int getStart() {
+		return start;
+	}
+	public void setStart(int start) {
+		this.start = start;
+	}
+	public int getEnd() {
+		return end;
+	}
+	public void setEnd(int end) {
+		this.end = end;
+	}
+	public String getKeyword() {
+		return keyword;
+	}
+	public void setKeyword(String keyword) {
+		this.keyword = keyword;
+	}
+	public String getVendorType() {
+		return vendorType;
+	}
+	public void setVendorType(String vendorType) {
+		this.vendorType = vendorType;
+	}
 }

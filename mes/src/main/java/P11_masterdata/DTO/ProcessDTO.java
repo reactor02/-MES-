@@ -8,6 +8,7 @@ public class ProcessDTO {
 	private String item_id;
 	private String process_info;
 	private String process_type;
+	private String keyword;
 	private int page;
 	private int size;
 	private int start;
@@ -99,6 +100,14 @@ public class ProcessDTO {
 
 	public void setProcess_type(String process_type) {
 		this.process_type = process_type;
+	}
+
+	public String getKeyword() {
+		return keyword;
+	}
+
+	public void setKeyword(String keyword) {
+		this.keyword = keyword;
 	}
 
 	public int getPage() {

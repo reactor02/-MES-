@@ -1802,13 +1802,14 @@ public class WoDAO {
 	    PreparedStatement ps = null;
 
 	    try {
-	        String query = "INSERT INTO io (io_id, io_type, io_reason, item_id, lot_id, emp_id, io_time) "
-	                + "VALUES ('out_'||out_seq.nextval, 1, '작업', ?, ?, ?, sysdate)";
+	        String query = "INSERT INTO io (io_id, io_type, io_reason, item_id, lot_id, emp_id, io_time, io_qty) "
+	                + "VALUES ('out_'||out_seq.nextval, 1, '작업', ?, ?, ?, sysdate, ?)";
 
 	        ps = conn.prepareStatement(query);
 	        ps.setString(1, dto.getItemId());
 	        ps.setString(2, dto.getLotId());
 	        ps.setString(3, worker);
+	        ps.setDouble(4, dto.getQty());
 
 	        return ps.executeUpdate();
 
@@ -1845,13 +1846,14 @@ public class WoDAO {
 	    PreparedStatement ps = null;
 
 	    try {
-	        String query = "INSERT INTO io (io_id, io_type, io_reason, item_id, lot_id, emp_id, io_time) "
-	                + "VALUES ('in_'||out_seq.nextval, 0, '작업 후 잔여', ?, ?, ?, sysdate)";
+	        String query = "INSERT INTO io (io_id, io_type, io_reason, item_id, lot_id, emp_id, io_time, io_qty) "
+	                + "VALUES ('in_'||in_seq.nextval, 0, '작업 후 잔여', ?, ?, ?, sysdate, ?)";
 
 	        ps = conn.prepareStatement(query);
 	        ps.setString(1, dto.getItemId());
 	        ps.setString(2, dto.getLotId());
 	        ps.setString(3, worker);
+	        ps.setDouble(4, dto.getQty());
 
 	        return ps.executeUpdate();
 

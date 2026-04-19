@@ -18,7 +18,7 @@ import javax.servlet.http.HttpSession;
 import P11_masterdata.DAO.VendorDAO;
 import P11_masterdata.DTO.VendorDTO;
 
-@WebServlet("/vendor")
+@WebServlet("/vendorr")
 public class VendorController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 

@@ -70,15 +70,13 @@ public class BomDetailController extends HttpServlet {
 
 			int end = page * size;
 			int start = end - (size - 1);
+
 			pageDTO.setStart(start);
 			pageDTO.setEnd(end);
 
 			bomInfo = bomDAO.selectBomInfo(bomId);
 			detailList = bomDAO.selectBomDetailPage(pageDTO);
-
-			if (bomInfo != null) {
-				itemList = bomDAO.selectBomDetailItemList(bomInfo.getParent_item_id());
-			}
+			itemList = bomDAO.selectBomDetailItemList(null);
 
 			totalCount = bomDAO.selectBomDetailTotalCount(bomId);
 			totalPage = totalCount / size;

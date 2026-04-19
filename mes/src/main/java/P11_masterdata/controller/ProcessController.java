@@ -29,11 +29,19 @@ public class ProcessController extends HttpServlet {
 		response.setContentType("text/html; charset=utf-8");
 
 		ProcessDAO processDAO = new ProcessDAO();
+
 		int size = 5;
 		int page = 1;
 
 		String sSize = request.getParameter("size");
 		String sPage = request.getParameter("page");
+		String keyword = request.getParameter("keyword");
+		String selectedProcessId = request.getParameter("processId");
+
+		if (keyword == null) {
+			keyword = "";
+		}
+		keyword = keyword.trim();
 
 		try {
 			if (sSize != null && !sSize.trim().equals("")) {
@@ -61,8 +69,6 @@ public class ProcessController extends HttpServlet {
 		List<ProcessDTO> allProcessList = processDAO.selectProcessList();
 		ProcessDTO selectedProcess = null;
 
-		String selectedProcessId = request.getParameter("processId");
-
 		if ((selectedProcessId == null || selectedProcessId.trim().equals("")) && !allProcessList.isEmpty()) {
 			selectedProcessId = allProcessList.get(0).getProcess_id();
 		}
@@ -74,36 +80,34 @@ public class ProcessController extends HttpServlet {
 			}
 		}
 
-		String nextProcessId = processDAO.selectNextProcessId();
+		ProcessDTO processDTO = new ProcessDTO();
+		processDTO.setKeyword(keyword);
 
-		int totalCount = processDAO.selectProcessTotalCount();
+		int totalCount = processDAO.selectProcessTotalCount(processDTO);
 		int totalPage = totalCount / size;
-
 		if (totalCount % size != 0) {
 			totalPage++;
 		}
-
 		if (totalPage == 0) {
 			totalPage = 1;
 		}
-
 		if (page > totalPage) {
 			page = totalPage;
 		}
 
-		ProcessDTO processDTO = new ProcessDTO();
 		processDTO.setPage(page);
 		processDTO.setSize(size);
 		processDTO.setStart((page - 1) * size + 1);
 		processDTO.setEnd(page * size);
 
 		List<ProcessDTO> processList = processDAO.selectProcessPageList(processDTO);
-
 		List<ProcessDTO> stepList = new ArrayList<ProcessDTO>();
 
 		if (selectedProcessId != null && !selectedProcessId.trim().equals("")) {
 			stepList = processDAO.selectProcessStepList(selectedProcessId);
 		}
+
+		String nextProcessId = processDAO.selectNextProcessId();
 
 		request.setAttribute("allProcessList", allProcessList);
 		request.setAttribute("processList", processList);
@@ -115,6 +119,7 @@ public class ProcessController extends HttpServlet {
 		request.setAttribute("size", size);
 		request.setAttribute("totalPage", totalPage);
 		request.setAttribute("totalCount", totalCount);
+		request.setAttribute("keyword", keyword);
 
 		RequestDispatcher dispatcher = request.getRequestDispatcher("/process.jsp");
 		dispatcher.forward(request, response);

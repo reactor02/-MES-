@@ -16,8 +16,9 @@
 <link rel="stylesheet" href="/mes/static/css/P07_work/main.css">
 <link rel="stylesheet" href="/mes/static/css/P03_notice/notice.css">
 
-<%-- TinyMCE CDN: notice.js보다 먼저 로드 --%>
-<script src="https://cdn.jsdelivr.net/npm/tinymce@6/tinymce.min.js" referrerpolicy="origin"></script>
+<%-- Quill CDN: notice.js보다 먼저 로드 --%>
+<link href="https://cdn.quilljs.com/1.3.7/quill.snow.css" rel="stylesheet">
+<script src="https://cdn.quilljs.com/1.3.7/quill.min.js"></script>
 <script src="/mes/static/js/03_notice/notice.js"></script>
 </head>
 <body>

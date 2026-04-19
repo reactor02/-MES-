@@ -234,6 +234,9 @@ public class WoService {
 
         for (WoBOMDTO bom : bomList) {
             double requiredQty = bom.getEa() * completedQty;
+            
+            System.out.println("ea : " + bom.getEa());
+            System.out.println("qty : " + completedQty);
 
             while (requiredQty > 0.000001) {
             	LotDTO lot = dao.getLot(conn, bom.getcId());

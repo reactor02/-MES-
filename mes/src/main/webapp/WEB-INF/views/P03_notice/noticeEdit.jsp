@@ -15,6 +15,10 @@
 <script src="/mes/static/js/00_layout/snb.js"></script>
 <link rel="stylesheet" href="/mes/static/css/P07_work/main.css">
 <link rel="stylesheet" href="/mes/static/css/P03_notice/notice.css">
+<%-- Quill CDN --%>
+<link href="https://cdn.quilljs.com/1.3.7/quill.snow.css" rel="stylesheet">
+<script src="https://cdn.quilljs.com/1.3.7/quill.min.js"></script>
+<script src="/mes/static/js/03_notice/notice.js"></script>
 </head>
 <body>
 <%@ include file="/WEB-INF/views/P00_layout/header.jsp" %>
@@ -47,25 +51,14 @@
 
         <div class="form-group">
           <label class="form-label">내용</label>
-          <div class="editor-toolbar">
-            <button type="button" class="editor-btn"><b>B</b></button>
-            <button type="button" class="editor-btn"><i>I</i></button>
-            <button type="button" class="editor-btn"><u>U</u></button>
-            <div class="editor-sep"></div>
-            <button type="button" class="editor-btn">≡</button>
-            <button type="button" class="editor-btn">☰</button>
-            <button type="button" class="editor-btn">≡</button>
-            <div class="editor-sep"></div>
-            <button type="button" class="editor-btn">T</button>
-            <button type="button" class="editor-btn">A</button>
-          </div>
-          <textarea class="editor-area" name="content" rows="8">${noticeDTO.content}</textarea>
+          <%-- Quill이 붙을 textarea --%>
+          <textarea id="noticeEditContent" name="content" style="display:none;">${noticeDTO.content}</textarea>
         </div>
 
         <div class="form-actions">
           <button type="button" class="btn btn-outline"
             onclick="history.back()">취소</button>
-          <button type="submit" class="btn btn-primary">수정</button>
+          <button type="button" class="btn btn-primary" id="noticeEditSubmitBtn">수정</button>
         </div>
       </form>
     </div>
