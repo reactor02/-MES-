@@ -4,14 +4,15 @@
 	box-sizing: border-box;
 }
 
-html, body {
+html,
+body {
 	height: 100%;
 	margin: 0;
 	padding: 0;
 }
 
 body {
-	font-family: 'Malgun Gothic', '맑은 고딕', sans-serif;
+	font-family: "Malgun Gothic", "맑은 고딕", sans-serif;
 	color: #333;
 	background: #fff;
 }
@@ -20,6 +21,7 @@ body {
 	display: flex;
 	min-height: 100vh;
 	padding-top: 0;
+	min-width: 0;
 }
 
 .snbContent {
@@ -35,7 +37,7 @@ body {
 	justify-content: center;
 	align-items: flex-start;
 	min-width: 0;
-	padding: 30px 24px;
+	padding: 30px 24px 40px;
 	background: #fff;
 }
 
@@ -46,6 +48,7 @@ body {
 	font-size: 14px;
 }
 
+/* 상단 */
 .bom-page-top {
 	display: flex;
 	justify-content: space-between;
@@ -56,28 +59,30 @@ body {
 
 .bom-page-header h1 {
 	margin: 0;
-	font-size: 35px;
+	font-size: 44px;
 	font-weight: 900;
 	color: #111;
-	letter-spacing: -1px;
-	line-height: 1.1;
+	letter-spacing: -0.03em;
+	line-height: 1.08;
 }
 
 .bom-page-header p {
-	margin-top: 8px;
+	margin: 10px 0 0;
 	font-size: 14px;
 	color: #777;
+	line-height: 1.5;
 }
 
+/* 카드 */
 .bom-card {
 	background: #fff;
 	border: 1px solid #dfe3e8;
-	border-radius: 6px;
+	border-radius: 12px;
 	padding: 24px 24px 20px;
 }
 
 .bom-detail-card {
-	padding: 46px 58px 28px;
+	padding: 32px 28px 24px;
 }
 
 .bom-detail-top {
@@ -85,33 +90,47 @@ body {
 	justify-content: space-between;
 	align-items: flex-start;
 	gap: 16px;
-	margin-bottom: 34px;
+	margin-bottom: 26px;
+}
+
+.bom-detail-title-wrap {
+	min-width: 0;
+	flex: 1;
 }
 
 .bom-detail-title-wrap h2 {
 	margin: 0;
-	font-size: 34px;
+	font-size: 28px;
 	font-weight: 900;
 	color: #111;
-	line-height: 1.2;
+	line-height: 1.25;
+	word-break: keep-all;
 }
 
+/* 버튼 */
 .bom-add-btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	height: 44px;
+	padding: 0 20px;
 	background: #6a8df6;
 	color: #fff;
 	border: 1px solid #c7d2fe;
-	border-radius: 6px;
-	padding: 11px 20px;
+	border-radius: 8px;
 	font-size: 14px;
-	font-weight: 600;
+	font-weight: 700;
 	cursor: pointer;
 	white-space: nowrap;
+	transition: background 0.2s ease;
+	flex-shrink: 0;
 }
 
 .bom-add-btn:hover {
 	background: #597fe9;
 }
 
+/* 테이블 */
 .bom-detail-inner {
 	background: #fff;
 }
@@ -120,21 +139,22 @@ body {
 	margin-top: 8px;
 	background: #fff;
 	border: 1px solid #dfe3e8;
-	border-radius: 6px;
+	border-radius: 12px;
 	padding: 0 14px;
-	overflow: hidden;
+	overflow-x: auto;
+	overflow-y: hidden;
 }
 
 .bom-detail-table-wrap {
-	padding: 0 26px;
+	padding: 0 14px;
 }
 
 .bom-table {
 	width: 100%;
+	min-width: 760px;
 	border-collapse: collapse;
 	table-layout: fixed;
 	background: #fff;
-	min-width: 0;
 }
 
 .bom-table thead tr {
@@ -145,10 +165,11 @@ body {
 	padding: 16px 10px;
 	text-align: center;
 	font-size: 14px;
-	font-weight: 700;
+	font-weight: 800;
 	color: #222;
 	border-bottom: 1px solid #d8dde5;
 	white-space: nowrap;
+	vertical-align: middle;
 }
 
 .bom-table td {
@@ -159,6 +180,8 @@ body {
 	border-bottom: 1px solid #eceff3;
 	word-break: keep-all;
 	white-space: normal;
+	vertical-align: middle;
+	line-height: 1.6;
 }
 
 .bom-table tbody tr:last-child td {
@@ -184,6 +207,7 @@ body {
 	justify-content: center;
 	align-items: center;
 	gap: 10px;
+	flex-wrap: wrap;
 }
 
 .bom-detail-edit-btn {
@@ -218,24 +242,26 @@ body {
 	color: #d93621;
 }
 
+/* 페이지네이션 */
 .bom-pagination {
 	display: flex;
 	justify-content: center;
 	gap: 6px;
 	padding: 20px 0 6px;
 	margin-top: 18px;
+	flex-wrap: wrap;
 }
 
 .bom-pagination a {
 	display: inline-block;
-	min-width: 24px;
+	min-width: 28px;
 	text-align: center;
 	padding: 4px 6px;
-	border-radius: 4px;
+	border-radius: 6px;
 	font-size: 13px;
 	color: #555;
 	text-decoration: none;
-	transition: background 0.15s;
+	transition: background 0.15s ease;
 }
 
 .bom-pagination a:hover {
@@ -248,14 +274,14 @@ body {
 	background: #eef3fb;
 }
 
+/* 모달 */
 .bom-detail-modal {
 	position: fixed;
 	inset: 0;
 	display: none;
 	justify-content: center;
-	align-items: flex-start;
-	padding-top: 80px;
-	padding-bottom: 40px;
+	align-items: center;
+	padding: 20px;
 	background: rgba(0, 0, 0, 0.35);
 	z-index: 3000;
 	overflow-y: auto;
@@ -263,18 +289,18 @@ body {
 
 .bom-detail-modal-popup {
 	width: 720px;
-	max-width: calc(100% - 40px);
+	max-width: calc(100% - 20px);
 	background: #fff;
 	border: 1px solid #e1e5ea;
-	border-radius: 16px;
-	padding: 34px 32px 28px;
+	border-radius: 12px;
+	padding: 32px 28px 28px;
 	box-shadow: 0 18px 40px rgba(0, 0, 0, 0.12);
 }
 
 .bom-detail-modal-title {
 	margin: 0 0 24px;
 	font-size: 28px;
-	font-weight: 800;
+	font-weight: 900;
 	color: #111;
 }
 
@@ -316,9 +342,9 @@ body {
 
 .bom-detail-input {
 	width: 100%;
-	height: 42px;
+	height: 40px;
 	padding: 0 12px;
-	border: 1px solid #d7dce3;
+	border: 1px solid #d0d5dd;
 	border-radius: 8px;
 	font-size: 14px;
 	color: #222;
@@ -328,7 +354,7 @@ body {
 
 .bom-detail-input:focus {
 	border-color: #2f6fed;
-	box-shadow: 0 0 0 3px rgba(47, 111, 237, 0.12);
+	box-shadow: 0 0 0 2px rgba(47, 111, 237, 0.12);
 }
 
 .bom-detail-input.readonly {
@@ -337,17 +363,17 @@ body {
 	cursor: not-allowed;
 }
 
-/* 여기 버튼 가운데 정렬 핵심 */
 .bom-detail-modal-actions {
 	width: 100%;
 	display: flex;
 	justify-content: center;
 	align-items: center;
 	gap: 14px;
-	margin-top: 28px;
+	margin-top: 30px;
 	margin-left: auto;
 	margin-right: auto;
 	text-align: center;
+	flex-wrap: wrap;
 }
 
 .bom-detail-cancel-btn,
@@ -383,6 +409,7 @@ body {
 	background: #2459c7;
 }
 
+/* 태블릿 */
 @media (max-width: 1024px) {
 	.bom-detail-top {
 		flex-direction: column;
@@ -391,49 +418,159 @@ body {
 
 	.bom-add-btn {
 		width: 100%;
+		max-width: 100%;
+		min-width: 0;
 	}
 }
 
+/* 모바일 */
 @media (max-width: 768px) {
+	.layout_snb {
+		display: block;
+		min-height: auto;
+	}
+
+	.snbContent {
+		width: 100%;
+		max-width: 100%;
+		min-width: 0;
+	}
+
 	.content {
-		padding: 20px 16px;
+		padding: 20px 16px 28px;
+		width: 100%;
+		overflow-x: hidden;
+	}
+
+	.bom-page {
+		width: 100%;
+		max-width: 100%;
+		min-width: 0;
+	}
+
+	.bom-page-top {
+		flex-direction: column;
+		align-items: stretch;
+		width: 100%;
 	}
 
 	.bom-page-header h1 {
-		font-size: 30px;
+		font-size: 32px;
+	}
+
+	.bom-page-header p {
+		font-size: 13px;
+	}
+
+	.bom-card {
+		padding: 18px 16px 16px;
+		width: 100%;
+		overflow: hidden;
 	}
 
 	.bom-detail-card {
-		padding: 24px 18px 20px;
+		padding: 22px 16px 18px;
 	}
 
 	.bom-detail-title-wrap h2 {
-		font-size: 26px;
+		font-size: 24px;
+		line-height: 1.3;
+	}
+
+	.bom-add-btn {
+		display: flex;
+		width: 100%;
 	}
 
 	.bom-table-wrap {
+		padding: 0 10px;
+		border-radius: 10px;
 		overflow-x: auto;
 	}
 
 	.bom-detail-table-wrap {
-		padding: 0 12px;
+		padding: 0 10px;
 	}
 
 	.bom-table {
-		min-width: 720px;
+		min-width: 700px;
 	}
 
 	.bom-detail-modal {
-		padding-top: 30px;
-		padding-bottom: 20px;
+		padding: 20px 16px;
+		align-items: flex-start;
 	}
 
 	.bom-detail-modal-popup {
-		width: 92%;
+		width: 100%;
+		max-width: 100%;
 		padding: 24px 18px;
+		border-radius: 12px;
+		margin-top: 10px;
+	}
+
+	.bom-detail-modal-title {
+		font-size: 22px;
 	}
 
 	.bom-detail-form-row {
 		flex-direction: column;
+		gap: 14px;
+		align-items: stretch;
+	}
+
+	.bom-detail-form-group.code,
+	.bom-detail-form-group.name,
+	.bom-detail-form-group.small {
+		width: 100%;
+		flex: 1;
+	}
+
+	.bom-detail-modal-actions {
+		flex-direction: column;
+	}
+
+	.bom-detail-cancel-btn,
+	.bom-detail-save-btn {
+		width: 100%;
+		max-width: 100%;
+		min-width: 0;
+	}
+}
+
+/* 작은 모바일 */
+@media (max-width: 480px) {
+	.content {
+		padding: 16px 12px 24px;
+		width: 100%;
+	}
+
+	.bom-page {
+		width: 100%;
+		max-width: 100%;
+	}
+
+	.bom-page-header h1 {
+		font-size: 28px;
+	}
+
+	.bom-card {
+		padding: 16px 12px 14px;
+	}
+
+	.bom-detail-card {
+		padding: 18px 12px 14px;
+	}
+
+	.bom-detail-title-wrap h2 {
+		font-size: 22px;
+	}
+
+	.bom-detail-modal-popup {
+		padding: 22px 14px;
+	}
+
+	.bom-table {
+		min-width: 640px;
 	}
 }
