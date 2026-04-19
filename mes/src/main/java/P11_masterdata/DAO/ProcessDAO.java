@@ -41,7 +41,7 @@ public class ProcessDAO {
 			query += "       process_info, ";
 			query += "       process_type ";
 			query += "FROM process ";
-			query += "ORDER BY process_id";
+			query += "ORDER BY TO_NUMBER(SUBSTR(process_id, 6))";
 
 			ps = conn.prepareStatement(query);
 			rs = ps.executeQuery();
@@ -184,7 +184,7 @@ public class ProcessDAO {
 			if (!"".equals(keyword)) {
 				query += "        WHERE process_name LIKE ? ";
 			}
-			query += "        ORDER BY process_id ";
+			query += "        ORDER BY TO_NUMBER(SUBSTR(process_id, 6)) ";
 			query += "    ) t ";
 			query += "    WHERE ROWNUM <= ? ";
 			query += ") ";
@@ -542,12 +542,8 @@ public class ProcessDAO {
 			query += "SELECT e.eq_id, ";
 			query += "       e.eq_name ";
 			query += "FROM equipment e ";
-			query += "WHERE e.eq_name LIKE '%' || ( ";
-			query += "    SELECT p.process_name ";
-			query += "    FROM process p ";
-			query += "    WHERE p.process_id = ? ";
-			query += ") || '%' ";
-			query += "AND (e.deleted IS NULL OR e.deleted <> 'Y') ";
+			query += "WHERE e.process_id = ? ";
+			query += "  AND (e.deleted IS NULL OR e.deleted <> 'Y') ";
 			query += "ORDER BY e.eq_id";
 
 			ps = conn.prepareStatement(query);
