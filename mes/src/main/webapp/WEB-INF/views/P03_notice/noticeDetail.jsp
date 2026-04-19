@@ -14,6 +14,7 @@
 <script src="/mes/static/js/00_layout/snb.js"></script>
 <link rel="stylesheet" href="/mes/static/css/P07_work/main.css">
 <link rel="stylesheet" href="/mes/static/css/P03_notice/notice.css">
+<script src="/mes/static/js/03_notice/notice.js"></script>
 </head>
 <body>
 <%@ include file="/WEB-INF/views/P00_layout/header.jsp" %>
@@ -28,6 +29,7 @@
     <div class="page-header-row">
       <div><h1>공지사항</h1></div>
       <div class="action-header">
+        <button class="btn btn-outline btn-sm" id="btnCopyUrl">🔗 URL 복사</button>
         <button class="btn btn-outline btn-sm"
           onclick="location.href='${ctx}/notice/list?page=${page}&size=${size}'">목록</button>
         <%-- auth 2 이상만 수정/삭제 버튼 표시 --%>
@@ -79,13 +81,7 @@
     <input type="hidden" name="boardno" value="${noticeDTO.boardno}">
   </form>
 
-  <script>
-    function submitDelete() {
-      if (confirm('삭제하시겠습니까?')) {
-        document.getElementById('deleteForm').submit();
-      }
-    }
-  </script>
+
 
   </main>
   </div>
