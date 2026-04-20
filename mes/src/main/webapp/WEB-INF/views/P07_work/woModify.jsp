@@ -73,7 +73,7 @@
 						<!-- 제품 -->
 						<div class="form-group">
 							<label>제품</label>
-							<input type="text" id="itemId" value="${woInfo.itemId}" placeholder="제품 ID (제품명)" readonly>
+							<input type="text" id="itemId" value="${woInfo.itemName} (${woInfo.itemId})" placeholder="제품명 (제품ID)" readonly>
 						</div>
 
 						<!-- 진행 현황 -->
