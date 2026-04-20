@@ -1328,7 +1328,7 @@ public class WoDAO {
 					+ "		ON i.ITEM_ID = proc.item_id "
 					+ "	FULL OUTER JOIN process_step ps "
 					+ "		ON proc.PROCESS_ID = ps.PROCESS_ID "
-					+ "WHERE w.WO_ID = ? AND proc.process_type = 'wo' "
+					+ "WHERE w.WO_ID = ? AND proc.process_type = 'wo' and proc.work = 'Y' "
 					+ "ORDER BY proc.process_id, ps.SEQ";
 			
 			ps = conn.prepareStatement(query);
