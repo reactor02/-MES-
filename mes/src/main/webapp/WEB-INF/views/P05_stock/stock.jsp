@@ -71,6 +71,7 @@
                             placeholder="자재명 또는 자재코드로 검색"
                             value="${map.filterKeyword != null ? map.filterKeyword : ''}" />
                         <button class="btn-search" id="btnSearch">검색</button>
+                        <button class="btn-reset" id="btnReset">초기화</button>
                     </div>
                 </div>
 

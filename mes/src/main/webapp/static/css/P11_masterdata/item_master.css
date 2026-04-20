@@ -276,11 +276,24 @@ tbody tr:last-child td {
 }
 
 tbody tr:hover {
-	background: #fafbfc;
+	background: transparent;
 }
 
 tbody td:nth-child(3) {
 	text-align: left;
+}
+
+.item-name-text {
+	display: inline-block;
+	color: #444;
+	font-weight: 600;
+	text-decoration: none;
+	transition: none;
+}
+
+.item-name-text:hover {
+	color: #444;
+	text-decoration: none;
 }
 
 /* 뱃지 */
@@ -318,6 +331,13 @@ tbody td:nth-child(3) {
 	font-weight: 700;
 	padding: 2px;
 	text-align: center;
+	text-decoration: none;
+	transition: color 0.2s ease, text-decoration 0.2s ease;
+}
+
+.icon-btn:hover {
+	text-decoration: underline;
+	text-underline-offset: 2px;
 }
 
 .icon-btn.edit {
@@ -675,6 +695,12 @@ tbody td:nth-child(3) {
 	box-shadow: 0 0 0 2px rgba(106, 141, 246, 0.10);
 }
 
+.add_item_info.readonly {
+	background-color: #f1f3f5;
+	color: #666;
+	cursor: not-allowed;
+}
+
 .add_item_btn_area {
 	width: 100%;
 	display: flex;
@@ -721,12 +747,6 @@ tbody td:nth-child(3) {
 
 .add_item_save_btn:hover {
 	background-color: #597fe9;
-}
-
-#add_item_id {
-	background-color: #f1f3f5;
-	color: #666;
-	cursor: not-allowed;
 }
 
 /* 태블릿 */

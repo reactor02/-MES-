@@ -17,13 +17,15 @@
 <script src="/mes/static/js/05_stock/stock.js"></script>
 </head>
 <body>
-<script>
-    const SESSION_ENAME  = '${dto.ename}';
-    const SESSION_EMP_ID = '${dto.empid}';
-</script>
-<c:if test="${not empty errorMsg}">
-    <script>alert('${errorMsg}');</script>
-</c:if>
+	<script>
+		const SESSION_ENAME = '${dto.ename}';
+		const SESSION_EMP_ID = '${dto.empid}';
+	</script>
+	<c:if test="${not empty errorMsg}">
+		<script>
+			alert('${errorMsg}');
+		</script>
+	</c:if>
 	<%@ include file="/WEB-INF/views/P00_layout/header.jsp"%>
 	<div class="layout_snb">
 		<div class="snbContent">
@@ -46,12 +48,14 @@
 
 				<%-- 유통기한 요약 카드 --%>
 				<div class="inv-summary-cards">
-					<div class="inv-card inv-card-warn ${map.filterExpiry == 'warn' ? 'inv-card-active' : ''}">
+					<div
+						class="inv-card inv-card-warn ${map.filterExpiry == 'warn' ? 'inv-card-active' : ''}">
 						<div class="inv-card-label">LOT 수</div>
 						<div class="inv-card-value">${map.expiryWarnCount != null ? map.expiryWarnCount : 0}</div>
 						<div class="inv-card-title">유통기한 임박</div>
 					</div>
-					<div class="inv-card inv-card-over ${map.filterExpiry == 'over' ? 'inv-card-active' : ''}">
+					<div
+						class="inv-card inv-card-over ${map.filterExpiry == 'over' ? 'inv-card-active' : ''}">
 						<div class="inv-card-label">LOT 수</div>
 						<div class="inv-card-value">${map.expiryOverCount != null ? map.expiryOverCount : 0}</div>
 						<div class="inv-card-title">유통기한 초과</div>
@@ -62,11 +66,11 @@
 				<div class="filter-bar">
 
 					<%-- 페이지당 건수 (맨 왼쪽) --%>
-					<select id="size">
-						<option value="5"  ${map.size == 5  ? 'selected' : ''}>5</option>
-						<option value="10" ${map.size == 10 ? 'selected' : ''}>10</option>
-						<option value="15" ${map.size == 15 ? 'selected' : ''}>15</option>
-						<option value="20" ${map.size == 20 ? 'selected' : ''}>20</option>
+					<label>열 개수:</label> <select id="size">
+						<option value="5" ${map.size == 5  ? 'selected' : ''}>5개씩</option>
+						<option value="10" ${map.size == 10 ? 'selected' : ''}>10개씩</option>
+						<option value="15" ${map.size == 15 ? 'selected' : ''}>15개씩</option>
+						<option value="20" ${map.size == 20 ? 'selected' : ''}>20개씩</option>
 					</select>
 
 					<%-- 입출고 분류 --%>
@@ -94,7 +98,7 @@
 								${map.filterGId == g.g_id ? 'selected' : ''}>
 								<c:choose>
 									<c:when test="${g.g_id == '10'}">원자재</c:when>
-									<c:when test="${g.g_id == '20'}">반자재</c:when>
+									<c:when test="${g.g_id == '20'}">반제품</c:when>
 									<c:when test="${g.g_id == '30'}">완제품</c:when>
 									<c:otherwise>${g.g_id}</c:otherwise>
 								</c:choose>
@@ -113,7 +117,8 @@
 					</select>
 
 					<%-- 작업자 검색 --%>
-					<div style="display: flex; gap: 6px; align-items: center; flex-shrink: 0;">
+					<div
+						style="display: flex; gap: 6px; align-items: center; flex-shrink: 0;">
 						<input type="text" id="filterEmp" placeholder="작업자 검색" readonly
 							value="${map.filterEmp != null ? map.filterEmp : ''}">
 						<button type="button" id="btnFilterEmpSearch">🔍</button>
@@ -123,21 +128,22 @@
 
 					<%-- 기간 (한 묶음) --%>
 					<div class="date-range-wrap">
-						기간:
-						<input type="date" id="filterDateFrom"
+						기간: <input type="date" id="filterDateFrom"
 							value="${map.filterDateFrom != null ? map.filterDateFrom : ''}">
-						~
-						<input type="date" id="filterDateTo"
+						~ <input type="date" id="filterDateTo"
 							value="${map.filterDateTo != null ? map.filterDateTo : ''}">
 					</div>
 
-					<%-- 자재명/코드 검색 (keyword 1/4 축소) --%>
+					<%-- 자재명/코드 검색  --%>
 					<div class="search-wrap">
-						<input type="text" id="filterKeyword"
-							placeholder="자재명/코드"
+						<input type="text" id="filterKeyword" placeholder="자재명/코드"
 							value="${map.filterKeyword != null ? map.filterKeyword : ''}" />
 						<button class="btn-search" id="btnSearch">검색</button>
+						
 					</div>
+
+
+
 
 				</div>
 
@@ -178,7 +184,8 @@
 									<td>${dto.spec}</td>
 									<td>${dto.unit}</td>
 									<td>${dto.io_qty}</td>
-									<td><fmt:formatDate value="${dto.io_time}" pattern="yyyy-MM-dd HH:mm" timeZone="Asia/Seoul"/></td>
+									<td><fmt:formatDate value="${dto.io_time}"
+											pattern="yyyy-MM-dd HH:mm" timeZone="Asia/Seoul" /></td>
 									<td><c:choose>
 											<c:when test="${empty dto.expiry_date}">-</c:when>
 											<c:otherwise>${dto.expiry_date}</c:otherwise>
@@ -239,13 +246,16 @@
 							<a>이전</a>
 						</c:if>
 						<c:if test="<%=pageNum != 1%>">
-							<a href="/mes/io?page=<%=pageNum-1%>&size=${map.size}<%=filterParams%>">이전</a>
+							<a
+								href="/mes/io?page=<%=pageNum-1%>&size=${map.size}<%=filterParams%>">이전</a>
 						</c:if>
 
 						<%-- 페이지 번호 --%>
-						<c:forEach var="i" begin="<%=start_section%>" end="<%=end_section%>">
+						<c:forEach var="i" begin="<%=start_section%>"
+							end="<%=end_section%>">
 							<c:if test="${map.page eq i}">
-								<a href="/mes/io?page=${i}&size=${map.size}<%=filterParams%>" class="active"><strong>${i}</strong></a>
+								<a href="/mes/io?page=${i}&size=${map.size}<%=filterParams%>"
+									class="active"><strong>${i}</strong></a>
 							</c:if>
 							<c:if test="${map.page ne i}">
 								<a href="/mes/io?page=${i}&size=${map.size}<%=filterParams%>">${i}</a>
@@ -257,7 +267,8 @@
 							<a>다음</a>
 						</c:if>
 						<c:if test="<%=pageNum != totalPage%>">
-							<a href="/mes/io?page=<%=pageNum+1%>&size=${map.size}<%=filterParams%>">다음</a>
+							<a
+								href="/mes/io?page=<%=pageNum+1%>&size=${map.size}<%=filterParams%>">다음</a>
 						</c:if>
 					</div>
 
@@ -312,7 +323,7 @@
 											<option value="${g.g_id}">
 												<c:choose>
 													<c:when test="${g.g_id == '10'}">원자재</c:when>
-													<c:when test="${g.g_id == '20'}">반자재</c:when>
+													<c:when test="${g.g_id == '20'}">반제품</c:when>
 													<c:when test="${g.g_id == '30'}">완제품</c:when>
 													<c:otherwise>${g.g_id}</c:otherwise>
 												</c:choose>
@@ -352,8 +363,8 @@
 
 							<%-- 입출고일 --%>
 							<div class="modal-field">
-								<label id="io_time_label">입출고일</label> <input type="date" name="io_time"
-									id="io_time">
+								<label id="io_time_label">입출고일</label> <input type="date"
+									name="io_time" id="io_time">
 							</div>
 
 							<%-- 유통기한 --%>
@@ -372,15 +383,14 @@
 
 							<%-- 작업자 (세션에서 자동 세팅) --%>
 							<div class="modal-field">
-								<label>작업자</label>
-								<input type="text" id="empName"
-									value="${dto.ename}" readonly>
-								<input type="hidden" name="emp_id" id="emp_id_hidden"
-									value="${dto.empid}">
+								<label>작업자</label> <input type="text" id="empName"
+									value="${dto.ename}" readonly> <input type="hidden"
+									name="emp_id" id="emp_id_hidden" value="${dto.empid}">
 							</div>
 
 							<div class="modal-footer">
-								<button type="button" class="btn-cancel" id="btnCancel">← 취소</button>
+								<button type="button" class="btn-cancel" id="btnCancel">←
+									취소</button>
 								<button type="submit" class="btn-submit">등록</button>
 							</div>
 
@@ -419,7 +429,8 @@
 			</tr>
 		</tbody>
 	</table>
-	<div id="lotPagination" style="display:flex; justify-content:center; gap:6px; margin-top:10px;"></div>
+	<div id="lotPagination"
+		style="display: flex; justify-content: center; gap: 6px; margin-top: 10px;"></div>
 	<div class="modal-footer">
 		<button type="button" id="btnLotSearchCancel">닫기</button>
 	</div>

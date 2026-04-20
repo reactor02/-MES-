@@ -29,7 +29,7 @@
         <%@ include file="/WEB-INF/views/P00_layout/snb.jsp" %>
     </div>
     <div class="content">
-    <main class="sg">
+    <main class="sg sg-wide">
 
     <div id="page-suggest-register">
         <div class="page-header">
@@ -56,7 +56,7 @@
 
                 <div class="form-group">
                     <label class="form-label">내용 <span class="req">*</span></label>
-                    <%-- TinyMCE가 붙을 textarea, name=content으로 서버 전송 --%>
+                    <%-- Quill이 붙을 textarea, name=content으로 서버 전송 --%>
                     <textarea id="suggestRegContent" name="content"></textarea>
                 </div>
 

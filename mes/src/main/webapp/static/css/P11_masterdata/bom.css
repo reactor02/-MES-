@@ -215,7 +215,7 @@ body {
 
 .bom-table {
 	width: 100%;
-	min-width: 680px;
+	min-width: 540px;
 	border-collapse: collapse;
 	table-layout: fixed;
 	background: #fff;
@@ -248,16 +248,27 @@ body {
 	line-height: 1.6;
 }
 
+.bom-table th:nth-child(1),
+.bom-table td:nth-child(1) {
+	width: 32%;
+}
+
+.bom-table th:nth-child(2),
+.bom-table td:nth-child(2) {
+	width: 44%;
+}
+
+.bom-table th:nth-child(3),
+.bom-table td:nth-child(3) {
+	width: 24%;
+}
+
 .bom-table tbody tr:last-child td {
 	border-bottom: none;
 }
 
 .bom-table tbody tr:hover {
 	background: #fafbfc;
-}
-
-.bom-table tbody td:nth-child(2) {
-	text-align: left;
 }
 
 .bom-code-link {
@@ -271,29 +282,16 @@ body {
 }
 
 .bom-name-link {
+	display: inline-block;
 	color: #222;
 	text-decoration: none;
 	font-weight: 600;
+	text-align: center;
 }
 
 .bom-name-link:hover {
 	color: #2f6fe0;
 	text-decoration: underline;
-}
-
-.bom-edit-btn {
-	background: none;
-	border: none;
-	cursor: pointer;
-	font-size: 13px;
-	font-weight: 700;
-	color: #444;
-	padding: 2px;
-	text-align: center;
-}
-
-.bom-edit-btn:hover {
-	color: #2f6fe0;
 }
 
 .bom-empty {
@@ -738,7 +736,7 @@ body {
 	}
 
 	.bom-table {
-		min-width: 680px;
+		min-width: 540px;
 	}
 
 	.add_item_modal_popup,
@@ -823,6 +821,6 @@ body {
 	}
 
 	.bom-table {
-		min-width: 620px;
+		min-width: 540px;
 	}
 }

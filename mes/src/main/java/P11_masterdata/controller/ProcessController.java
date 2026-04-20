@@ -102,9 +102,13 @@ public class ProcessController extends HttpServlet {
 
 		List<ProcessDTO> processList = processDAO.selectProcessPageList(processDTO);
 		List<ProcessDTO> stepList = new ArrayList<ProcessDTO>();
+		int nextStepSeq = 1;
 
 		if (selectedProcessId != null && !selectedProcessId.trim().equals("")) {
 			stepList = processDAO.selectProcessStepList(selectedProcessId);
+			if (!stepList.isEmpty()) {
+				nextStepSeq = stepList.get(stepList.size() - 1).getSeq() + 1;
+			}
 		}
 
 		String nextProcessId = processDAO.selectNextProcessId();
@@ -112,6 +116,7 @@ public class ProcessController extends HttpServlet {
 		request.setAttribute("allProcessList", allProcessList);
 		request.setAttribute("processList", processList);
 		request.setAttribute("stepList", stepList);
+		request.setAttribute("nextStepSeq", nextStepSeq);
 		request.setAttribute("selectedProcessId", selectedProcessId);
 		request.setAttribute("selectedProcess", selectedProcess);
 		request.setAttribute("nextProcessId", nextProcessId);

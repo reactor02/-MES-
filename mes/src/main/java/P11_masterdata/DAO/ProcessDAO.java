@@ -41,7 +41,7 @@ public class ProcessDAO {
 			query += "       process_info, ";
 			query += "       process_type ";
 			query += "FROM process ";
-			query += "ORDER BY TO_NUMBER(SUBSTR(process_id, 6))";
+			query += "ORDER BY TO_NUMBER(SUBSTR(process_id, 6)) DESC";
 
 			ps = conn.prepareStatement(query);
 			rs = ps.executeQuery();
@@ -184,7 +184,7 @@ public class ProcessDAO {
 			if (!"".equals(keyword)) {
 				query += "        WHERE process_name LIKE ? ";
 			}
-			query += "        ORDER BY TO_NUMBER(SUBSTR(process_id, 6)) ";
+			query += "        ORDER BY TO_NUMBER(SUBSTR(process_id, 6)) DESC ";
 			query += "    ) t ";
 			query += "    WHERE ROWNUM <= ? ";
 			query += ") ";
@@ -354,6 +354,117 @@ public class ProcessDAO {
 		}
 
 		return nextProcessId;
+	}
+
+	public String selectNextProcessStepId(String processId, int seq) {
+		Connection conn = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+
+		String nextProcessStepId = processId + "_step_" + seq;
+
+		try {
+			conn = getConnection();
+
+			String query = "";
+			query += "SELECT process_step_id ";
+			query += "FROM ( ";
+			query += "    SELECT process_step_id, ";
+			query += "           TO_NUMBER(REGEXP_SUBSTR(process_step_id, '[0-9]+$')) AS num ";
+			query += "    FROM process_step ";
+			query += "    WHERE process_step_id IS NOT NULL ";
+			query += "      AND REGEXP_LIKE(process_step_id, '[0-9]+$') ";
+			query += "    ORDER BY num DESC ";
+			query += ") ";
+			query += "WHERE ROWNUM = 1";
+
+			ps = conn.prepareStatement(query);
+			rs = ps.executeQuery();
+
+			if (rs.next()) {
+				String latestId = rs.getString("process_step_id");
+				String prefix = latestId.replaceFirst("[0-9]+$", "");
+				String numberOnly = latestId.substring(prefix.length());
+				int nextNumber = Integer.parseInt(numberOnly) + 1;
+				nextProcessStepId = prefix + nextNumber;
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (rs != null) {
+				try {
+					rs.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			if (ps != null) {
+				try {
+					ps.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+
+		return nextProcessStepId;
+	}
+
+	public int insertProcessStep(ProcessDTO processDTO) {
+		Connection conn = null;
+		PreparedStatement ps = null;
+
+		int result = 0;
+
+		try {
+			conn = getConnection();
+
+			String processStepId = processDTO.getProcess_step_id();
+			if (processStepId == null || processStepId.trim().equals("")) {
+				processStepId = selectNextProcessStepId(processDTO.getProcess_id(), processDTO.getSeq());
+			}
+
+			String insertQuery = "";
+			insertQuery += "INSERT INTO process_step (process_step_id, process_id, seq, step_name) ";
+			insertQuery += "VALUES (?, ?, ?, ?)";
+
+			ps = conn.prepareStatement(insertQuery);
+			ps.setString(1, processStepId);
+			ps.setString(2, processDTO.getProcess_id());
+			ps.setInt(3, processDTO.getSeq());
+			ps.setString(4, processDTO.getStep_name());
+
+			result = ps.executeUpdate();
+			System.out.println("process_step insert 결과: " + result);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (ps != null) {
+				try {
+					ps.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+
+		return result;
 	}
 
 	public int insertProcess(ProcessDTO processDTO) {
@@ -539,11 +650,23 @@ public class ProcessDAO {
 			conn = getConnection();
 
 			String query = "";
-			query += "SELECT e.eq_id, ";
-			query += "       e.eq_name ";
+			query += "SELECT DISTINCT e.eq_id, ";
+			query += "                e.eq_name ";
 			query += "FROM equipment e ";
-			query += "WHERE e.process_id = ? ";
-			query += "  AND (e.deleted IS NULL OR e.deleted <> 'Y') ";
+			query += "JOIN process ep ";
+			query += "  ON e.process_id = ep.process_id ";
+			query += "JOIN process cp ";
+			query += "  ON cp.process_id = ? ";
+			query += "WHERE (e.deleted IS NULL OR e.deleted <> 'Y') ";
+			query += "  AND (CASE ";
+			query += "           WHEN INSTR(TRIM(ep.process_name), ' ') > 0 ";
+			query += "           THEN TRIM(SUBSTR(TRIM(ep.process_name), INSTR(TRIM(ep.process_name), ' ') + 1)) ";
+			query += "           ELSE TRIM(ep.process_name) ";
+			query += "       END) = (CASE ";
+			query += "                   WHEN INSTR(TRIM(cp.process_name), ' ') > 0 ";
+			query += "                   THEN TRIM(SUBSTR(TRIM(cp.process_name), INSTR(TRIM(cp.process_name), ' ') + 1)) ";
+			query += "                   ELSE TRIM(cp.process_name) ";
+			query += "               END) ";
 			query += "ORDER BY e.eq_id";
 
 			ps = conn.prepareStatement(query);
