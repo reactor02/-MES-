@@ -43,7 +43,7 @@ function fetchPlan() {
         .then(data => {
             document.querySelector("#planId").value = data.planId;
 
-            document.querySelector("#itemId").value = data.itemId;
+            document.querySelector("#itemId").value = `${data.itemName} (${data.itemId})`;
             document.querySelector("#progressQty").value = `${data.prevQty} / ${data.planQty}`;
             document.querySelector("#director").value = `${data.dName} (${data.dId})`;
 

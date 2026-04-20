@@ -11,6 +11,7 @@ public class PlanWoDTO {
 	protected Date eDate;
 	protected int planStatus;
 	protected String itemId;
+	protected String itemName;
 	protected String dId;
 	protected String dName;
 	public String getPlanId() {
@@ -55,6 +56,13 @@ public class PlanWoDTO {
 	public void setItemId(String itemId) {
 		this.itemId = itemId;
 	}
+	
+	public String getItemName() {
+		return itemName;
+	}
+	public void setItemName(String itemName) {
+		this.itemName = itemName;
+	}
 	public String getdId() {
 		return dId;
 	}
@@ -72,8 +80,8 @@ public class PlanWoDTO {
 	@Override
 	public String toString() {
 		return "PlanWoDTO [planId=" + planId + ", planQty=" + planQty + ", prevQty=" + prevQty + ", sDate=" + sDate
-				+ ", eDate=" + eDate + ", planStatus=" + planStatus + ", itemId=" + itemId + ", dId=" + dId + ", dName="
-				+ dName + "]";
+				+ ", eDate=" + eDate + ", planStatus=" + planStatus + ", itemId=" + itemId + ", itemName=" + itemName
+				+ ", dId=" + dId + ", dName=" + dName + "]";
 	}
 	
 }

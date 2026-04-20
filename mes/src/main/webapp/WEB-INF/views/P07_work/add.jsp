@@ -76,7 +76,7 @@
 						<!-- 제품 -->
 						<div class="form-group">
 							<label>제품</label>
-							<input type="text" id="itemId" placeholder="제품 ID" readonly>
+							<input type="text" id="itemId" placeholder="제품명 (제품ID)" readonly>
 						</div>
 
 						<!-- 진행 현황 -->

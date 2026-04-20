@@ -85,6 +85,7 @@ public class WoAddController extends HttpServlet {
 		String json = "{"
 		    + "\"planId\":\"" + planDTO.getPlanId() + "\","
 		    + "\"itemId\":\"" + planDTO.getItemId() + "\","
+		    + "\"itemName\":\"" + planDTO.getItemName() + "\","
 		    + "\"prevQty\":\"" + planDTO.getPrevQty() + "\","
 		    + "\"planQty\":\"" + planDTO.getPlanQty() + "\","
 		    + "\"dName\":\"" + planDTO.getdName() + "\","

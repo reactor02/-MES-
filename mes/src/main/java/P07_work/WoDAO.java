@@ -739,10 +739,12 @@ public class WoDAO {
 
 			conn = dataFactory.getConnection();
 
-			String query = "SELECT p.*, d.eName dName "
+			String query = "SELECT p.*, d.eName dName, i.item_Name itemName "
 					+ "FROM production_plan p "
 					+ "	LEFT OUTER JOIN user_info d "
 					+ "		ON p.emp_id = d.emp_id "
+					+ "	LEFT OUTER JOIN item i "
+					+ "		ON p.item_id = i.item_id "
 					+ "WHERE plan_id=? ";
 			ps = conn.prepareStatement(query);
 			ps.setString(1, planDTO.getPlanId());
@@ -758,6 +760,7 @@ public class WoDAO {
 				Date eDate = rs.getDate("plan_edate");
 				int planStatus = rs.getInt("status");
 				String itemId = rs.getString("item_id");
+				String itemName = rs.getString("itemName");
 				String dId = rs.getString("emp_id");
 				String dName = rs.getString("dName");
 
@@ -768,6 +771,7 @@ public class WoDAO {
 				dto.seteDate(eDate);
 				dto.setPlanStatus(planStatus);
 				dto.setItemId(itemId);
+				dto.setItemName(itemName);
 				dto.setdId(dId);
 				dto.setdName(dName);
 				
