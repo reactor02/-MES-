@@ -46,7 +46,7 @@
 				
 				<div class="box-type4 radius">
 				        <div>
-				        <h3>검사 ID : ${ param.qc_id } <br>검사 종료일 : ${ param.qc_edate }</h3>
+				        <h3>검사 ID : ${ not empty param.qc_id ? param.qc_id : d1.qc_id } <br>검사 종료일 : ${ not empty param.qc_edate ? param.qc_edate : d1.qc_edate }</h3>
 				        </div>						
 						<div class="weather">
 							
@@ -78,14 +78,14 @@
 					<div class="box-type2 radius">
 						<h3>검사 전</h3>
 						<div class="big lightgrey">
-						${ param.qc_qty } 개
+						${ not empty param.qc_qty ? param.qc_qty : (100)} 개
 						</div>
 					</div>
 					
 					<div class="box-type2 radius">
 						<h3>검사 완료</h3>
 						<div class="big green">
-						${ param.qc_clear } 개 
+						${ not empty param.qc_qty ? param.qc_clear : (100 - d1.defect_cnt)} 개 
 						</div>
 						
 					</div>

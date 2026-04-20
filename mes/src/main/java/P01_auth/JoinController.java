@@ -8,6 +8,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 @WebServlet("/join")
 public class JoinController extends HttpServlet {
@@ -51,6 +52,8 @@ public class JoinController extends HttpServlet {
 		// TODO Auto-generated method stub
 
 		System.out.println("/join dopost 실행");
+		
+		
 
 		// 주소 : http://localhost:8080/mes/login.jsp
 
@@ -73,9 +76,16 @@ public class JoinController extends HttpServlet {
 		String join_mgr = request.getParameter("join_mgr");
 		String join_pw = request.getParameter("join_pw");
 		String join_pw2 = request.getParameter("join_pw2");
+		
+		
+		// 데이터 확인용 로그 추가
+				System.out.println("name: " + join_name);
+				System.out.println("pw: " + join_pw);
+				System.out.println("pw2: " + join_pw2);
+				System.out.println("mgr: " + join_mgr);
 
 		if (join_phone != null) {
-			phone = Integer.parseInt(join_phone);
+			phone = Long.parseLong(join_phone);
 		}
 
 		// 회원가입 로직
@@ -92,7 +102,9 @@ public class JoinController extends HttpServlet {
 			d.setLicense(join_license);
 			d.setPassword(s.encrypt(join_pw));
 			d.setPassword2(join_pw2);
-
+			
+			
+            
 			List list = s.join(d);
 
 			// 여서 에러남. if( list.get(0) > 0)했는데 안되었음. 원인은 리스트에 다른
@@ -100,10 +112,17 @@ public class JoinController extends HttpServlet {
 			// 그냥은 Object 처리 되어서 숫자 비교가 안되는 거였음.
 			if (!list.isEmpty() && (int) list.get(0) > 0) {
 				System.out.println("회원가입이 완료되었습니다!");
+				
+				
+
+				// 세션 소환
+				HttpSession session = request.getSession();
+
+				session.setAttribute("joinResult", (LoginDTO) list.get(1));
 
 				// 값 들려서 그? 다른 창 소환.
-				request.setAttribute("list", (LoginDTO) list.get(1));
-				request.getRequestDispatcher("/WEB-INF/views/P01_auth/joinResult.jsp").forward(request, response);
+				
+				response.sendRedirect(request.getContextPath() +"/joinResult");
 				return;
 
 			} else {

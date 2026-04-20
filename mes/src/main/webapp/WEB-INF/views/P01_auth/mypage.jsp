@@ -52,7 +52,7 @@
 							</c:if>
 						</div>
 						<form method="post" action="/mes/mypage">
-							<input type="hidden" name="mp_empid" value="${dto.empid}">
+							<input type="hidden" name="mp_empid" value="${ dto.empid }">
 							<div class="mp-tool">
 								<div class="mp-chain">
 									<span>이름</span> <input type="text" name="mp_name"
