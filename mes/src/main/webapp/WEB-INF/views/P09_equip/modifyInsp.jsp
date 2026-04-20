@@ -46,14 +46,15 @@
 				<div class="page-header">
 					<div>
 						<h2>설비 점검 이력</h2>
-						<p class="sub-text">설비 점검 이력과 결과를 등록해주세요.</p>
+						<p class="sub-text" <c:if test="${dto.auth < 2 || !(dto.empid eq logInfo.wId)}">style="display: none;"</c:if> >설비 점검 이력과 결과를 등록해주세요.</p>
+						
 					</div>
 
 					<div class="button-group">
 						<a href="/mes/eqdetail?eqId=${logInfo.eqId}">
 							<button type="button" class="buttonWhite" id="backBtn">취소</button>
 						</a>
-						<button type="submit" class="buttonMain" id="addBtn">수정</button>
+						<button type="submit" class="buttonMain" id="addBtn" <c:if test="${dto.auth < 2 || !(dto.empid eq logInfo.wId)}"> style="display:none;" </c:if> >수정</button>
 <!-- 						<button type="button" class="buttonRed" onclick="submitForm('delete')">삭제</button> -->
 					</div>
 				</div>
@@ -81,27 +82,27 @@
 						<div class="form-group">
 							<label>점검 시작 시간</label>
 							<div class="timeFlex">
-								<input type="date" id="sDate" name="sDate" value="${sDate}">
-								<input type="time" id="sTime" name="sTime" value="${sTime}">
+								<input type="date" id="sDate" name="sDate" value="${sDate}" <c:if test="${dto.auth < 2 || !(dto.empid eq logInfo.wId)}">readonly</c:if> >
+								<input type="time" id="sTime" name="sTime" value="${sTime}" <c:if test="${dto.auth < 2 || !(dto.empid eq logInfo.wId)}">readonly</c:if> >
 							</div>
 						</div>
 						
 						<div class="form-group">
 							<label>점검 종료 시간</label>
 							<div class="timeFlex">
-								<input type="date" id="eDate" name="eDate" value="${eDate}">
-								<input type="time" id="eTime" name="eTime" value="${eTime}">
+								<input type="date" id="eDate" name="eDate" value="${eDate}" <c:if test="${dto.auth < 2 || !(dto.empid eq logInfo.wId)}">readonly</c:if> >
+								<input type="time" id="eTime" name="eTime" value="${eTime}" <c:if test="${dto.auth < 2 || !(dto.empid eq logInfo.wId)}">readonly</c:if> >
 							</div>
 						</div>
 
 						<div class="form-group">
 							<label>점검 항목</label>
-							<input type="text" id="inspType" name="inspType" placeholder="점검 항목 입력" value="${logInfo.inspType}">
+							<input type="text" id="inspType" name="inspType" placeholder="점검 항목 입력" value="${logInfo.inspType}" <c:if test="${dto.auth < 2 || !(dto.empid eq logInfo.wId)}">readonly</c:if> >
 						</div>
 
 						<div class="form-group full">
 							<label>점검 결과 및 조치사항</label>
-							<textarea placeholder="점검 결과 및 조치사항 입력" id="content" name="content">${logInfo.inspContent}</textarea>
+							<textarea placeholder="점검 결과 및 조치사항 입력" id="content" name="content" <c:if test="${dto.auth < 2 || !(dto.empid eq logInfo.wId)}">readonly</c:if> >${logInfo.inspContent}</textarea>
 						</div>
 					</div>
 				</div>

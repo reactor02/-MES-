@@ -115,7 +115,7 @@
 		                        
 								<div>
 									<input type="date" name="startDate" value="${param.startDate}" class="date"> ~
-									<input type="date" name="endDate" value="${param.endDate}" class="date" min="${param.startDate}">
+									<input type="date" name="endDate" value="${param.endDate}" class="date"">
 								</div>
 		                    </div>
 		

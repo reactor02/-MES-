@@ -113,6 +113,10 @@ public class EqMainController extends HttpServlet {
 		
 		// 검색
 		String status = request.getParameter("status");
+		if ("전체".equals(status)) {
+		    status = "";
+		}
+		
 
 		String keyword = "";
 		keyword = request.getParameter("keyword").trim();

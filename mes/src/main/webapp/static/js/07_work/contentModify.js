@@ -39,17 +39,17 @@ function submitContentModify() {
 
     // 작업완료일 때만 완료 수량 필수
     if (checkedStatus && checkedStatus.value === "30") {
-        if (completedQtyStr === "") {
+        if (prevQtyStr === "") {
             alert("완료 수량을 입력하세요");
             return;
         }
 
-        if (isNaN(completedQty) || completedQty <= 0) {
+        if (isNaN(prevQty) || prevQty <= 0) {
             alert("완료 수량을 올바르게 입력하세요");
             return;
         }
 
-        if (completedQty < woQty) {
+        if (prevQty < woQty) {
             alert("완료 수량이 목표 수량보다 적으면 작업을 완료할 수 없습니다");
             return;
         }

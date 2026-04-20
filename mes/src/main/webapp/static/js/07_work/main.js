@@ -4,6 +4,7 @@ window.addEventListener("load", () => {
 
 function init() {
 	bind();
+	setEndDateLimit();
 }
 
 function bind() {
@@ -39,4 +40,34 @@ function addWo() {
 	addBtn.addEventListener ("click", () => {
 		window.location.href = "/mes/workadd";
 	})
+}
+
+
+
+function setEndDateLimit() {
+	const startDate = document.querySelector("input[name='startDate']");
+	const endDate = document.querySelector("input[name='endDate']");
+
+	if (!startDate || !endDate) return;
+
+	function updateEndDateMin() {
+		const minDate = startDate.value || "";
+		endDate.min = minDate;
+
+		if (endDate.value && endDate.value < minDate) {
+			endDate.value = "";
+		}
+	}
+
+	// 시작일 선택 즉시 반영
+	startDate.addEventListener("input", updateEndDateMin);
+	startDate.addEventListener("change", updateEndDateMin);
+
+	// 종료일 누를 때 최신 min 다시 반영
+	endDate.addEventListener("focus", updateEndDateMin);
+	endDate.addEventListener("click", updateEndDateMin);
+	endDate.addEventListener("mousedown", updateEndDateMin);
+
+	// 처음 로드 시에도 반영
+	updateEndDateMin();
 }

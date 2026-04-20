@@ -196,7 +196,17 @@ hr {
 
 .graph-wrap {
     position: relative;
+    width: 100%;
+    max-width: 320px;
+    height: 320px;
     margin: 0 auto;
+    min-width: 0;
+}
+
+.graph-wrap canvas {
+    display: block;
+    width: 100% !important;
+    height: 100% !important;
 }
 
 /* 중앙 텍스트 */
@@ -285,6 +295,8 @@ table.defList th, table.defList td {
 		padding: 20px;
 	}
 	
-	.qcDetail {
-	}
+    .graph-wrap {
+        max-width: 260px;
+        height: 260px;
+    }
 }
