@@ -235,3 +235,38 @@
     margin: 15px 0;
     font-size: 14px;
 }
+
+
+
+
+
+
+
+/* 툴팁 */
+.tooltip {
+    position: relative;
+}
+
+.tooltip::after {
+    content: attr(data-msg);
+    position: absolute;
+    top: 102%;
+    left: 50%;
+    transform: translateX(-50%);
+    
+    background: white;
+    color: black;
+    padding: 6px 10px;
+    border: 2px solid var(--color-border);
+    border-radius: 4px;
+    font-size: 12px;
+    
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: 0.2s;
+}
+
+.tooltip:hover::after {
+    opacity: 1;
+}
