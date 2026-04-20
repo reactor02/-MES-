@@ -71,8 +71,8 @@
 
 						<div class="form-group">
 							<label>담당자</label>
-							<input type="text" id="worker" placeholder="작업자" value="Prod (user_1002)" readonly>
-							<input type="hidden" name="wId" value="user_1002">
+							<input type="text" id="worker" placeholder="작업자" value="${dto.ename} (${dto.empid})" readonly>
+							<input type="hidden" name="wId" value="${dto.empid}">
 						</div>
 
 						<div class="form-group">

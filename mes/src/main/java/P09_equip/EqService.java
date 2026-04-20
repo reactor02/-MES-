@@ -116,5 +116,9 @@ public class EqService {
 	public int modifyLog(EqLogDTO dto) {
 		return dao.modifyLog(dto);
 	}
+	
+//	public int deleteInsp(String logId) {
+//		return dao.deleteInsp(logId);
+//	}
 
 }
