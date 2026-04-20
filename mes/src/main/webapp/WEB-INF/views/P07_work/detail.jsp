@@ -79,6 +79,9 @@
 	            	<c:if test="${ woInfo.woStatus == 30 }">
 	            		<span class="status finish">작업 완료</span>
 	            	</c:if>
+	            	<c:if test="${ woInfo.woStatus == 35 }">
+	            		<span class="status qcFin">검사 대기</span>
+	            	</c:if>
 	            	<c:if test="${ woInfo.woStatus == 40 }">
 	            		<span class="status qcFin">검사 완료</span>
 	            	</c:if>

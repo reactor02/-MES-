@@ -87,8 +87,15 @@
 
 						<!-- 목표 수량 -->
 						<div class="form-group">
-							<label>목표 수량</label>
-							<input type="number" name="targetQty" placeholder="목표 수량 입력" id="targetQty" min="1">
+						    <label>목표 수량</label>
+						    <input type="number"
+						           name="targetQty"
+						           placeholder="목표 수량 입력"
+						           id="targetQty"
+						           min="1"
+						           max=""
+						           oninput="this.value = clampNumber(this)"
+						           onkeydown="return event.key !== '-'">
 						</div>
 
 						<!-- 작업일 -->

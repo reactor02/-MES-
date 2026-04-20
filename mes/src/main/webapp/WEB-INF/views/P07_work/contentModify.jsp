@@ -109,8 +109,17 @@
 		
 		                <div class="form-group">
 		                    <label>완료 수량</label>
-		                    <input type="number" name="prevQty" value="${woInfo.prevQty}" step="1" min="0" max="${woInfo.woQty}" oninput="this.value = clampNumber(this)" onkeydown="return event.key !== '-'" placeholder="현재 완료 수량 입력" id="prevQty" required>
+		                    <input type="number"
+						       name="prevQty"
+						       id="prevQty"
+						       value = "${woInfo.prevQty }"
+						       placeholder="완료 수량 입력"
+						       min="1"
+						       max="${woInfo.woQty}"
+						       oninput="this.value = clampNumber(this)"
+						       onkeydown="return event.key !== '-'">
 		                </div>
+		                
 		            </div>
 		
 		        </div>

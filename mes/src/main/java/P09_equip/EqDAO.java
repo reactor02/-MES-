@@ -884,7 +884,7 @@ public class EqDAO {
 			
 			// SQL 준비
 			String query = "UPDATE eqrun_log "
-					+ "SET etime = sysdate "
+					+ "SET etime = sysdate   "
 					+ "WHERE eq_id = ? AND etime IS NULL ";
 			
 			ps = new LoggableStatement(conn, query);
@@ -1008,7 +1008,7 @@ public class EqDAO {
 			
 			// SQL 준비
 			String query = "INSERT INTO EQRUN_LOG (eqrun_id, eq_id, stime) "
-					+ "VALUES ('run_'||run_seq.nextval, ?, sysdate)";
+					+ "VALUES ('run_'||run_seq.nextval, ?, sysdate  )";
 			
 			ps = new LoggableStatement(conn, query);
 			ps.setString(1, eqId);

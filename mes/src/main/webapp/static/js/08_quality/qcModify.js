@@ -148,7 +148,6 @@ function validateAndSubmit(e) {
         return alert("검사 예정인 작업을 선택하세요");
     }
 
-
     if (!qcDate) {
         return alert("검사 시작일을 선택하세요");
     }

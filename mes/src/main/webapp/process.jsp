@@ -52,7 +52,7 @@
 				<div class="process-top">
 					<div class="process-header">
 						<h1>공정 관리</h1>
-						<p>생산 공정 정보를 관리합니다.</p>
+						<p>생산 공정 정보를 관리</p>
 					</div>
 
 					<button type="button" class="process-primary-btn"

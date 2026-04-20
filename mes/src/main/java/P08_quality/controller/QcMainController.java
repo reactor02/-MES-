@@ -83,6 +83,8 @@ public class QcMainController extends HttpServlet {
 		QcService service = new QcService();
 		QcCardDTO cardDTO = service.getCard();
 		
+		System.out.println("cardDTO : " + cardDTO);
+		
 		request.setAttribute("cardDTO", cardDTO);
 	}
 	

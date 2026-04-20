@@ -1488,13 +1488,14 @@ public class WoDAO {
 			conn = dataFactory.getConnection();
 			
 			// SQL 준비
-			String query = "INSERT INTO io (io_id, io_type, io_reason, item_id, lot_id, emp_id, io_time) "
-					+ "VALUES ('out_'||out_seq.nextval, 1, '작업', ?, ?, ?, sysdate)";
+			String query = "INSERT INTO io (io_id, io_type, io_reason, item_id, lot_id, emp_id, io_time, io_qty) "
+					+ "VALUES ('out_'||out_seq.nextval, 1, '작업', ?, ?, ?, sysdate + 9/24, ?)";
 			
 			ps = new LoggableStatement(conn, query);
 			ps.setString(1, dto.getItemId());
 			ps.setString(2, dto.getLotId());
 			ps.setString(3, worker);
+			ps.setDouble(4, dto.getQty());
 			
 			// SQL 실행 및 결과 확보
 			result = ps.executeUpdate();
@@ -1616,13 +1617,14 @@ public class WoDAO {
 			conn = dataFactory.getConnection();
 			
 			// SQL 준비
-			String query = "INSERT INTO io (io_id, io_type, io_reason, item_id, lot_id, emp_id, io_time) "
-					+ "VALUES ('in_'||out_seq.nextval, 0, '작업 후 잔여', ?, ?, ?, sysdate)";
+			String query = "INSERT INTO io (io_id, io_type, io_reason, item_id, lot_id, emp_id, io_time, io_qty) "
+					+ "VALUES ('in_'||out_seq.nextval, 0, '작업 후 잔여', ?, ?, ?, sysdate + 9/24)";
 			
 			ps = new LoggableStatement(conn, query);
 			ps.setString(1, dto.getItemId());
 			ps.setString(2, dto.getLotId());
 			ps.setString(3, worker);
+			ps.setDouble(4,  dto.getQty());
 			
 			// SQL 실행 및 결과 확보
 			result = ps.executeUpdate();
@@ -1803,7 +1805,7 @@ public class WoDAO {
 
 	    try {
 	        String query = "INSERT INTO io (io_id, io_type, io_reason, item_id, lot_id, emp_id, io_time, io_qty) "
-	                + "VALUES ('out_'||out_seq.nextval, 1, '작업', ?, ?, ?, sysdate, ?)";
+	                + "VALUES ('out_'||out_seq.nextval, 1, '작업', ?, ?, ?, sysdate + 9/24, ?)";
 
 	        ps = conn.prepareStatement(query);
 	        ps.setString(1, dto.getItemId());
@@ -1847,7 +1849,7 @@ public class WoDAO {
 
 	    try {
 	        String query = "INSERT INTO io (io_id, io_type, io_reason, item_id, lot_id, emp_id, io_time, io_qty) "
-	                + "VALUES ('in_'||in_seq.nextval, 0, '작업 후 잔여', ?, ?, ?, sysdate, ?)";
+	                + "VALUES ('in_'||in_seq.nextval, 0, '작업 후 잔여', ?, ?, ?, sysdate + 9/24, ?)";
 
 	        ps = conn.prepareStatement(query);
 	        ps.setString(1, dto.getItemId());
