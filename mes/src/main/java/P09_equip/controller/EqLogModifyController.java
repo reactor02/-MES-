@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import P07_work.WoService;
 import P09_equip.EqService;
 import P09_equip.DTO.EqLogDTO;
 
@@ -34,6 +35,11 @@ public class EqLogModifyController extends HttpServlet {
 		request.setCharacterEncoding("UTF-8");
 		response.setContentType("text/html; charset=UTF-8;");
 		
+//		String cmd = request.getParameter("cmd");
+//		
+//		if ("delete".equals(cmd))) {
+//			deleteInsp(request, response);
+//		}
 		modifyLog(request, response);
 		
 	}
@@ -129,5 +135,21 @@ public class EqLogModifyController extends HttpServlet {
 		
 		response.sendRedirect("/mes/eqdetail?eqId=" + eqId);
 	}
+	
+//	protected void deleteInsp(HttpServletRequest request, HttpServletResponse response) throws IOException {
+//	    System.out.println("/workadd deleteInsp 실행");
+//
+//	    request.setCharacterEncoding("UTF-8");
+//	    response.setContentType("application/json; charset=UTF-8");
+//	    
+//	    String logId = request.getParameter("logId");
+//	    
+//	    EqService service = new EqService();
+//	    int result = service.deleteInsp(logId);
+//
+//	    System.out.println(result);
+//		
+//		response.sendRedirect("/mes/equipment");
+//	}
 
 }
