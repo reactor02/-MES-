@@ -41,7 +41,7 @@ public class DefectReportingController extends HttpServlet {
 		List<LoginDTO> dMonthChart = s.dMonthChart();
 		
 		
-		
+		LoginDTO d1 = dMonthChart.get((dMonthChart.size() - 1));
 		
 
 		// Paging 페이징
@@ -89,6 +89,7 @@ public class DefectReportingController extends HttpServlet {
 		session.setAttribute("list", list);
 		
 		//월간 불량 자료
+		session.setAttribute("d1", d1);
 		session.setAttribute("dMonthChart", dMonthChart);
 				
 		//부적합 보고서 내용		
