@@ -66,7 +66,51 @@ public class ProdDAO {
             .toString();
     }
 
-    /* ── 목록 조회 (페이지네이션 + JOIN) ──────────────────── */
+    /* ── [공통] 검색 WHERE 절 + 파라미터 바인딩 ─────────── */
+    /**
+     * 검색 조건(keyword, startDate, endDate)이 있으면 WHERE 조각 반환.
+     * keyword : item_name / plan_id LIKE 검색
+     * 날짜    : plan_sdate <= endDate AND plan_edate >= startDate (기간 겹침)
+     */
+    private String buildSearchWhere(ProdDTO prodDTO) {
+        StringBuilder where = new StringBuilder();
+        String keyword   = prodDTO.getKeyword();
+        String startDate = prodDTO.getStartDate();
+        String endDate   = prodDTO.getEndDate();
+
+        if (keyword != null && !keyword.isEmpty()) {
+            where.append(" AND (i.item_name LIKE ? OR pp.plan_id LIKE ?) ");
+        }
+        if (endDate != null && !endDate.isEmpty()) {
+            where.append(" AND pp.plan_sdate <= TO_DATE(?, 'YYYY-MM-DD') ");
+        }
+        if (startDate != null && !startDate.isEmpty()) {
+            where.append(" AND pp.plan_edate >= TO_DATE(?, 'YYYY-MM-DD') ");
+        }
+        return where.toString();
+    }
+
+    /** buildSearchWhere()에 맞춰 ? 순서대로 setXxx. 다음 ? 인덱스를 반환. */
+    private int bindSearchParams(PreparedStatement ps, ProdDTO prodDTO, int idx) throws Exception {
+        String keyword   = prodDTO.getKeyword();
+        String startDate = prodDTO.getStartDate();
+        String endDate   = prodDTO.getEndDate();
+
+        if (keyword != null && !keyword.isEmpty()) {
+            String like = "%" + keyword + "%";
+            ps.setString(idx++, like);
+            ps.setString(idx++, like);
+        }
+        if (endDate != null && !endDate.isEmpty()) {
+            ps.setString(idx++, endDate);
+        }
+        if (startDate != null && !startDate.isEmpty()) {
+            ps.setString(idx++, startDate);
+        }
+        return idx;
+    }
+
+    /* ── 목록 조회 (페이지네이션 + JOIN + 검색) ─────────── */
     public List<ProdDTO> selectAll(ProdDTO prodDTO) {
         List<ProdDTO> list = new ArrayList<>();
 
@@ -74,6 +118,8 @@ public class ProdDAO {
             .append("SELECT * FROM ( ")
             .append("  SELECT rownum AS rnum, p.* FROM ( ")
             .append(basePlanSelectSql())
+            .append("    WHERE  1 = 1 ")
+            .append(buildSearchWhere(prodDTO))
             .append("    ORDER  BY pp.plan_sdate DESC ")
             .append("  ) p ")
             .append(") ")
@@ -83,8 +129,9 @@ public class ProdDAO {
         try (Connection conn = getConn();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
-            ps.setInt(1, prodDTO.getStart());
-            ps.setInt(2, prodDTO.getEnd());
+            int idx = bindSearchParams(ps, prodDTO, 1);
+            ps.setInt(idx++, prodDTO.getStart());
+            ps.setInt(idx++, prodDTO.getEnd());
 
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
@@ -99,14 +146,25 @@ public class ProdDAO {
         return list;
     }
 
-    /* ── 전체 건수 ────────────────────────────────────────── */
-    public int selectTotal() {
+    /* ── 전체 건수 (검색 조건 반영) ──────────────────────── */
+    public int selectTotal(ProdDTO prodDTO) {
         int totalCount = 0;
-        String sql = "SELECT COUNT(*) cnt FROM production_plan";
+
+        String sql = new StringBuilder()
+            .append("SELECT COUNT(*) cnt ")
+            .append("FROM   production_plan pp ")
+            .append("JOIN   item      i ON pp.item_id = i.item_id ")
+            .append("JOIN   user_info u ON pp.emp_id  = u.emp_id ")
+            .append("WHERE  1 = 1 ")
+            .append(buildSearchWhere(prodDTO))
+            .toString();
+
         try (Connection conn = getConn();
-             PreparedStatement ps = conn.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
-            if (rs.next()) totalCount = rs.getInt("cnt");
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            bindSearchParams(ps, prodDTO, 1);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) totalCount = rs.getInt("cnt");
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -134,6 +192,46 @@ public class ProdDAO {
             e.printStackTrace();
         }
         return dto;
+    }
+
+    /* ── 등록 (plan_id = 'plan_' || plan_seq.NEXTVAL, status=0, prev_qty=0) ── */
+    public String insertPlan(ProdDTO dto) {
+        String newPlanId = null;
+
+        // 1) 신규 plan_id 생성 (DUAL에서 조합)
+        String seqSql = "SELECT 'plan_' || plan_seq.NEXTVAL AS new_id FROM dual";
+
+        // 2) INSERT
+        String insertSql = new StringBuilder()
+            .append("INSERT INTO production_plan ")
+            .append("(plan_id, item_id, emp_id, plan_qty, prev_qty, ")
+            .append(" plan_sdate, plan_edate, status) ")
+            .append("VALUES (?, ?, ?, ?, 0, ")
+            .append(" TO_DATE(?, 'YYYY-MM-DD'), TO_DATE(?, 'YYYY-MM-DD'), 0)")
+            .toString();
+
+        try (Connection conn = getConn()) {
+
+            try (PreparedStatement ps = conn.prepareStatement(seqSql);
+                 ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) newPlanId = rs.getString("new_id");
+            }
+            if (newPlanId == null) return null;
+
+            try (PreparedStatement ps = conn.prepareStatement(insertSql)) {
+                ps.setString(1, newPlanId);
+                ps.setString(2, dto.getItemId());
+                ps.setString(3, dto.getEmpId());
+                ps.setInt   (4, dto.getPlanQty());
+                ps.setString(5, dto.getPlanSdate() != null ? dto.getPlanSdate().toString() : "");
+                ps.setString(6, dto.getPlanEdate() != null ? dto.getPlanEdate().toString() : "");
+                ps.executeUpdate();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+        return newPlanId;
     }
 
     /* ── 수정 (진행률 100% 시 status → 2 자동처리) ────────── */

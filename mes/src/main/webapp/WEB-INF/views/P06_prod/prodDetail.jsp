@@ -169,54 +169,40 @@
       <div class="pp-modal-body">
         <form id="editForm" action="/mes/prod/update" method="post">
           <input type="hidden" name="planId" value="${planDto.planId}">
+          <input type="hidden" id="editItemId" name="itemId" value="${planDto.itemId}">
           <div class="form-grid">
 
             <div class="form-group">
-              <label class="form-label" for="regGroup">대분류 <span class="req">*</span></label>
-              <select class="form-control" id="regGroup" name="gId" required>
-                <option value="">대분류 선택</option>
-                <c:forEach var="g" items="${groupList}">
-                  <c:choose>
-                    <c:when test="${g.gId == 'fin'}">
-                      <option value="${g.gId}">완제품</option>
-                    </c:when>
-                    <c:when test="${g.gId == 'semi'}">
-                      <option value="${g.gId}">반제품</option>
-                    </c:when>
-                    <c:when test="${g.gId != 'raw'}">
-                      <option value="${g.gId}">${g.itemgroupName}</option>
-                    </c:when>
-                  </c:choose>
-                </c:forEach>
-              </select>
+              <label class="form-label" for="editGroupView">대분류</label>
+              <input type="text" class="form-control reg-readonly" id="editGroupView"
+                     readonly tabindex="-1">
             </div>
 
             <div class="form-group">
-              <label class="form-label" for="regSubItem">소분류 <span class="req">*</span></label>
-              <select class="form-control" id="regSubItem" name="itemId" required>
-                <option value="">소분류 선택</option>
-              </select>
+              <label class="form-label" for="editSubItemView">소분류</label>
+              <input type="text" class="form-control reg-readonly" id="editSubItemView"
+                     readonly tabindex="-1" value="${planDto.itemName}">
             </div>
 
             <div class="form-group">
-              <label class="form-label" for="regUnit">단위</label>
-              <input type="text" class="form-control reg-readonly" id="regUnit"
-                     name="unit" readonly tabindex="-1" placeholder="소분류 선택 시 자동입력">
+              <label class="form-label" for="editUnit">단위</label>
+              <input type="text" class="form-control reg-readonly" id="editUnit"
+                     readonly tabindex="-1">
             </div>
 
             <div class="form-group">
-              <label class="form-label" for="regSpec">규격</label>
-              <input type="text" class="form-control reg-readonly" id="regSpec"
-                     name="spec" readonly tabindex="-1" placeholder="소분류 선택 시 자동입력">
+              <label class="form-label" for="editSpec">규격</label>
+              <input type="text" class="form-control reg-readonly" id="editSpec"
+                     readonly tabindex="-1">
             </div>
 
             <div class="form-group">
-              <label class="form-label" for="regEmpName">담당자 <span class="req">*</span></label>
+              <label class="form-label" for="editEmpName">담당자 <span class="req">*</span></label>
               <div class="emp-search-wrap">
-                <input type="text" class="form-control" id="regEmpName"
+                <input type="text" class="form-control" id="editEmpName"
                        value="${planDto.ename}" readonly tabindex="-1">
-                <input type="hidden" id="regEmpId" name="empId" value="${planDto.empId}">
-                <button type="button" class="emp-search-btn" onclick="openEmpPopup()" title="담당자 검색">
+                <input type="hidden" id="editEmpId" name="empId" value="${planDto.empId}">
+                <button type="button" class="emp-search-btn" onclick="openEmpPopup('edit')" title="담당자 검색">
                   <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                     <circle cx="7" cy="7" r="5" stroke="#64748b" stroke-width="1.6"/>
                     <path d="M11 11L14 14" stroke="#64748b" stroke-width="1.6" stroke-linecap="round"/>
@@ -226,32 +212,31 @@
             </div>
 
             <div class="form-group">
-              <label class="form-label" for="regQty">목표수량 <span class="req">*</span></label>
-              <input type="number" class="form-control" id="regQty" name="planQty"
+              <label class="form-label" for="editQty">목표수량 <span class="req">*</span></label>
+              <input type="number" class="form-control" id="editQty" name="planQty"
                      placeholder="목표 수량 입력" min="1" required value="${planDto.planQty}">
             </div>
 
-            <div class="form-group">
-              <label class="form-label" for="regStartDate">시작일 <span class="req">*</span></label>
-              <input type="date" class="form-control" id="regStartDate" name="planSdate"
-                     required value="${planDto.planSdate}">
-            </div>
-
-            <div class="form-group">
-              <label class="form-label" for="regEndDate">종료일 <span class="req">*</span></label>
-              <input type="date" class="form-control" id="regEndDate" name="planEdate"
-                     required value="${planDto.planEdate}">
-            </div>
-
             <div class="form-group dtl-status-group">
-              <label class="form-label" for="regStatus">상태 <span class="req">*</span></label>
-              <select class="form-control" id="regStatus" name="status" required>
+              <label class="form-label" for="editStatus">상태 <span class="req">*</span></label>
+              <select class="form-control" id="editStatus" name="status" required>
                 <option value="0" <c:if test="${planDto.status == 0}">selected</c:if>>대기</option>
                 <option value="1" <c:if test="${planDto.status == 1}">selected</c:if>>진행중</option>
                 <option value="2" <c:if test="${planDto.status == 2}">selected</c:if>>완료</option>
                 <option value="3" <c:if test="${planDto.status == 3}">selected</c:if>>보류</option>
                 <option value="4" <c:if test="${planDto.status == 4}">selected</c:if>>취소</option>
               </select>
+            </div>
+
+            <div class="form-group form-group-wide">
+              <label class="form-label">기간 <span class="req">*</span></label>
+              <div class="date-range-wrap">
+                <input type="date" class="form-control" id="editStartDate" name="planSdate"
+                       required value="${planDto.planSdate}">
+                <span class="date-range-sep">~</span>
+                <input type="date" class="form-control" id="editEndDate" name="planEdate"
+                       required value="${planDto.planEdate}">
+              </div>
             </div>
 
           </div>

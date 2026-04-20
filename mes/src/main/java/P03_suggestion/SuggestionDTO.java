@@ -27,6 +27,12 @@ public class SuggestionDTO {
     private int start;
     private int end;
 
+    // 검색어
+    private String searchKeyword;
+
+    // 한국시간 기준 epoch ms (JS 10분 체크용 - JDBC Timestamp의 타임존 해석 이슈 우회)
+    private long ctimeKstMs;
+
     public String    getBoardno()                        { return boardno; }
     public void      setBoardno(String boardno)          { this.boardno = boardno; }
     public String    getTitle()                          { return title; }
@@ -65,4 +71,8 @@ public class SuggestionDTO {
     public void      setStart(int start)                 { this.start = start; }
     public int       getEnd()                            { return end; }
     public void      setEnd(int end)                     { this.end = end; }
+    public String    getSearchKeyword()                  { return searchKeyword; }
+    public void      setSearchKeyword(String s)          { this.searchKeyword = s; }
+    public long      getCtimeKstMs()                     { return ctimeKstMs; }
+    public void      setCtimeKstMs(long ctimeKstMs)      { this.ctimeKstMs = ctimeKstMs; }
 }

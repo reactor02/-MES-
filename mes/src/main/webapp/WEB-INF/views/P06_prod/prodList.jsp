@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -33,10 +34,7 @@
         <p class="page-header-desc">주간 생산 계획을 조회하고 관리합니다</p>
       </div>
       <div class="header-actions">
-        <%-- auth 2이상만 선택삭제 표시 --%>
-        <c:if test="${dto.auth >= 2}">
-          <button class="btn btn-danger-outline btn-sm" id="btnBulkDelete">선택 삭제</button>
-        </c:if>
+       
         <%-- auth 2이상만 등록 버튼 표시 --%>
         <c:if test="${dto.auth >= 2}">
           <button class="btn btn-primary btn-sm" onclick="openRegisterModal()">
@@ -50,27 +48,34 @@
     </div>
 
     <div class="table-toolbar">
-      <input type="date" class="date-input" id="startDate" name="startDate" title="시작일">
-      <input type="date" class="date-input" id="endDate"   name="endDate"   title="종료일">
-
       <select id="sizeSelect" class="date-input size-select">
-        <option value="5"  <c:if test="${map.size == 5}">selected</c:if>>5건</option>
-        <option value="10" <c:if test="${map.size == 10}">selected</c:if>>10건</option>
-        <option value="15" <c:if test="${map.size == 15}">selected</c:if>>15건</option>
-        <option value="20" <c:if test="${map.size == 20}">selected</c:if>>20건</option>
+        <option value="5"  <c:if test="${map.size == 5}">selected</c:if>>5개씩</option>
+        <option value="10" <c:if test="${map.size == 10}">selected</c:if>>10개씩</option>
+        <option value="15" <c:if test="${map.size == 15}">selected</c:if>>15개씩</option>
+        <option value="20" <c:if test="${map.size == 20}">selected</c:if>>20개씩</option>
       </select>
 
-      <%-- 검색 인풋 + 버튼 한 줄 --%>
+      <label class="toolbar-label" for="startDate">기간:</label>
+      <div class="toolbar-date-range">
+        <input type="date" class="date-input" id="startDate" name="startDate"
+               title="시작일" value="${map.startDate}">
+        <span class="toolbar-date-sep">~</span>
+        <input type="date" class="date-input" id="endDate" name="endDate"
+               title="종료일" value="${map.endDate}">
+      </div>
+
+      <%-- 검색 인풋 + 검색/초기화 버튼 한 줄 --%>
       <div class="toolbar-right">
         <div class="search-wrap">
           <svg class="search-icon" width="14" height="14" viewBox="0 0 14 14" fill="none">
             <circle cx="6" cy="6" r="4.5" stroke="#94A3B8" stroke-width="1.4"/>
             <path d="M9.5 9.5L12 12" stroke="#94A3B8" stroke-width="1.4" stroke-linecap="round"/>
           </svg>
-          <input type="text" class="search-input" placeholder="제품명으로 검색"
-                 id="searchKeyword" name="searchKeyword">
+          <input type="text" class="search-input" placeholder="제품명 또는 계획ID로 검색"
+                 id="searchKeyword" name="searchKeyword" value="${map.keyword}">
         </div>
-        <button class="btn btn-outline btn-sm toolbar-btn">검색</button>
+        <button type="button" class="btn btn-outline btn-sm toolbar-btn" id="searchBtn">검색</button>
+        <button type="button" class="btn btn-outline btn-sm toolbar-btn" id="resetBtn">초기화</button>
       </div>
     </div>
 
@@ -78,7 +83,7 @@
       <table>
         <thead>
           <tr>
-            <th class="checkbox-col"><input type="checkbox" id="chkAll"></th>
+            
             <th>계획ID</th>
             <th>제품명</th>
             <th>담당자</th>
@@ -92,7 +97,7 @@
         <tbody id="planListBody">
           <c:forEach var="row" items="${map.list}">
             <tr>
-              <td><input type="checkbox" name="chk" value="${row.planId}"></td>
+              
               <td><span class="plan-id-text">${row.planId}</span></td>
               <td class="item-name-col">
                 <a href="/mes/prod/detail?planId=${row.planId}" class="item-name-link">
@@ -140,13 +145,16 @@
     <!-- 페이지네이션 -->
     <div class="pagination">
 
+      <c:set var="searchParam"
+             value="&size=${map.size}&keyword=${map.keyword}&startDate=${map.startDate}&endDate=${map.endDate}"/>
+
       <%-- 이전 --%>
       <c:choose>
         <c:when test="${map.page <= 1}">
           <button class="page-btn" disabled>이전</button>
         </c:when>
         <c:otherwise>
-          <a class="page-btn" href="list?page=${map.page - 1}&size=${map.size}">이전</a>
+          <a class="page-btn" href="/mes/prod/list?page=${map.page - 1}${searchParam}">이전</a>
         </c:otherwise>
       </c:choose>
 
@@ -157,7 +165,7 @@
             <button class="page-btn page-btn-active">${i}</button>
           </c:when>
           <c:otherwise>
-            <a class="page-btn" href="list?page=${i}&size=${map.size}">${i}</a>
+            <a class="page-btn" href="/mes/prod/list?page=${i}${searchParam}">${i}</a>
           </c:otherwise>
         </c:choose>
       </c:forEach>
@@ -168,7 +176,7 @@
           <button class="page-btn" disabled>다음</button>
         </c:when>
         <c:otherwise>
-          <a class="page-btn" href="list?page=${map.page + 1}&size=${map.size}">다음</a>
+          <a class="page-btn" href="/mes/prod/list?page=${map.page + 1}${searchParam}">다음</a>
         </c:otherwise>
       </c:choose>
 
@@ -185,7 +193,7 @@
         <button class="pp-modal-close" onclick="closeRegisterModal()">&#x2715;</button>
       </div>
       <div class="pp-modal-body">
-        <form id="registerForm" action="/production/plan/insert" method="post">
+        <form id="registerForm" action="/mes/prod/insert" method="post">
           <div class="form-grid">
 
             <div class="form-group">
@@ -194,14 +202,11 @@
                 <option value="">대분류 선택</option>
                 <c:forEach var="g" items="${groupList}">
                   <c:choose>
-                    <c:when test="${g.gId == 'fin'}">
+                    <c:when test="${g.gId == '30'}">
                       <option value="${g.gId}">완제품</option>
                     </c:when>
-                    <c:when test="${g.gId == 'semi'}">
+                    <c:when test="${g.gId == '20'}">
                       <option value="${g.gId}">반제품</option>
-                    </c:when>
-                    <c:when test="${g.gId != 'raw'}">
-                      <option value="${g.gId}">${g.itemgroupName}</option>
                     </c:when>
                   </c:choose>
                 </c:forEach>
@@ -233,7 +238,7 @@
                 <input type="text" class="form-control" id="regEmpName"
                        placeholder="돋보기를 눌러 검색" readonly tabindex="-1">
                 <input type="hidden" id="regEmpId" name="empId">
-                <button type="button" class="emp-search-btn" onclick="openEmpPopup()" title="담당자 검색">
+                <button type="button" class="emp-search-btn" onclick="openEmpPopup('register')" title="담당자 검색">
                   <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                     <circle cx="7" cy="7" r="5" stroke="#64748b" stroke-width="1.6"/>
                     <path d="M11 11L14 14" stroke="#64748b" stroke-width="1.6" stroke-linecap="round"/>
@@ -248,14 +253,13 @@
                      placeholder="목표 수량 입력" min="1" required>
             </div>
 
-            <div class="form-group">
-              <label class="form-label" for="regStartDate">시작일 <span class="req">*</span></label>
-              <input type="date" class="form-control" id="regStartDate" name="planSdate" required>
-            </div>
-
-            <div class="form-group">
-              <label class="form-label" for="regEndDate">종료일 <span class="req">*</span></label>
-              <input type="date" class="form-control" id="regEndDate" name="planEdate" required>
+            <div class="form-group form-group-wide">
+              <label class="form-label">기간 <span class="req">*</span></label>
+              <div class="date-range-wrap">
+                <input type="date" class="form-control" id="regStartDate" name="planSdate" required>
+                <span class="date-range-sep">~</span>
+                <input type="date" class="form-control" id="regEndDate" name="planEdate" required>
+              </div>
             </div>
 
           </div>
@@ -279,39 +283,25 @@
       <div class="pp-modal-body">
         <form id="editForm" action="/mes/prod/update" method="post">
           <input type="hidden" id="editPlanId" name="planId">
+          <input type="hidden" id="editItemId" name="itemId">
           <div class="form-grid">
             <div class="form-group">
-              <label class="form-label" for="editGroup">대분류 <span class="req">*</span></label>
-              <select class="form-control" id="editGroup" name="gId" required>
-                <option value="">대분류 선택</option>
-                <c:forEach var="g" items="${groupList}">
-                  <c:choose>
-                    <c:when test="${g.gId == 'fin'}">
-                      <option value="${g.gId}">완제품</option>
-                    </c:when>
-                    <c:when test="${g.gId == 'semi'}">
-                      <option value="${g.gId}">반제품</option>
-                    </c:when>
-                    <c:when test="${g.gId != 'raw'}">
-                      <option value="${g.gId}">${g.itemgroupName}</option>
-                    </c:when>
-                  </c:choose>
-                </c:forEach>
-              </select>
+              <label class="form-label" for="editGroupView">대분류</label>
+              <input type="text" class="form-control reg-readonly" id="editGroupView"
+                     readonly tabindex="-1">
             </div>
             <div class="form-group">
-              <label class="form-label" for="editSubItem">소분류 <span class="req">*</span></label>
-              <select class="form-control" id="editSubItem" name="itemId" required>
-                <option value="">소분류 선택</option>
-              </select>
+              <label class="form-label" for="editSubItemView">소분류</label>
+              <input type="text" class="form-control reg-readonly" id="editSubItemView"
+                     readonly tabindex="-1">
             </div>
             <div class="form-group">
-              <label class="form-label" for="regEmpName">담당자 <span class="req">*</span></label>
+              <label class="form-label" for="editEmpName">담당자 <span class="req">*</span></label>
               <div class="emp-search-wrap">
-                <input type="text" class="form-control" id="regEmpName"
+                <input type="text" class="form-control" id="editEmpName"
                        placeholder="돋보기를 눌러 검색" readonly tabindex="-1">
-                <input type="hidden" id="regEmpId" name="empId">
-                <button type="button" class="emp-search-btn" onclick="openEmpPopup()" title="담당자 검색">
+                <input type="hidden" id="editEmpId" name="empId">
+                <button type="button" class="emp-search-btn" onclick="openEmpPopup('edit')" title="담당자 검색">
                   <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                     <circle cx="7" cy="7" r="5" stroke="#64748b" stroke-width="1.6"/>
                     <path d="M11 11L14 14" stroke="#64748b" stroke-width="1.6" stroke-linecap="round"/>
@@ -333,13 +323,13 @@
                 <option value="4">취소</option>
               </select>
             </div>
-            <div class="form-group">
-              <label class="form-label" for="editStartDate">시작일 <span class="req">*</span></label>
-              <input type="date" class="form-control" id="editStartDate" name="planSdate" required>
-            </div>
-            <div class="form-group">
-              <label class="form-label" for="editEndDate">종료일 <span class="req">*</span></label>
-              <input type="date" class="form-control" id="editEndDate" name="planEdate" required>
+            <div class="form-group form-group-wide">
+              <label class="form-label">기간 <span class="req">*</span></label>
+              <div class="date-range-wrap">
+                <input type="date" class="form-control" id="editStartDate" name="planSdate" required>
+                <span class="date-range-sep">~</span>
+                <input type="date" class="form-control" id="editEndDate" name="planEdate" required>
+              </div>
             </div>
           </div>
           <div class="form-actions">

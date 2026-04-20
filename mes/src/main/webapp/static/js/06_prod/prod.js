@@ -9,7 +9,30 @@ function bind() {
     var sizeSelect = document.getElementById("sizeSelect");
     if (sizeSelect) {
         sizeSelect.addEventListener("change", function () {
-            location.href = "list?page=1&size=" + this.value;
+            location.href = buildListUrl(1, this.value);
+        });
+    }
+
+    /* ── 검색 버튼 / 검색 인풋 엔터 ── */
+    var searchBtn = document.getElementById("searchBtn");
+    if (searchBtn) {
+        searchBtn.addEventListener("click", doSearch);
+    }
+    var searchKeyword = document.getElementById("searchKeyword");
+    if (searchKeyword) {
+        searchKeyword.addEventListener("keydown", function (e) {
+            if (e.key === "Enter") {
+                e.preventDefault();
+                doSearch();
+            }
+        });
+    }
+
+    /* ── 초기화 버튼 ── */
+    var resetBtn = document.getElementById("resetBtn");
+    if (resetBtn) {
+        resetBtn.addEventListener("click", function () {
+            location.href = "/mes/prod/list";
         });
     }
 
@@ -93,20 +116,81 @@ function bind() {
 
 
 /* ==========================================================
-   날짜 유효성 — 시작일 변경 시 종료일 min 세팅, 종료일 변경 시 시작일 max 세팅
+   목록 URL 조립 (절대경로 /mes/prod/list + 검색 조건 유지)
+   ========================================================== */
+function buildListUrl(page, size) {
+    var startDate = document.getElementById("startDate");
+    var endDate   = document.getElementById("endDate");
+    var keyword   = document.getElementById("searchKeyword");
+
+    var url = "/mes/prod/list?page=" + page + "&size=" + size;
+    if (keyword && keyword.value.trim()) {
+        url += "&keyword=" + encodeURIComponent(keyword.value.trim());
+    }
+    if (startDate && startDate.value) {
+        url += "&startDate=" + encodeURIComponent(startDate.value);
+    }
+    if (endDate && endDate.value) {
+        url += "&endDate=" + encodeURIComponent(endDate.value);
+    }
+    return url;
+}
+
+function doSearch() {
+    var sizeSelect = document.getElementById("sizeSelect");
+    var size = sizeSelect ? sizeSelect.value : 10;
+    location.href = buildListUrl(1, size);
+}
+
+
+/* ==========================================================
+   날짜 유효성
+   - 시작일 변경 시 → 종료일 min 세팅
+   - 종료일 변경 시 → 시작일 max 세팅
+   - change + input 이벤트 모두 리스닝 (브라우저별 타이밍 차이 방어)
+   - 종료일 포커스/클릭 순간에도 시작일 기준으로 min 재계산
    ========================================================== */
 function bindDateValidation(startId, endId) {
     var startEl = document.getElementById(startId);
     var endEl   = document.getElementById(endId);
     if (!startEl || !endEl) return;
-    startEl.addEventListener("change", function () {
-        endEl.min = this.value;
-        if (endEl.value && endEl.value < this.value) endEl.value = this.value;
-    });
-    endEl.addEventListener("change", function () {
-        startEl.max = this.value;
-        if (startEl.value && startEl.value > this.value) startEl.value = this.value;
-    });
+
+    function syncMinFromStart() {
+        if (startEl.value) {
+            endEl.min = startEl.value;
+            if (endEl.value && endEl.value < startEl.value) {
+                endEl.value = startEl.value;
+            }
+        } else {
+            endEl.removeAttribute("min");
+        }
+    }
+
+    function syncMaxFromEnd() {
+        if (endEl.value) {
+            startEl.max = endEl.value;
+            if (startEl.value && startEl.value > endEl.value) {
+                startEl.value = endEl.value;
+            }
+        } else {
+            startEl.removeAttribute("max");
+        }
+    }
+
+    // 시작일 변경 → 종료일 min 세팅
+    startEl.addEventListener("change", syncMinFromStart);
+    startEl.addEventListener("input",  syncMinFromStart);
+
+    // 종료일 변경 → 시작일 max 세팅
+    endEl.addEventListener("change", syncMaxFromEnd);
+    endEl.addEventListener("input",  syncMaxFromEnd);
+
+    // 종료일 포커스/클릭 시 시작일 기준 min을 즉시 최신화
+    // (change 이벤트가 아직 안 떨어진 상황에서도 달력이 열리기 전에 min이 반영되도록)
+    endEl.addEventListener("focus", syncMinFromStart);
+    endEl.addEventListener("click", syncMinFromStart);
+    startEl.addEventListener("focus", syncMaxFromEnd);
+    startEl.addEventListener("click", syncMaxFromEnd);
 }
 
 
@@ -128,75 +212,51 @@ function resetRegisterForm() {
     document.getElementById("regSpec").value    = "";
     document.getElementById("regEmpId").value   = "";
     document.getElementById("regEmpName").value = "";
+
+    // 이전에 세팅된 min/max 속성 제거 (모달 재오픈 시 stale 값 방지)
+    var startEl = document.getElementById("regStartDate");
+    var endEl   = document.getElementById("regEndDate");
+    if (startEl) startEl.removeAttribute("max");
+    if (endEl)   endEl.removeAttribute("min");
 }
 
 
 /* ==========================================================
-   수정 모달  (list용 / detail용 통합)
-   - list에서는 openEditModal(planId, itemId, ...) 형태로 호출
-   - detail에서는 openEditModal() 파라미터 없이 호출
+   수정 모달 (detail 페이지 전용)
+   - JSP에서 planId/itemId/planQty/status/날짜/담당자 값은 이미 주입됨
+   - JS는 대분류명/단위/규격(읽기전용 표시) + 종료일 min만 세팅
    ========================================================== */
-function openEditModal(planId, itemId, itemName, planQty,
-                       planSdate, planEdate, status, empId, ename) {
-
+function openEditModal() {
     var modal = document.getElementById("modalEdit");
     if (!modal) return;
 
-    /* ── list 페이지 (파라미터 전달) ── */
-    if (planId !== undefined) {
-        document.getElementById("editPlanId").value    = planId;
-        document.getElementById("editQty").value       = planQty;
-        document.getElementById("editStatus").value    = status;
-        document.getElementById("editStartDate").value = String(planSdate).substring(0, 10);
-        document.getElementById("editEndDate").value   = String(planEdate).substring(0, 10);
+    // 대분류명 / 단위 / 규격 세팅 (itemDataMap에서 조회)
+    var itemIdEl = document.getElementById("editItemId");
+    var currentItemId = itemIdEl ? itemIdEl.value
+                        : (typeof DTL_ITEM_ID !== "undefined" ? DTL_ITEM_ID : "");
 
-        // 종료일 min 세팅
-        var editEndEl = document.getElementById("editEndDate");
-        if (editEndEl) editEndEl.min = String(planSdate).substring(0, 10);
-
-        // 대분류 찾아서 세팅 후 소분류 채우기
-        var foundGId = "";
-        if (typeof itemDataMap !== "undefined") {
-            Object.keys(itemDataMap).forEach(function (gId) {
-                itemDataMap[gId].forEach(function (item) {
-                    if (item.itemId === String(itemId)) foundGId = gId;
-                });
+    if (currentItemId && typeof itemDataMap !== "undefined") {
+        Object.keys(itemDataMap).forEach(function (gId) {
+            itemDataMap[gId].forEach(function (item) {
+                if (item.itemId === String(currentItemId)) {
+                    var gView    = document.getElementById("editGroupView");
+                    var subView  = document.getElementById("editSubItemView");
+                    var unitEl   = document.getElementById("editUnit");
+                    var specEl   = document.getElementById("editSpec");
+                    if (gView)   gView.value   = groupLabelById(gId);
+                    if (subView) subView.value = item.itemName;
+                    if (unitEl)  unitEl.value  = item.unit || "";
+                    if (specEl)  specEl.value  = item.spec || "";
+                }
             });
-        }
-        if (foundGId) {
-            setSelectValue("editGroup", foundGId);
-            updateSubItemOptions(
-                document.getElementById("editGroup"),
-                document.getElementById("editSubItem"),
-                itemId
-            );
-        }
+        });
+    }
 
-        /* 담당자 세팅 */
-        var empNameEl = document.getElementById("regEmpName");
-        var empIdEl   = document.getElementById("regEmpId");
-        if (empNameEl) empNameEl.value = ename  || "";
-        if (empIdEl)   empIdEl.value   = empId  || "";
-
-    /* ── detail 페이지 (파라미터 없음 → DTL_ITEM_ID 사용) ── */
-    } else {
-        var currentItemId = (typeof DTL_ITEM_ID !== "undefined") ? DTL_ITEM_ID : "";
-        if (currentItemId) {
-            var foundGId = "";
-            Object.keys(itemDataMap).forEach(function (gId) {
-                itemDataMap[gId].forEach(function (item) {
-                    if (item.itemId === String(currentItemId)) foundGId = gId;
-                });
-            });
-            if (foundGId) {
-                setSelectValue("regGroup", foundGId);
-                updateSubItemOptions(
-                    document.getElementById("regGroup"),
-                    document.getElementById("regSubItem"),
-                    currentItemId
-                );
-            }
-        }
+    // 종료일 min = 현재 시작일
+    var startEl = document.getElementById("editStartDate");
+    var endEl   = document.getElementById("editEndDate");
+    if (startEl && endEl && startEl.value) {
+        endEl.min = startEl.value;
     }
 
     modal.classList.remove("dtl-hidden");
@@ -206,27 +266,28 @@ function openEditModal(planId, itemId, itemName, planQty,
 function closeEditModal() {
     var modal = document.getElementById("modalEdit");
     if (!modal) return;
-    var form = document.getElementById("editForm");
-    if (form) form.reset();
     modal.style.display = "none";
     modal.classList.add("dtl-hidden");
 }
 
-function setSelectValue(selectId, value) {
-    var sel = document.getElementById(selectId);
-    if (!sel) return;
-    for (var i = 0; i < sel.options.length; i++) {
-        if (sel.options[i].value === String(value)) { sel.selectedIndex = i; break; }
-    }
+/* 대분류 ID → 화면 표기명 매핑 (JSP c:choose 규칙과 동일하게) */
+function groupLabelById(gId) {
+    if (String(gId) === "30") return "완제품";
+    if (String(gId) === "20") return "반제품";
+    // 10(자재)은 등록 대상이 아니지만, 혹시 표시될 경우를 대비해 빈 값 반환
+    return "";
 }
 
 
 /* ==========================================================
    담당자 검색 팝업
+   - mode: 'register' (등록 모달) / 'edit' (수정 모달)
    ========================================================== */
 var EMP_PAGE_SIZE = 5;
+var EMP_TARGET_MODE = "register";  // 선택한 담당자를 어느 모달의 input에 세팅할지
 
-function openEmpPopup() {
+function openEmpPopup(mode) {
+    EMP_TARGET_MODE = (mode === "edit") ? "edit" : "register";
     document.getElementById("empSearchKeyword").value = "";
     document.getElementById("empPopup").style.display = "flex";
     document.getElementById("empPopup").classList.remove("dtl-hidden");
@@ -301,8 +362,11 @@ function renderEmpPaging(total, current, keyword) {
 }
 
 function selectEmp(empId, ename) {
-    document.getElementById("regEmpId").value   = empId;
-    document.getElementById("regEmpName").value = ename;
+    var prefix = (EMP_TARGET_MODE === "edit") ? "edit" : "reg";
+    var nameEl = document.getElementById(prefix + "EmpName");
+    var idEl   = document.getElementById(prefix + "EmpId");
+    if (idEl)   idEl.value   = empId;
+    if (nameEl) nameEl.value = ename;
     closeEmpPopup();
 }
 

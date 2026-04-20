@@ -422,21 +422,31 @@ document.addEventListener('DOMContentLoaded', function () {
         location.href = '/mes/io?' + params.toString();
     });
 
-    // ── 유통기한 카드 클릭 → 필터 적용 ─────────────────────
+    // ── 유통기한 카드 클릭 → 필터 토글 ─────────────────────
+    // 이미 활성(inv-card-active)인 카드를 다시 누르면 필터 해제,
+    // 아니면 해당 필터 적용 (서버에서 filterExpiry 값으로 상호배타 처리됨)
     const warnCard = document.querySelector('.inv-card-warn');
     const overCard = document.querySelector('.inv-card-over');
-    if (warnCard) {
-        warnCard.style.cursor = 'pointer';
-        warnCard.addEventListener('click', function () {
-            location.href = '/mes/io?page=1&size=' + document.getElementById('size').value + '&filterExpiry=warn';
+
+    function toggleExpiryCard(card, filterValue) {
+        if (!card) return;
+        card.style.cursor = 'pointer';
+        card.addEventListener('click', function () {
+            const size = document.getElementById('size').value;
+            const isActive = card.classList.contains('inv-card-active');
+
+            if (isActive) {
+                // 이미 활성화 상태 → 필터 해제
+                location.href = '/mes/io?page=1&size=' + size;
+            } else {
+                // 비활성화 상태 → 필터 적용
+                location.href = '/mes/io?page=1&size=' + size + '&filterExpiry=' + filterValue;
+            }
         });
     }
-    if (overCard) {
-        overCard.style.cursor = 'pointer';
-        overCard.addEventListener('click', function () {
-            location.href = '/mes/io?page=1&size=' + document.getElementById('size').value + '&filterExpiry=over';
-        });
-    }
+
+    toggleExpiryCard(warnCard, 'warn');
+    toggleExpiryCard(overCard, 'over');
 
 
     // ── 기간 날짜 유효성 ─────────────────────────────────────
@@ -474,5 +484,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
     });
+    
+    
 
 });

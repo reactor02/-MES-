@@ -24,7 +24,7 @@
         <%@ include file="/WEB-INF/views/P00_layout/snb.jsp" %>
     </div>
     <div class="content">
-        <main class="sg">
+        <main class="sg sg-wide">
 
   <div id="page-suggest-list">
     <div class="page-header-row">
@@ -41,24 +41,31 @@
       </button>
     </div>
 
-    <div class="table-toolbar">
-      <div class="search-wrap">
-        <svg class="search-icon" width="14" height="14" viewBox="0 0 14 14" fill="none">
-          <circle cx="6" cy="6" r="4.5" stroke="#94A3B8" stroke-width="1.4"/>
-          <path d="M9.5 9.5L12 12" stroke="#94A3B8" stroke-width="1.4" stroke-linecap="round"/>
-        </svg>
-        <input type="text" class="search-input" placeholder="제목으로 검색"
-               id="searchKeyword" name="searchKeyword">
-      </div>
-      <button class="btn btn-outline btn-sm toolbar-btn">검색</button>
+    <%-- 검색 form: GET 방식으로 list로 submit --%>
+    <form id="searchForm" method="get"
+          action="${pageContext.request.contextPath}/suggestion/list">
+      <input type="hidden" name="page" value="1">
+      <input type="hidden" name="size" value="${map.size}">
+      <div class="table-toolbar">
+        <div class="search-wrap">
+          <svg class="search-icon" width="14" height="14" viewBox="0 0 14 14" fill="none">
+            <circle cx="6" cy="6" r="4.5" stroke="#94A3B8" stroke-width="1.4"/>
+            <path d="M9.5 9.5L12 12" stroke="#94A3B8" stroke-width="1.4" stroke-linecap="round"/>
+          </svg>
+          <input type="text" class="search-input" placeholder="제목으로 검색"
+                 id="searchKeyword" name="searchKeyword"
+                 value="${map.searchKeyword}">
+        </div>
+        <button type="submit" class="btn btn-outline btn-sm toolbar-btn">검색</button>
 
-      <select id="sizeSelect" class="date-input size-select">
-        <option value="5"  ${map.size == 5  ? 'selected' : ''}>5건</option>
-        <option value="10" ${map.size == 10 ? 'selected' : ''}>10건</option>
-        <option value="15" ${map.size == 15 ? 'selected' : ''}>15건</option>
-        <option value="20" ${map.size == 20 ? 'selected' : ''}>20건</option>
-      </select>
-    </div>
+        <select id="sizeSelect" class="date-input size-select">
+          <option value="5"  ${map.size == 5  ? 'selected' : ''}>5건</option>
+          <option value="10" ${map.size == 10 ? 'selected' : ''}>10건</option>
+          <option value="15" ${map.size == 15 ? 'selected' : ''}>15건</option>
+          <option value="20" ${map.size == 20 ? 'selected' : ''}>20건</option>
+        </select>
+      </div>
+    </form>
 
     <div class="table-wrap">
       <table>
@@ -107,14 +114,16 @@
       </table>
     </div>
 
-    <!-- 페이지네이션 -->
+    <!-- 페이지네이션 (검색어 유지) -->
+    <c:set var="sk" value="${map.searchKeyword}"/>
     <div class="pagination">
       <c:choose>
         <c:when test="${map.page == 1}">
           <button class="page-btn" disabled>이전</button>
         </c:when>
         <c:otherwise>
-          <a class="page-btn" href="${pageContext.request.contextPath}/suggestion/list?page=${map.page - 1}&size=${map.size}">이전</a>
+          <a class="page-btn"
+             href="${pageContext.request.contextPath}/suggestion/list?page=${map.page - 1}&size=${map.size}&searchKeyword=${sk}">이전</a>
         </c:otherwise>
       </c:choose>
 
@@ -124,7 +133,8 @@
             <button class="page-btn page-btn-active">${i}</button>
           </c:when>
           <c:otherwise>
-            <a class="page-btn" href="${pageContext.request.contextPath}/suggestion/list?page=${i}&size=${map.size}">${i}</a>
+            <a class="page-btn"
+               href="${pageContext.request.contextPath}/suggestion/list?page=${i}&size=${map.size}&searchKeyword=${sk}">${i}</a>
           </c:otherwise>
         </c:choose>
       </c:forEach>
@@ -134,7 +144,8 @@
           <button class="page-btn" disabled>다음</button>
         </c:when>
         <c:otherwise>
-          <a class="page-btn" href="${pageContext.request.contextPath}/suggestion/list?page=${map.page + 1}&size=${map.size}">다음</a>
+          <a class="page-btn"
+             href="${pageContext.request.contextPath}/suggestion/list?page=${map.page + 1}&size=${map.size}&searchKeyword=${sk}">다음</a>
         </c:otherwise>
       </c:choose>
     </div>
@@ -142,8 +153,11 @@
   </div>
 
   <script>
+    // 건수 변경 시: 현재 검색어를 유지한 채로 이동
     document.getElementById("sizeSelect").addEventListener("change", function () {
-      location.href = "${pageContext.request.contextPath}/suggestion/list?page=1&size=" + this.value;
+      var sk = document.getElementById("searchKeyword").value || "";
+      location.href = "${pageContext.request.contextPath}/suggestion/list?page=1&size=" + this.value
+                    + "&searchKeyword=" + encodeURIComponent(sk);
     });
   </script>
 
