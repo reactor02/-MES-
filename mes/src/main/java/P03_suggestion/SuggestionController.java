@@ -52,13 +52,18 @@ public class SuggestionController extends HttpServlet {
                 try { size = Integer.parseInt(request.getParameter("size")); } catch (Exception e) {}
                 try { page = Integer.parseInt(request.getParameter("page")); } catch (Exception e) {}
 
+                String searchKeyword = request.getParameter("searchKeyword");
+                if (searchKeyword != null) searchKeyword = searchKeyword.trim();
+
                 SuggestionDTO dto = new SuggestionDTO();
                 dto.setSize(size);
                 dto.setPage(page);
+                dto.setSearchKeyword(searchKeyword);
 
                 Map<String, Object> map = suggestionService.getList(dto);
-                map.put("size", size);
-                map.put("page", page);
+                map.put("size",          size);
+                map.put("page",          page);
+                map.put("searchKeyword", searchKeyword == null ? "" : searchKeyword);
 
                 int totalCount    = (int) map.get("totalCount");
                 int totalPages    = (int) Math.ceil((double) totalCount / size);
@@ -100,8 +105,10 @@ public class SuggestionController extends HttpServlet {
                 // 댓글 입력 가능 여부: 작성자 본인 OR auth >= 2
                 boolean canComment = isOwner || auth >= 2;
 
-                // ctime 밀리초: JS에서 10분 체크용
-                long ctimeMs = (detail.getCtime() != null) ? detail.getCtime().getTime() : 0;
+                // JS 10분 체크용 ctime epoch ms:
+                // JDBC Timestamp.getTime()은 타임존 해석 이슈로 부정확하므로
+                // DAO가 Oracle에서 직접 KST로 보정해 계산한 ctimeKstMs를 사용한다.
+                long ctimeMs = detail.getCtimeKstMs();
 
                 List<CommentDTO> commentList = suggestionService.getCommentList(boardno);
 

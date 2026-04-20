@@ -19,7 +19,7 @@ public class ProdService {
         planDTO.setStart(start);
 
         List list       = prodPlanDAO.selectAll(planDTO);
-        int  totalCount = prodPlanDAO.selectTotal();
+        int  totalCount = prodPlanDAO.selectTotal(planDTO);
 
         int totalPage    = (int) Math.ceil((double) totalCount / size);
         if (totalPage < 1) totalPage = 1;
@@ -37,6 +37,11 @@ public class ProdService {
         map.put("endSection",   endSection);
 
         return map;
+    }
+
+    /* ── 생산계획 등록 (신규 plan_id 반환) ────────────────── */
+    public String insertPlan(ProdDTO dto) {
+        return prodPlanDAO.insertPlan(dto);
     }
 
     /* ── 생산계획 상세 ────────────────────────────────────── */

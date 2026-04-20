@@ -8,7 +8,7 @@ public class SuggestionService {
 
     SuggestionDAO suggestionDAO = new SuggestionDAO();
 
-    // 목록 조회 (페이지네이션)
+    // 목록 조회 (페이지네이션 + 검색)
     public Map<String, Object> getList(SuggestionDTO dto) {
         int size  = dto.getSize();
         int page  = dto.getPage();
@@ -18,7 +18,7 @@ public class SuggestionService {
         dto.setStart(start);
 
         List<SuggestionDTO> list = suggestionDAO.selectList(dto);
-        int totalCount = suggestionDAO.selectTotal();
+        int totalCount = suggestionDAO.selectTotal(dto);
 
         Map<String, Object> map = new HashMap<>();
         map.put("list",       list);

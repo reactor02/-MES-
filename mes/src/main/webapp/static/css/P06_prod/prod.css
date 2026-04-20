@@ -208,6 +208,28 @@
     gap: 8px;
 }
 
+/* 툴바 내 라벨 (열 개수:, 기간:) */
+.pp .toolbar-label {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--pp-text-secondary);
+    white-space: nowrap;
+    user-select: none;
+}
+
+/* 툴바 내 기간 범위 래퍼 ([시작일] ~ [종료일]) */
+.pp .toolbar-date-range {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: nowrap;
+}
+.pp .toolbar-date-sep {
+    color: var(--pp-text-muted);
+    font-size: 13px;
+    user-select: none;
+}
+
 .pp .search-wrap {
     position: relative;
     flex: 1;
@@ -716,14 +738,6 @@
    등록 모달 전용 (구 prodRegist.css)
    ========================================================== */
 
-/* ── unit / spec readonly 인풋 ── */
-.reg-readonly {
-    background-color: #f1f5f9;
-    color: var(--pp-text-secondary, #64748b);
-    cursor: default;
-    pointer-events: none;
-}
-
 /* ── 담당자 인풋 + 돋보기 래퍼 ── */
 .emp-search-wrap {
     display: flex;
@@ -914,4 +928,49 @@
 /* 수정 모달에서 상태 select는 등록과 달리 보여야 함 */
 .pp .dtl-status-visible {
     display: block;
+}
+
+/* ==========================================================
+   기간 범위 UI ([시작일] ~ [종료일]) + 한 줄 전체 차지
+   ========================================================== */
+
+/* 기간은 form-grid의 2칸 전체를 차지 */
+.pp .form-group-wide {
+    grid-column: 1 / -1;
+}
+
+/* 두 날짜 input을 가운데 ~ 구분자와 함께 가로로 나란히 */
+.pp .date-range-wrap {
+    display: flex;
+    flex-direction: row;     /* form-group이 column이어도 내부는 가로 */
+    flex-wrap: nowrap;       /* 좁아도 줄바꿈 금지 */
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+}
+.pp .date-range-wrap .form-control {
+    flex: 1 1 0;             /* 두 input이 남는 공간을 균등 분배 */
+    min-width: 0;            /* flex item의 기본 min-width(auto) 해제 */
+    width: auto;             /* 기존 .pp .form-control width:100% 무력화 */
+}
+.pp .date-range-sep {
+    flex: 0 0 auto;
+    color: #64748b;
+    font-weight: 500;
+    user-select: none;
+}
+
+/* ==========================================================
+   수정 불가(readonly) 필드 — 회색 처리
+   ========================================================== */
+.pp .reg-readonly {
+    background-color: #f1f5f9 !important;
+    color: #64748b !important;
+    border-color: #e2e8f0 !important;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+.pp .reg-readonly:focus {
+    outline: none;
+    box-shadow: none;
 }

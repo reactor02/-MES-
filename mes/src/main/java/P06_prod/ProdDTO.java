@@ -20,11 +20,25 @@ public class ProdDTO {
     private String ename;        // user_info.ename �� �����
     private int prevQty;  // prev_qty  �������
      
-    // ���������̼ǿ�
+    // 페이지네이션
     private int size  = 10;
 	private int page  = 1;
     private int start;
     private int end;
+
+    // 검색 조건
+    private String keyword;       // 제품명 / 계획ID LIKE 검색
+    private String startDate;     // 검색 시작일 (yyyy-MM-dd)
+    private String endDate;       // 검색 종료일 (yyyy-MM-dd)
+
+    public String getKeyword()                   { return keyword; }
+    public void   setKeyword(String keyword)     { this.keyword = keyword; }
+
+    public String getStartDate()                 { return startDate; }
+    public void   setStartDate(String startDate) { this.startDate = startDate; }
+
+    public String getEndDate()                   { return endDate; }
+    public void   setEndDate(String endDate)     { this.endDate = endDate; }
 
     // ������ Getters / Setters ������������������������������������������������������������������������������
     

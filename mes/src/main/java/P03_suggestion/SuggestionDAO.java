@@ -24,13 +24,22 @@ public class SuggestionDAO {
         return conn;
     }
 
-    public int selectTotal() {
+    // 검색 조건 반영한 총건수
+    public int selectTotal(SuggestionDTO dto) {
         int totalCount = 0;
-        String sql = "SELECT COUNT(*) cnt FROM suggestion";
+        StringBuilder sql = new StringBuilder("SELECT COUNT(*) cnt FROM suggestion WHERE 1=1 ");
+        if (dto.getSearchKeyword() != null && !dto.getSearchKeyword().trim().isEmpty()) {
+            sql.append(" AND title LIKE ? ");
+        }
         try (Connection conn = getConn();
-             PreparedStatement ps = conn.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
-            if (rs.next()) totalCount = rs.getInt("cnt");
+             PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+            int idx = 1;
+            if (dto.getSearchKeyword() != null && !dto.getSearchKeyword().trim().isEmpty()) {
+                ps.setString(idx++, "%" + dto.getSearchKeyword().trim() + "%");
+            }
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) totalCount = rs.getInt("cnt");
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -39,20 +48,30 @@ public class SuggestionDAO {
 
     public List<SuggestionDTO> selectList(SuggestionDTO dto) {
         List<SuggestionDTO> list = new ArrayList<>();
-        String sql = "SELECT * FROM ("
-                   + "  SELECT rownum AS rnum, s.* FROM ("
-                   + "    SELECT s.boardno, s.title, s.ctime,"
-                   + "           TO_CHAR(FROM_TZ(CAST(s.ctime AS TIMESTAMP), 'UTC') AT TIME ZONE 'Asia/Seoul', 'YYYY-MM-DD HH24:MI') AS ctime_str,"
-                   + "           s.emp_id, s.complete, s.views, u.ename"
-                   + "    FROM suggestion s"
-                   + "    LEFT JOIN user_info u ON s.emp_id = u.emp_id"
-                   + "    ORDER BY TO_NUMBER(SUBSTR(s.boardno, 6)) DESC"
-                   + "  ) s"
-                   + ") WHERE rnum >= ? AND rnum <= ?";
+        StringBuilder sql = new StringBuilder();
+        sql.append("SELECT * FROM (")
+           .append("  SELECT rownum AS rnum, s.* FROM (")
+           .append("    SELECT s.boardno, s.title, s.ctime,")
+           .append("           TO_CHAR(FROM_TZ(CAST(s.ctime AS TIMESTAMP), 'UTC') AT TIME ZONE 'Asia/Seoul', 'YYYY-MM-DD HH24:MI') AS ctime_str,")
+           .append("           s.emp_id, s.complete, s.views, u.ename")
+           .append("    FROM suggestion s")
+           .append("    LEFT JOIN user_info u ON s.emp_id = u.emp_id")
+           .append("    WHERE 1=1 ");
+        if (dto.getSearchKeyword() != null && !dto.getSearchKeyword().trim().isEmpty()) {
+            sql.append("    AND s.title LIKE ? ");
+        }
+        sql.append("    ORDER BY TO_NUMBER(SUBSTR(s.boardno, 6)) DESC")
+           .append("  ) s")
+           .append(") WHERE rnum >= ? AND rnum <= ?");
+
         try (Connection conn = getConn();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, dto.getStart());
-            ps.setInt(2, dto.getEnd());
+             PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+            int idx = 1;
+            if (dto.getSearchKeyword() != null && !dto.getSearchKeyword().trim().isEmpty()) {
+                ps.setString(idx++, "%" + dto.getSearchKeyword().trim() + "%");
+            }
+            ps.setInt(idx++, dto.getStart());
+            ps.setInt(idx++, dto.getEnd());
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     SuggestionDTO row = new SuggestionDTO();
@@ -75,13 +94,23 @@ public class SuggestionDAO {
 
     public SuggestionDTO selectOne(String boardno) {
         SuggestionDTO dto = null;
-        String sql = "SELECT s.boardno, s.title, s.content, s.ctime, s.mtime,"
-                   + "       TO_CHAR(FROM_TZ(CAST(s.ctime AS TIMESTAMP), 'UTC') AT TIME ZONE 'Asia/Seoul', 'YYYY-MM-DD HH24:MI') AS ctime_str,"
-                   + "       TO_CHAR(FROM_TZ(CAST(s.mtime AS TIMESTAMP), 'UTC') AT TIME ZONE 'Asia/Seoul', 'YYYY-MM-DD HH24:MI') AS mtime_str,"
-                   + "       s.views, s.emp_id, s.complete, s.origin_name, s.save_name, u.ename"
-                   + " FROM suggestion s"
-                   + " LEFT JOIN user_info u ON s.emp_id = u.emp_id"
-                   + " WHERE s.boardno = ?";
+        // ctime_kst_ms: 한국시간으로 보정된 ctime의 epoch 밀리초.
+        // JDBC Timestamp.getTime()의 타임존 해석 이슈를 우회하기 위해 Oracle에서 직접 계산.
+        // (그 시각을 UTC로 파싱 → 1970-01-01 00:00:00 UTC와의 차이를 DAY로 뽑아 ms로 환산)
+        String sql =
+            "SELECT s.boardno, s.title, s.content, s.ctime, s.mtime,"
+          + "       TO_CHAR(FROM_TZ(CAST(s.ctime AS TIMESTAMP), 'UTC') AT TIME ZONE 'Asia/Seoul', 'YYYY-MM-DD HH24:MI') AS ctime_str,"
+          + "       TO_CHAR(FROM_TZ(CAST(s.mtime AS TIMESTAMP), 'UTC') AT TIME ZONE 'Asia/Seoul', 'YYYY-MM-DD HH24:MI') AS mtime_str,"
+          + "       ROUND("
+          + "         ("
+          + "           CAST(FROM_TZ(CAST(s.ctime AS TIMESTAMP), 'UTC') AT TIME ZONE 'Asia/Seoul' AS DATE)"
+          + "           - TO_DATE('1970-01-01 00:00:00','YYYY-MM-DD HH24:MI:SS')"
+          + "         ) * 86400000"
+          + "       ) AS ctime_kst_ms,"
+          + "       s.views, s.emp_id, s.complete, s.origin_name, s.save_name, u.ename"
+          + " FROM suggestion s"
+          + " LEFT JOIN user_info u ON s.emp_id = u.emp_id"
+          + " WHERE s.boardno = ?";
         try (Connection conn = getConn();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, boardno);
@@ -95,6 +124,7 @@ public class SuggestionDAO {
                     dto.setMtime(rs.getTimestamp("mtime"));
                     dto.setCtimeStr(rs.getString("ctime_str"));
                     dto.setMtimeStr(rs.getString("mtime_str"));
+                    dto.setCtimeKstMs(rs.getLong("ctime_kst_ms"));
                     dto.setViews(rs.getInt("views"));
                     dto.setEmpId(rs.getString("emp_id"));
                     dto.setComplete(rs.getInt("complete"));
