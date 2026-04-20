@@ -27,7 +27,7 @@
     
 <link rel="stylesheet" href="/mes/static/css/P08_quality/add.css">
 <link rel="stylesheet" href="/mes/static/css/P09_equip/equip.css">
-<!-- <script src="/mes/static/js/09_equip/detail.js"></script> -->
+<!-- <script src="/mes/static/js/09_equip/modifyInsp.js"></script> -->
 
 </head>
 <body>
@@ -40,7 +40,8 @@
         </div>
         <div class="content">
             <!-- 상단 -->
-			<form method="post" action="/mes/eqlogmodify">
+			<form method="post" action="/mes/eqlogmodify" id="eqForm">
+				<input type="hidden" name="cmd" value="" id="actionType">
 				<input type="hidden" name="logId" value="${logInfo.logId}">
 				<div class="page-header">
 					<div>
@@ -53,6 +54,7 @@
 							<button type="button" class="buttonWhite" id="backBtn">취소</button>
 						</a>
 						<button type="submit" class="buttonMain" id="addBtn">수정</button>
+<!-- 						<button type="button" class="buttonRed" onclick="submitForm('delete')">삭제</button> -->
 					</div>
 				</div>
 
