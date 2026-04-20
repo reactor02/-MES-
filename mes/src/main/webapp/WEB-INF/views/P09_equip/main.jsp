@@ -108,11 +108,11 @@
 				            	<div class="color success"></div>
 				            	<div class="typeName">정상</div>
 			            	</div>
-			            	<div class="typeTag">
+			            	<div class="typeTag tooltip tooltipTop" data-msg="정상 범위 ±10%">
 				            	<div class="color warning"></div>
 				            	<div class="typeName">경고</div>
 			            	</div>
-			            	<div class="typeTag">
+			            	<div class="typeTag tooltip tooltipTop" data-msg="정상 범위 미만 혹은 초과">
 				            	<div class="color danger"></div>
 				            	<div class="typeName">위험</div>
 			            	</div>

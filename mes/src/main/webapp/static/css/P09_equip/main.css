@@ -267,6 +267,11 @@
     transition: 0.2s;
 }
 
+.tooltipTop::after {
+	top: auto !important;
+	bottom: 102% !important;
+}
+
 .tooltip:hover::after {
     opacity: 1;
 }
