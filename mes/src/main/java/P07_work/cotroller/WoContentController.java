@@ -52,16 +52,23 @@ public class WoContentController extends HttpServlet {
 	            throw new RuntimeException("작업 상태가 선택되지 않았습니다.");
 	        }
 
-	        if (prevQtyStr == null || prevQtyStr.trim().isEmpty()) {
-	            throw new RuntimeException("완료 수량이 입력되지 않았습니다.");
-	        }
-
 	        if (worker == null || worker.trim().isEmpty()) {
 	            throw new RuntimeException("작업자 정보가 없습니다.");
 	        }
-
+	        
 	        int status = Integer.parseInt(statusStr);
-	        int prevQty = Integer.parseInt(prevQtyStr);
+
+	        int prevQty = 0;
+	        if (status == 30) {
+	            if (prevQtyStr == null || prevQtyStr.trim().isEmpty()) {
+	                throw new RuntimeException("완료 수량이 입력되지 않았습니다.");
+	            }
+	            prevQty = Integer.parseInt(prevQtyStr);
+	        } else {
+	            if (prevQtyStr != null && !prevQtyStr.trim().isEmpty()) {
+	                prevQty = Integer.parseInt(prevQtyStr);
+	            }
+	        }
 
 	        WoService service = new WoService();
 	        service.processContentModify(woId, status, prevQty, worker);

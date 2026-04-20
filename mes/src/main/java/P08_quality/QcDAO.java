@@ -202,10 +202,11 @@ public class QcDAO {
 					+ "LEFT OUTER JOIN ( "
 					+ "    SELECT qc_id, SUM(defect_cnt) AS def_cnt "
 					+ "    FROM defect "
+					+ "	   WHERE deleted is null"
 					+ "    GROUP BY qc_id "
 					+ ") def_sum "
 					+ "    ON qc.qc_id = def_sum.qc_id "
-					+ "WHERE qc.qcstatus_no = 30 "
+					+ "WHERE qc.qcstatus_no in (30, 50) "
 					+ "  AND qc.deleted IS NULL "
 					+ "  AND wo.deleted IS NULL "
 					+ "  AND qc.qc_edate >= TRUNC(SYSDATE) "
@@ -1120,6 +1121,69 @@ public class QcDAO {
 	
 	
 	
+	public int woStatus(QcAddDTO dto) {
+
+		Connection conn = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+
+		int result = -1;
+
+		try {
+
+			// JNDI 방식
+			// context.xml에 있는 DB 정보로 커넥션 풀을 가져온다
+			Context ctx = new InitialContext();
+			// DataSource : 커넥션 풀 관리자
+			DataSource dataFactory = (DataSource) ctx.lookup("java:/comp/env/jdbc/oracle");
+
+			// DB 접속(그런데 이제 커넥션 풀로)
+			conn = dataFactory.getConnection();
+
+			// SQL 준비
+			String query = "update work_order set wostatus_no = 35 where wo_id = ? ";
+			
+			ps = new LoggableStatement(conn, query);
+			
+			ps.setString(1, dto.getWoId());
+
+			// SQL 실행 및 결과 확보
+			result = ps.executeUpdate();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (rs != null) {
+				try {
+					rs.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+
+			if (ps != null) {
+				try {
+					ps.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		} // finally
+
+		return result;
+	} // woStatus
+	
+	
+	
+	
 	public QcDTO getQc (String qcId) {
 		
 		Connection conn = null;
@@ -1369,6 +1433,69 @@ public class QcDAO {
 
 		return result;
 	} // deleteQc
+
+	
+	public int delWoStatus(String woId) {
+		
+		Connection conn = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		
+		int result = -1;
+		
+		try {
+			
+			// JNDI 방식
+			// context.xml에 있는 DB 정보로 커넥션 풀을 가져온다
+			Context ctx = new InitialContext();
+			// DataSource : 커넥션 풀 관리자
+			DataSource dataFactory = (DataSource) ctx.lookup("java:/comp/env/jdbc/oracle");
+			
+			// DB 접속(그런데 이제 커넥션 풀로)
+			conn = dataFactory.getConnection();
+			
+			// SQL 준비
+			String query = "UPDATE WORK_ORDER  "
+					+ "SET wostatus_no = 30  "
+					+ "WHERE wo_id = ?  ";
+			
+			ps = new LoggableStatement(conn, query);
+			
+			ps.setString(1, woId);
+			
+			// SQL 실행 및 결과 확보
+			result = ps.executeUpdate();
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (rs != null) {
+				try {
+					rs.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			
+			if (ps != null) {
+				try {
+					ps.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		} // finally
+		
+		return result;
+	} // delWoStatus
 	
 	
 	public int addDef(String qcId, QcDefDTO dto) {
@@ -1856,14 +1983,15 @@ public class QcDAO {
 			conn = dataFactory.getConnection();
 			
 			// SQL 준비
-			String query = "INSERT INTO io (io_id, io_type, io_reason, item_id, lot_id, emp_id, io_time) "
-					+ "values('in_'||in_seq.nextval, 0, '생산', ?, ?, ?, sysdate)";
+			String query = "INSERT INTO io (io_id, io_type, io_reason, item_id, lot_id, emp_id, io_time, io_qty) "
+					+ "values('in_'||in_seq.nextval, 0, '생산', ?, ?, ?, sysdate + 9/24, ?)";
 			
 			ps = new LoggableStatement(conn, query);
 			
 			ps.setString(1, dto.getItemId());
 			ps.setString(2, dto.getLotId());
 			ps.setString(3, dto.getEmpId());
+			ps.setDouble(4,  dto.getQty());
 			
 			// SQL 실행 및 결과 확보
 			result = ps.executeUpdate();
@@ -2216,7 +2344,7 @@ public class QcDAO {
 
 	    try {
 	        String query = "INSERT INTO io (io_id, io_type, io_reason, item_id, lot_id, emp_id, io_time, io_qty) "
-	                + "values('in_'||in_seq.nextval, 0, '생산', ?, ?, ?, sysdate, ?)";
+	                + "values('in_'||in_seq.nextval, 0, '생산', ?, ?, ?, sysdate + 9/24, ?)";
 
 	        ps = conn.prepareStatement(query);
 	        ps.setString(1, dto.getItemId());

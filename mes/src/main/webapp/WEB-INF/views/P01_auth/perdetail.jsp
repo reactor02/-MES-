@@ -40,8 +40,7 @@
 			<div class="model-body">
 			
 			     <div class="model-high">
-                       <h2 class="h2">권한부여 상세</h2>
-		               <span class="close-btn" >&times;</span>
+                       <h2 class="h2">사용자 관리 상세</h2>
 	             </div>
 	             
 	             <div>
@@ -54,6 +53,13 @@
 			
 			<form method="post" action="/mes/pdetail">
 					<div class="center">
+					<c:if test="${ not empty error }">
+					${ not empty error }
+					</c:if>
+					<c:if test="${ not empty error1 }">
+					${ not empty error1 }
+					</c:if>
+					<input value="${ d.empid }" name="change-auth" style="display : none;">
 				           <div class="pd-box">
 							사번 : 
 							<li class="input-1 radius">
@@ -61,13 +67,14 @@
 							</li>
 				           </div>
 				           <br>
-				           <div class="pd-box">
-						    부서 : 
-						    <li class="input-1 radius">
-							${ d.deptname }
-							</li>
+						    <div class="pd-box">
+						    부서 : <select name="dept" class="input-1 radius">
+							<c:forEach var="s" items="${ selectd }">
+							<option  value="${s.deptname}" ${ s.deptname == d.deptname ? 'selected' : '' }>${ s.deptname }</option>
+							</c:forEach>
+							</select>
 				           </div>
-				           <br>
+							<br>
 				           <div class="pd-box">
 						    이름 : 
 						    <li class="input-1 radius">
@@ -77,9 +84,9 @@
 				           <br>
 				           <div class="pd-box">
 						    권한 : <select name="permission" class="input-1 radius">
-							<option>작업자 [1]</option>
-							<option>관리자 [2]</option>
-							<option>슈퍼바이저 [3]</option>
+							<c:forEach var="a" items="${ selecta }">
+							<option  value="${a.auth}" ${ a.auth == d.auth ? 'selected' : '' }>${ a.auth == 1 ? '작업자' : a.auth == 2 ? '관리자' : a.auth == 3 ? '슈퍼바이저' : '권한박탈(퇴사)' }</option>
+							</c:forEach>
 							</select>
 				           </div>
 							<br>

@@ -110,7 +110,7 @@ public class LoginAuthFilter implements Filter {
                 || "/womodify".equals(path)
                 || "/qcadd".equals(path)
                 || "/qcmodify".equals(path)
-                || "/notice/detail".equals(path)
+                || "/notice/register".equals(path)
                 || "/notice/edit".equals(path)) {
             return 2;
         }

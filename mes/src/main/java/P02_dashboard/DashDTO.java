@@ -3,7 +3,7 @@ package P02_dashboard;
 import java.io.Serializable; // 1. import 추가
 import java.sql.Date;
 
-public class DashDTO {
+public class DashDTO implements Serializable  {
 	
 	String dtype_name;
 	String nboardno;

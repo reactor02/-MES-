@@ -96,6 +96,11 @@ public class QcService {
 		return dao.addQc(dto);
 	}
 	
+	public int woStatus(QcAddDTO dto) {
+		QcDAO dao = new QcDAO();
+		return dao.woStatus(dto);
+	}
+	
 	public QcDTO getQc(String qcId) {
 		QcDAO dao = new QcDAO();
 		return dao.getQc(qcId);
@@ -109,6 +114,11 @@ public class QcService {
 	public int deleteQc(String qcId) {
 		QcDAO dao = new QcDAO();
 		return dao.deleteQc(qcId);
+	}
+	
+	public int delWoStatus(String woId) {
+		QcDAO dao = new QcDAO();
+		return dao.delWoStatus(woId);
 	}
 	
 	public int addDef(String qcId, QcDefDTO defDTO) {

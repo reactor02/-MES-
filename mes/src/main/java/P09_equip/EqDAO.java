@@ -884,7 +884,7 @@ public class EqDAO {
 			
 			// SQL 준비
 			String query = "UPDATE eqrun_log "
-					+ "SET etime = sysdate "
+					+ "SET etime = sysdate   "
 					+ "WHERE eq_id = ? AND etime IS NULL ";
 			
 			ps = new LoggableStatement(conn, query);
@@ -1008,7 +1008,7 @@ public class EqDAO {
 			
 			// SQL 준비
 			String query = "INSERT INTO EQRUN_LOG (eqrun_id, eq_id, stime) "
-					+ "VALUES ('run_'||run_seq.nextval, ?, sysdate)";
+					+ "VALUES ('run_'||run_seq.nextval, ?, sysdate  )";
 			
 			ps = new LoggableStatement(conn, query);
 			ps.setString(1, eqId);
@@ -1287,8 +1287,8 @@ public class EqDAO {
 			conn = dataFactory.getConnection();
 			
 			// SQL 준비
-			String query = "UPDATE EQUIPMENT_LOG\r\n"
-					+ "SET start_time=?, end_time=?, insp_type=?, insp_content=?\r\n"
+			String query = "UPDATE EQUIPMENT_LOG "
+					+ "SET start_time=?, end_time=?, insp_type=?, insp_content=? "
 					+ "WHERE eq_log_id=?";
 			
 			ps = new LoggableStatement(conn, query);
@@ -1332,4 +1332,71 @@ public class EqDAO {
 		
 		return result;
 	} // modifyLog
+	
+//	
+//	public int deleteInsp(String logId) {
+//		
+//		Connection conn = null;
+//		PreparedStatement ps = null;
+//		ResultSet rs = null;
+//		
+//		int result = -1;
+//		
+//		try {
+//			
+//			// JNDI 방식
+//			// context.xml에 있는 DB 정보로 커넥션 풀을 가져온다
+//			Context ctx = new InitialContext();
+//			// DataSource : 커넥션 풀 관리자
+//			DataSource dataFactory = (DataSource) ctx.lookup("java:/comp/env/jdbc/oracle");
+//			
+//			// DB 접속(그런데 이제 커넥션 풀로)
+//			conn = dataFactory.getConnection();
+//			
+//			// SQL 준비
+//			String query = "UPDATE EQUIPMENT_LOG "
+//					+ "SET deleted = 'Y' "
+//					+ "WHERE eq_log_id=?";
+//			
+//			ps = new LoggableStatement(conn, query);
+//			
+//			ps.setTimestamp(1, dto.getsTime());
+//			ps.setTimestamp(2, dto.geteTime());
+//			ps.setString(3, dto.getInspType());
+//			ps.setString(4, dto.getInspContent());
+//			ps.setString(5, dto.getLogId());
+//			
+//			// SQL 실행 및 결과 확보
+//			result = ps.executeUpdate();
+//			
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		} finally {
+//			if (rs != null) {
+//				try {
+//					rs.close();
+//				} catch (SQLException e) {
+//					e.printStackTrace();
+//				}
+//			}
+//			
+//			if (ps != null) {
+//				try {
+//					ps.close();
+//				} catch (SQLException e) {
+//					e.printStackTrace();
+//				}
+//			}
+//			
+//			if (conn != null) {
+//				try {
+//					conn.close();
+//				} catch (SQLException e) {
+//					e.printStackTrace();
+//				}
+//			}
+//		} // finally
+//		
+//		return result;
+//	} // deleteInsp
 }

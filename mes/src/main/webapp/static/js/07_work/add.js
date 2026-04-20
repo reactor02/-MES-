@@ -20,8 +20,15 @@ function bind() {
     // 모달 내부 실시간 검색
     document.querySelector("#workerKeyword").addEventListener("input", handleSearchInput);
     
+    // 목표 수량 clamp
+    document.querySelector("#targetQty").addEventListener("input", handleTargetQtyInput);
+    
+    
     document.querySelector("#addBtn").addEventListener("click", validateAndSubmit);
 }
+
+
+
 
 function fetchPlan() {
     const planSelect = document.querySelector("#planSelect");
@@ -40,12 +47,23 @@ function fetchPlan() {
             document.querySelector("#progressQty").value = `${data.prevQty} / ${data.planQty}`;
             document.querySelector("#director").value = `${data.dName} (${data.dId})`;
 
-            document.querySelector("input[name='workDate']").min = data.sDate;
-            document.querySelector("input[name='workDate']").max = data.eDate;
+            document.querySelector("#workDate").min = data.sDate;
+            document.querySelector("#workDate").max = data.eDate;
 
+            const targetQtyEl = document.querySelector("#targetQty");
+            const remainQty = Number(data.planQty) - Number(data.prevQty);
+
+            targetQtyEl.value = "";
+            targetQtyEl.min = 1;
+            targetQtyEl.max = remainQty > 0 ? remainQty : 0;
+            
+            
             planSelect.value = data.planId;
         })
-        .catch(err => console.error(err));
+        .catch(err => {
+            console.error(err);
+            alert("생산 계획 정보를 불러오지 못했습니다.");
+        });
 }
 
 /* =========================
@@ -173,7 +191,9 @@ function validateAndSubmit(e) {
     const planId = document.querySelector("#planId").value;
     const itemId = document.querySelector("#itemId").value;
     const progressQty = document.querySelector("#progressQty").value;
-    const targetQty = document.querySelector("#targetQty").value;
+    const targetQtyEl = document.querySelector("#targetQty");
+    const targetQty = Number(targetQtyEl.value);
+    const maxQty = Number(targetQtyEl.max);
     const workDate = document.querySelector("#workDate").value;
     const director = document.querySelector("#director").value;
     const workerId = document.querySelector("#workerId").value;
@@ -181,10 +201,18 @@ function validateAndSubmit(e) {
     if (!planId || !itemId || !progressQty || !director) {
         return alert("생산 계획을 선택하세요");
     }
-    
 
-    if (!targetQty || targetQty <= 0) {
+    if (!targetQtyEl.value || targetQty <= 0) {
         return alert("목표 수량을 입력하세요");
+    }
+
+    if (!targetQtyEl.max || maxQty <= 0) {
+        return alert("남은 계획 수량이 없습니다.");
+    }
+
+    if (targetQty > maxQty) {
+        targetQtyEl.value = maxQty;
+        return alert(`목표 수량은 ${maxQty} 이하만 입력할 수 있습니다.`);
     }
 
     if (!workDate) {
@@ -196,4 +224,54 @@ function validateAndSubmit(e) {
     }
 
     document.querySelector("form").submit();
+}
+
+
+/* =========================
+   목표 수량 제한
+========================= */
+function handleTargetQtyInput(e) {
+    const el = e.target;
+
+    // 빈 값 허용
+    if (el.value === "") return;
+
+    let num = Number(el.value);
+
+    if (isNaN(num)) {
+        el.value = "";
+        return;
+    }
+
+    const min = el.min !== "" ? Number(el.min) : -Infinity;
+    const max = el.max !== "" ? Number(el.max) : Infinity;
+
+    if (num < min) {
+        el.value = min;
+        return;
+    }
+
+    if (num > max) {
+        el.value = max;
+        return;
+    }
+
+    el.value = num;
+}
+
+function clampNumber(el) {
+    let val = el.value;
+
+    if (val === '') return '';
+
+    let num = Number(val);
+    if (isNaN(num)) return '';
+
+    const min = el.min !== '' ? Number(el.min) : -Infinity;
+    const max = el.max !== '' ? Number(el.max) : Infinity;
+
+    if (num < min) return min;
+    if (num > max) return max;
+
+    return num;
 }

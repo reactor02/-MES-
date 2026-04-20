@@ -4,7 +4,7 @@ import java.sql.Date;
 
 import java.io.Serializable; // 1. 임포트 추가
 
-public class LoginDTO {
+public class LoginDTO implements Serializable {
 	
 	String empid;
 	String ename;
@@ -17,6 +17,7 @@ public class LoginDTO {
 	String deptname;
 	int auth;
 	Date hiredate;
+	int dept_no;
 
 	
 	int wo_qty;
@@ -37,12 +38,33 @@ public class LoginDTO {
 	Date qc_edate;
 	String dtype_name;
 	
-    
+    int retire;
     
     
 	
 	
 	
+	public int getRetire() {
+		return retire;
+	}
+
+
+
+	public void setRetire(int retire) {
+		this.retire = retire;
+	}
+
+
+
+	public int getDept_no() {
+		return dept_no;
+	}
+	
+	
+	
+	public void setDept_no(int dept_no) {
+		this.dept_no = dept_no;
+	}
 	
 	public int getQc_qty() {
 		return qc_qty;
