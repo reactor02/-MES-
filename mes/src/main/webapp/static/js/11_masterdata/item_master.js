@@ -17,6 +17,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const editItemId = document.getElementById('edit_item_id');
     const editItemName = document.getElementById('edit_item_name');
     const editGId = document.getElementById('edit_g_id');
+    const editGIdDisplay = document.getElementById('edit_g_id_display');
     const editSafeQty = document.getElementById('edit_safe_qty');
     const editPay = document.getElementById('edit_pay');
     const editSpec = document.getElementById('edit_spec');
@@ -65,6 +66,13 @@ document.addEventListener('DOMContentLoaded', function() {
             if (editGId != null) {
                 editGId.value = gId;
             }
+            if (editGIdDisplay != null) {
+                if (groupMap[gId] != null) {
+                    editGIdDisplay.value = groupMap[gId];
+                } else {
+                    editGIdDisplay.value = '';
+                }
+            }
             if (editSafeQty != null) {
                 editSafeQty.value = safeQty;
             }
@@ -95,6 +103,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const btnAdd = document.querySelector('.btn-add');
     const addItemModal = document.getElementById('addItemModal');
     const addItemCloseBtn = document.getElementById('cancelAddItemModal');
+    const addItemForm = addItemModal != null ? addItemModal.querySelector('form') : null;
 
     if (btnAdd != null && addItemModal != null) {
         btnAdd.addEventListener('click', function() {
@@ -211,6 +220,25 @@ document.addEventListener('DOMContentLoaded', function() {
         addGId.addEventListener('change', function() {
             syncAddItemGroupName();
             updateItemCode();
+        });
+    }
+
+    if (addItemForm != null) {
+        addItemForm.addEventListener('submit', function(event) {
+            syncAddItemGroupName();
+            updateItemCode();
+
+            if (addItemName != null && addItemName.value.trim() === '') {
+                event.preventDefault();
+                alert('품목명을 입력해주세요.');
+                addItemName.focus();
+                return;
+            }
+
+            if (addItemId != null && addItemId.value.trim() === '') {
+                event.preventDefault();
+                alert('품목코드가 생성되지 않았습니다. 품목그룹과 품목명을 다시 확인해주세요.');
+            }
         });
     }
 
