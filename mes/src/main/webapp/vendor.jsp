@@ -5,6 +5,9 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <%@ page import="java.util.*"%>
 
+<c:set var="isSuperAdmin"
+	value="${not empty sessionScope.dto and sessionScope.dto.empid eq 'user_1001'}" />
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -44,7 +47,9 @@
 						<h1>거래처 관리</h1>
 						<p>공급업체 및 고객사 거래처 정보를 관리</p>
 					</div>
-					<button type="button" class="btn-add">+ 거래처 등록</button>
+					<c:if test="${isSuperAdmin}">
+						<button type="button" class="btn-add">+ 거래처 등록</button>
+					</c:if>
 				</div>
 
 				<div class="summary-cards">
@@ -198,12 +203,13 @@
 		</div>
 	</div>
 
-	<!-- 등록 모달 -->
-	<div class="add_vendor_modal" id="addVendorModal"
-		style="display: none;">
-		<div class="add_vendor_modal_popup">
-			<form action="${pageContext.request.contextPath}/vendorAdd"
-				method="post">
+	<c:if test="${isSuperAdmin}">
+		<!-- 등록 모달 -->
+		<div class="add_vendor_modal" id="addVendorModal"
+			style="display: none;">
+			<div class="add_vendor_modal_popup">
+				<form action="${pageContext.request.contextPath}/vendorAdd"
+					method="post">
 				<input type="hidden" id="add_emp_id" name="emp_id"
 					value="${not empty currentEmpId ? currentEmpId : (not empty sessionScope.dto.empid ? sessionScope.dto.empid : sessionScope.dto.empId)}">
 
@@ -253,9 +259,10 @@
 						id="saveAddVendorModal">등록</button>
 				</div>
 
-			</form>
+				</form>
+			</div>
 		</div>
-	</div>
+	</c:if>
 
 	<script
 		src="${pageContext.request.contextPath}/static/js/11_masterdata/vendor.js"></script>
