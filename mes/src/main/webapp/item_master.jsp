@@ -42,7 +42,7 @@
 				<div class="page-top">
 					<div class="page-header">
 						<h1>품목 마스터</h1>
-						<p>제품 및 원자재 품목 정보를 관리합니다.</p>
+						<p>제품 및 원자재 품목 정보를 관리</p>
 					</div>
 					<button type="button" class="btn-add">+ 품목 등록</button>
 				</div>
