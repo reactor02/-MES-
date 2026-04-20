@@ -67,6 +67,46 @@ public class LoginService {
 		
 	}
 	
+	public int changeAuth(LoginDTO d) {
+		System.out.println("/login service.changeAuth() 실행 ");
+		
+		//실무 함수 소환
+		LoginDAO a = new LoginDAO();
+		
+		
+		
+		//정보수정 실행 결과 리턴.
+		return a.changeAuth(d);
+		
+		
+	}
+	
+	public int changeDept(LoginDTO d) {
+		System.out.println("/login service.changeDept() 실행 ");
+		
+		//실무 함수 소환
+		LoginDAO a = new LoginDAO();
+		
+		
+		
+		//정보수정 실행 결과 리턴.
+		return a.changeDept(d);
+		
+		
+	}
+	public int retire(LoginDTO d) {
+		System.out.println("/login service.retire() 실행 ");
+		
+		//실무 함수 소환
+		LoginDAO a = new LoginDAO();
+		
+		
+		
+		//정보수정 실행 결과 리턴.
+		return a.retire(d);
+		
+		
+	}
 	
 	public LoginDTO detail(String empid) {
 		System.out.println("/login service.detail() 실행 ");
@@ -289,6 +329,15 @@ public class LoginService {
 		
 		//로그인 함수 실행결과 리턴
 		return a.selectm();				
+	}
+	public List<LoginDTO> selecta() {
+		System.out.println("/dashboard service.selecta() 실행 ");
+		
+		//실무 함수 소환
+		LoginDAO a = new LoginDAO();
+		
+		//로그인 함수 실행결과 리턴
+		return a.selecta();				
 	}
 	
 	
