@@ -78,7 +78,7 @@
 							<div class="detail-card summary-card">
 								<div class="card-title-row">
 									<h2>설비 목록</h2>
-									<span class="card-sub-text">이 공정에 배치된 설비 목록입니다.</span>
+									<span class="card-sub-text">현재 공정명과 맞는 설비 목록입니다.</span>
 								</div>
 
 								<ul class="equip-list">
@@ -107,8 +107,8 @@
 								<table class="material-table">
 									<thead>
 										<tr>
-											<th>원자재 코드</th>
-											<th>원자재명</th>
+											<th>자재 코드</th>
+											<th>자재명</th>
 											<th>단위</th>
 										</tr>
 									</thead>

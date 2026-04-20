@@ -26,23 +26,36 @@ public class ProcessAddController extends HttpServlet {
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		// 한글처리
 		request.setCharacterEncoding("utf-8");
 		response.setContentType("text/html; charset=utf-8;");
 
-		// 파라메타 확보
-		String process_id = request.getParameter("process_id");
-		int seq = Integer.parseInt(request.getParameter("seq"));
-		String process_name = request.getParameter("process_name");
-		String process_type = request.getParameter("process_type");
-		String item_id = request.getParameter("item_id");
-		String process_info = request.getParameter("process_info");
+		ProcessDAO processDAO = new ProcessDAO();
 
-		if (process_info == null || process_info.trim().equals("")) {
-			process_info = process_name;
+		String process_id = trimToEmpty(request.getParameter("process_id"));
+		int seq = parseIntOrDefault(request.getParameter("seq"), 1);
+		String process_name = trimToEmpty(request.getParameter("process_name"));
+		String process_type = trimToEmpty(request.getParameter("process_type"));
+		String item_id = trimToEmpty(request.getParameter("item_id"));
+		String process_info = trimToEmpty(request.getParameter("process_info"));
+
+		if (process_id.equals("")) {
+			process_id = processDAO.selectNextProcessId();
+		}
+		if (seq < 1) {
+			seq = 1;
+		}
+		if (process_type.equals("")) {
+			process_type = "wo";
 		}
 
-		// DTO에 담기
+		if (process_info.equals("")) {
+			process_info = process_name;
+		}
+		if (process_name.equals("") || item_id.equals("")) {
+			response.sendRedirect(request.getContextPath() + "/process");
+			return;
+		}
+
 		ProcessDTO processDTO = new ProcessDTO();
 		processDTO.setProcess_id(process_id);
 		processDTO.setSeq(seq);
@@ -51,12 +64,10 @@ public class ProcessAddController extends HttpServlet {
 		processDTO.setItem_id(item_id);
 		processDTO.setProcess_info(process_info);
 		
-		// addProcess 호출
 		int result = addProcess(processDTO);
 
-		// insert후 다시 페이지 복귀
-		if (result == 0) {
-			response.sendRedirect(request.getContextPath() + "/process");
+		if (result > 0) {
+			response.sendRedirect(request.getContextPath() + "/process?page=1&processId=" + process_id);
 		} else {
 			response.sendRedirect(request.getContextPath() + "/process");
 		}
@@ -67,5 +78,21 @@ public class ProcessAddController extends HttpServlet {
 		return processDAO.insertProcess(processDTO);
 	}
 
+	private int parseIntOrDefault(String value, int defaultValue) {
+		try {
+			if (value == null || value.trim().equals("")) {
+				return defaultValue;
+			}
+			return Integer.parseInt(value.trim());
+		} catch (Exception e) {
+			return defaultValue;
+		}
+	}
 
+	private String trimToEmpty(String value) {
+		if (value == null) {
+			return "";
+		}
+		return value.trim();
+	}
 }

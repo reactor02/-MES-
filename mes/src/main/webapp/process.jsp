@@ -6,10 +6,9 @@
 
 <%@ page import="java.util.*"%>
 
-<c:set var="nextSeq" value="1" />
-<c:if test="${not empty stepList}">
-	<c:set var="nextSeq" value="${fn:length(stepList) + 1}" />
-</c:if>
+<c:set var="nextSeq" value="${nextStepSeq}" />
+<c:set var="isSuperAdmin"
+	value="${not empty sessionScope.dto and sessionScope.dto.empid eq 'user_1001'}" />
 
 <c:set var="defaultProcessType" value="wo" />
 <c:if test="${not empty selectedProcess and not empty selectedProcess.process_type}">
@@ -55,12 +54,15 @@
 						<p>생산 공정 정보를 관리</p>
 					</div>
 
-					<button type="button" class="process-primary-btn"
-						id="openProcessStepModal">+ 공정 단계 등록</button>
+					<c:if test="${isSuperAdmin}">
+						<button type="button" class="process-primary-btn"
+							id="openProcessStepModal">+ 공정 단계 등록</button>
+					</c:if>
 				</div>
 
 				<div class="process-filter-row">
-					<form method="get" action="${pageContext.request.contextPath}/process">
+					<form method="get"
+						action="${pageContext.request.contextPath}/process">
 						<input type="hidden" name="keyword" value="${keyword}">
 						<input type="hidden" name="size" value="${size}">
 						<select name="processId" class="process-select"
@@ -108,18 +110,25 @@
 					<div class="process-list-top">
 						<h2>공정 목록</h2>
 
-						<form class="process-toolbar" method="get"
-							action="${pageContext.request.contextPath}/process">
-							<input type="hidden" name="processId" value="${selectedProcessId}">
-							<input type="hidden" name="size" value="${size}">
+						<div class="process-toolbar-wrap">
+							<form class="process-toolbar" method="get"
+								action="${pageContext.request.contextPath}/process">
+								<input type="hidden" name="processId" value="${selectedProcessId}">
+								<input type="hidden" name="size" value="${size}">
 
-							<div class="process-search">
-								<input class="process-search-text" type="text" name="keyword"
-									value="${keyword}" placeholder="공정명 검색..." />
-							</div>
+								<div class="process-search">
+									<input class="process-search-text" type="text" name="keyword"
+										value="${keyword}" placeholder="공정명 검색..." />
+								</div>
 
-							<button type="submit" class="process-primary-btn small">검색</button>
-						</form>
+								<button type="submit" class="process-primary-btn small">검색</button>
+							</form>
+
+							<c:if test="${isSuperAdmin}">
+								<button type="button" class="process-primary-btn small"
+									id="openProcessAddModal">+ 공정 등록</button>
+							</c:if>
+						</div>
 					</div>
 
 					<div class="process-table-wrap">
@@ -156,7 +165,8 @@
 													</c:choose>
 												</td>
 												<td>
-													<a href="${pageContext.request.contextPath}/processDetail?processId=${p.process_id}">
+													<a class="process-name-link"
+														href="${pageContext.request.contextPath}/processDetail?processId=${p.process_id}">
 														${p.process_name}
 													</a>
 												</td>
@@ -215,10 +225,12 @@
 		</div>
 	</div>
 
-	<div class="process-step-modal" id="processStepModal">
-		<div class="process-step-modal-popup">
-			<form action="${pageContext.request.contextPath}/ProcessAddController"
-				method="post">
+	<c:if test="${isSuperAdmin}">
+		<!-- 공정 단계 등록 모달 : process_step INSERT -->
+		<div class="process-step-modal" id="processStepModal">
+			<div class="process-step-modal-popup">
+				<form action="${pageContext.request.contextPath}/ProcessStepAddController"
+					method="post">
 
 				<div class="process-step-modal-header">
 					<h3 class="process-step-modal-title">공정 단계 등록</h3>
@@ -226,45 +238,36 @@
 
 				<div class="process-step-form-row">
 					<div class="process-step-form-group code">
-						<label for="processCodeInput">공정코드</label>
-						<input type="text" id="processCodeInput" name="process_id"
-							class="process-step-input" value="${nextProcessId}" readonly>
+						<label for="processStepProcessId">공정코드</label>
+						<input type="text" id="processStepProcessId" name="process_id"
+							class="process-step-input" value="${selectedProcessId}" readonly>
 					</div>
 
 					<div class="process-step-form-group code">
-						<label for="processSeqView">단계순서</label>
-						<input type="text" id="processSeqView" class="process-step-input"
-							value="${nextSeq}단계" readonly>
+						<label for="processStepSeqView">단계순서</label>
+						<input type="text" id="processStepSeqView"
+							class="process-step-input" value="${nextSeq}단계" readonly>
 						<input type="hidden" name="seq" value="${nextSeq}">
 					</div>
 
-					<div class="process-step-form-group type">
-						<label for="processTypeInput">공정유형</label>
-						<select id="processTypeInput" name="process_type"
-							class="process-step-input">
-							<option value="wo"
-								<c:if test="${defaultProcessType eq 'wo'}">selected</c:if>>작업</option>
-							<option value="qc"
-								<c:if test="${defaultProcessType eq 'qc'}">selected</c:if>>품질</option>
-						</select>
-					</div>
-
 					<div class="process-step-form-group name">
-						<label for="processNameInput">공정명</label>
-						<input type="text" id="processNameInput" name="process_name"
-							class="process-step-input" placeholder="">
+						<label for="processStepName">공정 단계명</label>
+						<input type="text" id="processStepName" name="step_name"
+							class="process-step-input" placeholder="공정 단계명을 입력하세요" required>
 					</div>
 				</div>
-
-				<input type="hidden" name="item_id" value="${selectedProcess.item_id}">
-				<input type="hidden" name="process_info" value="">
 
 				<div class="process-step-preview-box">
 					<h4 class="process-step-preview-title">공정 단계(예상)</h4>
 
 					<c:choose>
 						<c:when test="${empty stepList}">
-							<div class="process-step-preview-empty">등록된 공정 단계가 없습니다.</div>
+							<div class="process-step-preview-line">
+								<div class="process-step-preview-card">
+									<span class="process-step-preview-badge">${nextSeq}단계</span>
+									<strong>새 공정 단계</strong>
+								</div>
+							</div>
 						</c:when>
 
 						<c:otherwise>
@@ -279,6 +282,13 @@
 										<div class="process-step-preview-arrow">→</div>
 									</c:if>
 								</c:forEach>
+
+								<div class="process-step-preview-arrow">→</div>
+
+								<div class="process-step-preview-card">
+									<span class="process-step-preview-badge">${nextSeq}단계</span>
+									<strong>새 공정 단계</strong>
+								</div>
 							</div>
 						</c:otherwise>
 					</c:choose>
@@ -289,11 +299,83 @@
 						id="closeProcessStepModal">취소</button>
 					<button type="submit" class="process-step-save-btn">등록</button>
 				</div>
-
-			</form>
+				</form>
+			</div>
 		</div>
-	</div>
+	</c:if>
 
+	<c:if test="${isSuperAdmin}">
+		<!-- 공정 등록 모달 : process INSERT -->
+		<div class="process-add-modal" id="processAddModal">
+			<div class="process-add-modal-popup">
+				<form action="${pageContext.request.contextPath}/ProcessAddController"
+					method="post">
+
+				<div class="process-add-modal-header">
+					<h3 class="process-add-modal-title">공정 등록</h3>
+				</div>
+
+				<div class="process-add-form-row">
+					<div class="process-add-form-group code">
+						<label for="addProcessId">공정코드</label>
+						<input type="text" id="addProcessId" name="process_id"
+							class="process-add-input readonly" value="${nextProcessId}" readonly>
+					</div>
+
+					<div class="process-add-form-group type">
+						<label for="addProcessType">공정유형</label>
+						<select id="addProcessType" name="process_type"
+							class="process-add-input">
+							<option value="wo"
+								<c:if test="${defaultProcessType eq 'wo'}">selected</c:if>>작업</option>
+							<option value="qc"
+								<c:if test="${defaultProcessType eq 'qc'}">selected</c:if>>품질</option>
+						</select>
+					</div>
+				</div>
+
+				<div class="process-add-form-row">
+					<div class="process-add-form-group name">
+						<label for="addProcessName">공정명</label>
+						<input type="text" id="addProcessName" name="process_name"
+							class="process-add-input" placeholder="공정명을 입력하세요" required>
+					</div>
+				</div>
+
+				<div class="process-add-form-row">
+					<div class="process-add-form-group item">
+						<label for="addProcessItemId">품목코드</label>
+						<input type="text" id="addProcessItemId" name="item_id"
+							class="process-add-input" value="${selectedProcess.item_id}"
+							placeholder="예: semi_1003" required>
+					</div>
+
+<!-- 					<div class="process-add-form-group seq"> -->
+<!-- 						<label for="addProcessSeq">순서</label> -->
+<!-- 						<input type="number" id="addProcessSeq" name="seq" -->
+<!-- 							class="process-add-input" value="1" min="1"> -->
+<!-- 					</div> -->
+				</div>
+
+				<div class="process-add-form-row">
+					<div class="process-add-form-group info">
+						<label for="addProcessInfo">공정 설명</label>
+						<textarea id="addProcessInfo" name="process_info"
+							class="process-add-textarea" placeholder="공정 설명을 입력하세요"></textarea>
+					</div>
+				</div>
+
+				<div class="process-add-modal-actions">
+					<button type="button" class="process-add-cancel-btn"
+						id="closeProcessAddModal">취소</button>
+					<button type="submit" class="process-add-save-btn">등록</button>
+				</div>
+				</form>
+			</div>
+		</div>
+	</c:if>
+
+	<!-- 공정 수정 모달 -->
 	<div class="process-edit-modal" id="processEditModal">
 		<div class="process-edit-modal-popup">
 			<form action="${pageContext.request.contextPath}/processUpdate"
