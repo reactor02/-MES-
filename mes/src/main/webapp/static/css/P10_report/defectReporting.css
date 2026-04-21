@@ -77,9 +77,12 @@ header {
  
 	flex-shirink : 0;
 } 
+/* 현재 CSS에 있는 내용 */
 .radius {
-	border : 1px solid black;
-	border-radius : 10px;
+    border: 1px solid #ddd;       /* 테두리 */
+    border-radius: 10px;          /* 둥근 모서리 */
+    background-color: #fff;       /* 배경색(필수) */
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05); /* 그림자 */
 }
 .weather {
 	display : flex;

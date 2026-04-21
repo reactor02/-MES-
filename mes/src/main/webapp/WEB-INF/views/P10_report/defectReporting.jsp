@@ -20,7 +20,9 @@
 
 <link rel="stylesheet" href="/mes/static/css/P00_layout/snb.css">
 <script src="/mes/static/js/00_layout/snb.js"></script>
-<link rel="stylesheet" href="/mes/static/css/P10_report/defectReporting.css">
+<link rel="stylesheet"
+	href="/mes/static/css/P10_report/defectReporting.css">
+	<link rel="stylesheet" href="/mes/static/css/P09_equip/main.css">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 </head>
@@ -42,19 +44,20 @@
 					<h7>부적합 발생 현황 및 시정조치 관리</h7>
 				</div>
 				<div class="board-box">
-				
-				
-				<div class="box-type4 radius">
-				        <div>
-				        <h3>검사 ID : ${ not empty param.qc_id ? param.qc_id : d1.qc_id } <br>검사 종료일 : ${ not empty param.qc_edate ? param.qc_edate : d1.qc_edate }</h3>
-				        </div>						
-						<div class="weather">
-							
+
+
+					<div class="box-type4 radius">
+						<div>
+							<h3>
+								검사 ID : ${ not empty param.qc_id ? param.qc_id : sessionScope.d1.qc_id }
+								<br> 검사 종료일 : ${ not empty param.qc_edate ? param.qc_edate : sessionScope.d1.qc_edate }
+							</h3>
 						</div>
+						<div class="weather"></div>
 					</div>
-					
-				    <div class="box-type4 radius">
-						<div class="chart-1 weather" >
+
+					<div class="box-type4 radius">
+						<div class="chart-1 weather">
 							<h3>품질 기준</h3>
 							<h4>성상 & 포장상태 : 육안 검사 & 누설 검사</h4>
 							<h4>알콜함량 & 성분분석 : 63% ~ 77%, 5mL 이상</h4>
@@ -62,79 +65,114 @@
 							<h4>포장밀봉상태 : 누설시험 진행</h4>
 						</div>
 					</div>
+
 					
-				    <div class="box-type4 radius">
-						<div class="chart-1 weather">
-						<h3>당시 클린룸 상태</h3>
-							<h4>미세먼지 : 452,000</h4>
-							<h4>온도 : 21 도</h4>
-							<h4>습도 : 53 %</h4>
-							<h4>차압 : 15 Pa</h4>
-						</div>
-					</div>
-				
-				
-					
+		        <div class="card" style="height : 250px; padding-bottom : 0px;" >
+		        	<div class="cardTitle">
+			            <h3>클린룸 현황</h3>
+			            <div class="type">
+			            	<div class="typeTag">
+				            	<div class="color success"></div>
+				            	<div class="typeName">정상</div>
+			            	</div>
+			            	<div class="typeTag">
+				            	<div class="color warning"></div>
+				            	<div class="typeName">정상</div>
+			            	</div>
+			            	<div class="typeTag">
+				            	<div class="color danger"></div>
+				            	<div class="typeName">정상</div>
+			            	</div>
+			            </div>
+		        	</div>
+		            <div class= cardClean>
+			            <div class="cardSmall temp warning">
+				            <p>온도</p>
+				            <strong>21.1</strong>
+				            <p>(단위 : ℃)</p>
+				        </div>
+				        <div class="cardSmall humid">
+				            <p>습도</p>
+				            <strong>51.2</strong>
+				            <p>(단위 : % RH)</p>
+				        </div>
+				        <div class="cardSmall press">
+				            <p>차압</p>
+				            <strong>+12</strong>
+				            <p>(단위 : Pa)</p>
+				        </div>
+				        <div class="cardSmall clean">
+				            <p>청정도</p>
+				            <strong>30.5</strong>
+				            <p>(단위 : 만/m²)</p>
+				        </div>
+		            </div>
+		        </div>
+
+
+
 					<div class="box-type2 radius">
 						<h3>검사 전</h3>
-						<div class="big lightgrey">
-						${ not empty param.qc_qty ? param.qc_qty : (100)} 개
-						</div>
+						<div class="big lightgrey">${ not empty param.qc_qty ? param.qc_qty : (100)}
+							개</div>
 					</div>
-					
+
 					<div class="box-type2 radius">
 						<h3>검사 완료</h3>
-						<div class="big green">
-						${ not empty param.qc_qty ? param.qc_clear : (100 - d1.defect_cnt)} 개 
-						</div>
-						
+						<div class="big green">${ not empty param.qc_qty ? param.qc_clear : (100 - d1.defect_cnt)}
+							개</div>
+
 					</div>
-				
-				
-				    
-				
-				<div class="box-type2-1 radius">
-						<div  style="width: 100%; ">						
-						<div style="width : 100%; height : 400px; ">
-							<canvas id="defect-type-chart"></canvas>
-						</div>
-						</div>
-					</div>
-					
+
+
+
+
 					<div class="box-type2-1 radius">
-						<div style="width: 100%; display : flex; flex-direction : column; justify-content : space-evenly;">							
-						<div style="height : 390px;">
-							<canvas id="month-defect-chart"></canvas>
-						</div>
-						</div>
-					</div>
-					
-
-
-					
-					<div class="box-type3 radius">
-					<h3>부적합 보고서</h3>
-					<div class="short-box">
-						<c:forEach var="d" items="${ defect_report }">
-							<div>
-								<a href="http://localhost:8080/mes/defectreporting?defect_id=${ d.defect_id }&solution=${ d.solution }&qc_qty=100&qc_clear=${ 100 - (d.defect_cnt) }&qc_id=${ d.qc_id }&dtype_name=${ d.dtype_name }&qc_edate=${ d.qc_edate }&defect_cnt=${ d.defect_cnt }">${ d.defect_id } : ${ d.defect_cnt } : ${ d.dtype_name } : ${ d.solution } : ${ d.qc_id } : ${ d.woid } : ${ d.qc_sdate } :${ d.qc_edate } : ${ d.defect_cnt } :</a>
-								<div class='buttonMain small'>${ d.solution }
-								</div>
+						<div style="width: 100%;">
+							<div style="width: 100%; height: 400px;">
+								<canvas id="defect-type-chart"></canvas>
 							</div>
-						</c:forEach>
+						</div>
 					</div>
-					
-					
-						<form method="get" action="defectreporting">
-					<div class="next">
-						<c:forEach var="m" begin="1" end="${ page_no }">
-							<button name="d_btn" value="${ m  }" class="buttonMain small">${ m }</button>						
-						</c:forEach>
-					</div>
-						</form>
-				</div>
 
-					
+					<div class="box-type2-1 radius">
+						<div
+							style="width: 100%; display: flex; flex-direction: column; justify-content: space-evenly;">
+							<div style="height: 390px;">
+								<canvas id="month-defect-chart"></canvas>
+							</div>
+						</div>
+					</div>
+
+
+
+
+					<div class="box-type3 radius">
+						<h3>부적합 보고서</h3>
+						<div class="short-box">
+							<c:forEach var="d" items="${ defect_report }">
+								<div>
+									<a
+										href="http://localhost:8080/mes/defectreporting?defect_id=${ d.defect_id }&solution=${ d.solution }&qc_qty=100&qc_clear=${ 100 - (d.defect_cnt) }&qc_id=${ d.qc_id }&dtype_name=${ d.dtype_name }&qc_edate=${ d.qc_edate }&defect_cnt=${ d.defect_cnt }">${ d.defect_id }
+										: ${ d.defect_cnt } : ${ d.dtype_name } : ${ d.solution } : ${ d.qc_id }
+										: ${ d.woid } : ${ d.qc_sdate } :${ d.qc_edate } : ${ d.defect_cnt }
+										:</a>
+									<div class='buttonMain small'>${ d.solution }</div>
+								</div>
+							</c:forEach>
+						</div>
+
+
+						<form method="get" action="defectreporting">
+							<div class="next">
+								<c:forEach var="m" begin="1" end="${ page_no }">
+									<button name="d_btn" value="${ m  }" class="buttonMain small">${ m }</button>
+								</c:forEach>
+							</div>
+						</form>
+					</div>
+
+
 				</div>
 			</div>
 
@@ -146,11 +184,17 @@
 
 	<script>
 	// 1. EL 파라미터 추출
-	const p_id = "${param.defect_id}";
-	const p_date = "${param.qc_edate}";
-	const p_name = "${param.dtype_name}"; // 불량 유형 이름 추가
-	const p_solution = "${param.solution}"; // 해결 이름 추가
-	const p_cnt = Number("${param.defect_cnt}") || 0; 
+	const p_id = " ${ not empty param.qc_id ? param.qc_id : sessionScope.d1.qc_id }";
+	const p_date = " ${ not empty param.qc_edate ? param.qc_edate : sessionScope.d1.qc_edate }";
+	const p_name = "${ not empty param.dtype_name ? param.dtype_name : sessionScope.d1.dtype_name }"; // 불량 유형 이름 추가
+	const p_solution = "${ not empty param.solution ? param.solution : sessionScope.d1.dtype_name}"; // 해결 이름 추가
+	const p_cnt = Number("${ not empty param.defect_cnt ? param.defect_cnt : sessionScope.d1.defect_cnt}") || 0; 
+	
+	console.log('p_id', p_id)
+	console.log('p_date', p_date)
+	console.log('p_name', p_name)
+	console.log('p_solution', p_solution)
+	console.log('p_cnt', p_cnt)
 
 	const total_qty = 100;
 	const success_qty = total_qty - p_cnt;

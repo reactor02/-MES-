@@ -108,6 +108,8 @@ public class DashboardController extends HttpServlet {
 	    }
 		
 		
+	    
+	    
 		// Paging 페이징(alarms)
 		String apage = request.getParameter("a_btn");
 		System.out.println("apage : " + apage);
@@ -150,7 +152,7 @@ public class DashboardController extends HttpServlet {
 		List<DashDTO> notice = s.notice(nstart_no, ncountPageNo);
 		
 		//건의 사항 페이징
-		List<DashDTO> suggestion = s.suggestion(sstart_no, scountPageNo);
+		List<DashDTO> suggestion = s.suggestion(empid, sstart_no, scountPageNo);
 
 	
 

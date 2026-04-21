@@ -38,10 +38,10 @@ public class DefectReportingController extends HttpServlet {
 		
 		 //불량 유형별 차트 자료
 		List<DashDTO> list = s.defect();
+		
 		List<LoginDTO> dMonthChart = s.dMonthChart();
 		
 		
-		LoginDTO d1 = dMonthChart.get((dMonthChart.size() - 1));
 		
 
 		// Paging 페이징
@@ -68,16 +68,16 @@ public class DefectReportingController extends HttpServlet {
 
 		int page_no = (int) Math.ceil((double) count / countPage);
 		System.out.println("page_no : " + page_no);
-		
-		
-		
-		
+
 
 		// 함수 소환 후 결과를 리스트에 저장.
 		List<LoginDTO> defect_report= s.defect_report(start_no, countPageNo);
 		
+		LoginDTO d1 = defect_report.get(0);
 		
-		
+		System.out.println(d1.getDefect_cnt());
+		System.out.println(d1.getDtype_name());
+		System.out.println(d1.getDefect_id());
 		
 
 		// 세션 소환

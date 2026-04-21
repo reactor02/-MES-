@@ -52,10 +52,12 @@
 
 						<div class="chain">
 							<select name="join-dept" class="input-2 radius">
+							<option>부서명</option>
 								<c:forEach var="d" items="${ selectd }">
 									<option>${ d.deptname }</option>
 								</c:forEach>
 							</select><br> <select name="join-mgr" class="input-2 radius">
+							<option>상사 사원번호</option>
 								<c:forEach var="m" items="${ selectm }">
 									<option>${ m.empid }</option>
 								</c:forEach>

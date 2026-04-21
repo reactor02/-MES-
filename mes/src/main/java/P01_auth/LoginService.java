@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import P02_dashboard.DashDTO;
+import P10_report.ReportDTO;
 
 public class LoginService {
 	
@@ -216,14 +217,14 @@ public class LoginService {
 	} 
 	
 	
-	public List<DashDTO> suggestion(int sstart_no, int scountPageNo) {
+	public List<DashDTO> suggestion(String empid, int sstart_no, int scountPageNo) {
 		System.out.println("/dashboard service.suggestion() 실행 ");
 		
 		//실무 함수 소환
 		LoginDAO a = new LoginDAO();
 		
 		//로그인 함수 실행결과 리턴
-		return a.suggestion(sstart_no, scountPageNo);				
+		return a.suggestion(empid, sstart_no, scountPageNo);				
 	}
 	
 	public List<DashDTO> work_order() {
@@ -340,6 +341,70 @@ public class LoginService {
 		return a.selecta();				
 	}
 	
+	
+	
+	// 1. 목표 대비 달성률(sysdate)
+	public List<ReportDTO> date() {
+	    System.out.println("/dashboard service.date() 실행 ");
+	    LoginDAO a = new LoginDAO();
+	    return a.date();
+	}
+
+	// 2. 공정 양품률(sysdate)
+	public List<ReportDTO> clear() {
+	    System.out.println("/dashboard service.clear() 실행 ");
+	    LoginDAO a = new LoginDAO();
+	    return a.clear();
+	}
+	
+	// 1. 목표 대비 달성률(sysdate)
+		public ReportDTO sumdate() {
+		    System.out.println("/dashboard service.sumdate() 실행 ");
+		    LoginDAO a = new LoginDAO();
+		    return a.sumdate();
+		}
+		// 1. 목표 대비 달성률(sysdate)
+		public List<ReportDTO> sumclear() {
+			System.out.println("/dashboard service.sumclear() 실행 ");
+			LoginDAO a = new LoginDAO();
+			return a.sumclear();
+		}
+		// 1. topfive
+		public List<ReportDTO> topfive() {
+			System.out.println("/dashboard service.topfive() 실행 ");
+			LoginDAO a = new LoginDAO();
+			return a.topfive();
+		}
+		// 1. errormch
+		public List<ReportDTO> errormch(int start_no, int countPageNo) {
+			System.out.println("/dashboard service.errormch() 실행 ");
+			LoginDAO a = new LoginDAO();
+			return a.errormch(start_no, countPageNo);
+		}
+		
+		// 1. 목표 대비 달성률(sysdate)
+		public ReportDTO press() {
+		    System.out.println("/dashboard service. press() 실행 ");
+		    LoginDAO a = new LoginDAO();
+		    return a.press();
+		}
+
+
+//
+//	// 5. 설비 실시간 가동 현황
+//	public List<ReportDTO> mchdate() {
+//	    System.out.println("/dashboard service.mchdate() 실행 ");
+//	    LoginDAO a = new LoginDAO();
+//	    return a.mchdate();
+//	}
+//
+//	// 7. 실시간 공정이슈 및 시정조치
+//	public List<ReportDTO> errormch() {
+//	    System.out.println("/dashboard service.errormch() 실행 ");
+//	    LoginDAO a = new LoginDAO();
+//	    return a.errormch();
+//	}
+//	
 	
 	
 	

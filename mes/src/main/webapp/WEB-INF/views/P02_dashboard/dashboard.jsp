@@ -22,6 +22,7 @@
 <script src="/mes/static/js/00_layout/snb.js"></script>
 <link rel="stylesheet"
 	href="/mes/static/css/P02_dashboard/dashboard.css">
+	<link rel="stylesheet" href="/mes/static/css/P09_equip/main.css">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 </head>
@@ -44,11 +45,11 @@
 				</div>
 				<div class="board-box">
 
-					<div class="box-type4 radius">
+					<div class=" card box-type4 radius">
 						<div class="weather"></div>
 					</div>
 
-					<div class="box-type4 radius">
+					<div class=" card box-type4 radius">
 						<div class="chart-1 weather">
 							<h3>품질 기준</h3>
 							<h4>성상 & 포장상태 : 육안 검사 결과 (합격/불합격)</h4>
@@ -58,15 +59,52 @@
 						</div>
 					</div>
 
-					<div class="box-type4 radius">
-						<div class="chart-1 weather">
-							<h3>현재 클린룸 상태</h3>
-							<h4>미세먼지 : 452,000</h4>
-							<h4>온도 : 21 도</h4>
-							<h4>습도 : 53 %</h4>
-							<h4>차압 : 15 Pa</h4>
-						</div>
-					</div>
+				
+						<!-- 요약 카드 -->
+		   
+		        <div class="card" style="height : 300px; padding-bottom : 0px;" >
+		        	<div class="cardTitle">
+			            <h3>클린룸 현황</h3>
+			            <div class="type">
+			            	<div class="typeTag">
+				            	<div class="color success"></div>
+				            	<div class="typeName">정상</div>
+			            	</div>
+			            	<div class="typeTag">
+				            	<div class="color warning"></div>
+				            	<div class="typeName">정상</div>
+			            	</div>
+			            	<div class="typeTag">
+				            	<div class="color danger"></div>
+				            	<div class="typeName">정상</div>
+			            	</div>
+			            </div>
+		        	</div>
+		            <div class= cardClean>
+			            <div class="cardSmall temp warning">
+				            <p>온도</p>
+				            <strong>21.1</strong>
+				            <p>(단위 : ℃)</p>
+				        </div>
+				        <div class="cardSmall humid">
+				            <p>습도</p>
+				            <strong>51.2</strong>
+				            <p>(단위 : % RH)</p>
+				        </div>
+				        <div class="cardSmall press">
+				            <p>차압</p>
+				            <strong>+12</strong>
+				            <p>(단위 : Pa)</p>
+				        </div>
+				        <div class="cardSmall clean">
+				            <p>청정도</p>
+				            <strong>30.5</strong>
+				            <p>(단위 : 만/m²)</p>
+				        </div>
+		            </div>
+		        </div>
+		        
+					
 
 					<div class="box-type1 radius">
 						<div
@@ -115,19 +153,13 @@
 					<div class="short-box">
 						<c:forEach var="n" items="${ notice }">
 							<div>
-								<a>${ n.nboardno } : ${ n.ntitle }</a>
+								<a href="/mes/notice/detail?boardno=${ n.nboardno }">${ n.ntitle }</a>
 							</div>
 						</c:forEach>
 
 
 					</div>
-					<div class="next">
-						<c:forEach var="m" begin="1" end="${ npage_no }">
-						<form method="get" action="dashboard">
-							<button name="n_btn" value="${ m }" class="buttonMain">${ m }</button>
-						</form>
-						</c:forEach>
-					</div>
+					
 				</div>
 
 				<div class="box-type3 radius">
@@ -135,7 +167,7 @@
 					<div class="short-box">
 						<c:forEach var="s" items="${ suggestion }">
 							<div>
-								<a>${ s.sboardno } : ${ s.stitle } </a>
+								<a href="/mes/suggestion/detail?boardno=${ s.sboardno }"> ${ s.stitle } </a>
 								<div class='buttonMain small'>${ s.complete == 0 ? '검토중' : ( s.complete == 1 ? '검토완료' : '답변달림' ) }
 								</div>
 							</div>
@@ -145,13 +177,7 @@
 
 
 					</div>
-					<div class="next">
-						<c:forEach var="m" begin="1" end="${ spage_no }">
-						<form method="get" action="dashboard">
-							<button name="s_btn" value="${ m  }" class="buttonMain">${ m }</button>						
-						</form>
-						</c:forEach>
-					</div>
+					
 				</div>
 
 				</div>

@@ -25,8 +25,8 @@ public class ReportingController extends HttpServlet {
 
 		// 주소 : http://localhost:8080/mes/login.jsp
 
-		// 한글깨짐 방지
-		request.setCharacterEncoding("UTF-8");
+//		// 한글깨짐 방지
+//		request.setCharacterEncoding("UTF-8");
 //		response.setContentType("text/html; charset=UTF-8");
 		// 함수 모음집 소환
 		LoginService s = new LoginService();
@@ -35,10 +35,39 @@ public class ReportingController extends HttpServlet {
 		LoginDTO d = new LoginDTO();
 		
 		
+		//목표 대비 달성률(sysdate)
+		List<ReportDTO> date = s.date();
 		
-		 //불량 유형별 차트 자료
-		List<DashDTO> list = s.defect();
+		//목표 대비 달성률(sysdate)
+		ReportDTO sumdate = s.sumdate();
+		
+		//목표 대비 달성률(sysdate)
+		List<ReportDTO> sumclear = s.sumclear();
+		
+		//tipFive
+		List<ReportDTO> topfive = s.topfive();
+		
+		//설비 가동률
+		ReportDTO press = s.press();
+		
+		
+		
+		
+	    // 공정 양품률(sysdate)		
+		List<ReportDTO> clear = s.clear();
+		
+		
+//		//설비 실시간 가동 현황
+//		List<ReportDTO> mchdate = s.mchdate();
+		
+	    //주요 불량 원인 top 5
 		List<LoginDTO> dMonthChart = s.dMonthChart();
+		
+//		//실시간 공정이슈 및 시정조치.
+//		List<ReportDTO> errormch = s.errormch();
+//		
+		
+		
 		
 		
 		
@@ -72,6 +101,8 @@ public class ReportingController extends HttpServlet {
 		
 		
 		
+		//errormch
+		List<ReportDTO> errormch = s.errormch(start_no, countPageNo);
 
 		// 함수 소환 후 결과를 리스트에 저장.
 		List<LoginDTO> defect_report= s.defect_report(start_no, countPageNo);
@@ -86,7 +117,13 @@ public class ReportingController extends HttpServlet {
 		// 세션으로 보내기
 		
 		//불량 차트 자료
-		session.setAttribute("list", list);
+		session.setAttribute("date", date);
+		session.setAttribute("sumdate", sumdate);
+		session.setAttribute("sumclear", sumclear);
+		session.setAttribute("errormch", errormch);
+		session.setAttribute("press", press);
+		session.setAttribute("topfive", topfive);
+		session.setAttribute("clear", clear);
 		
 		//월간 불량 자료
 		session.setAttribute("dMonthChart", dMonthChart);
@@ -97,6 +134,7 @@ public class ReportingController extends HttpServlet {
 
 		// 세션이니 그냥 주소 바뀌게 ㄱㄱ.
 		request.getRequestDispatcher("/WEB-INF/views/P10_report/reporting.jsp").forward(request, response);
+		return;
 
 	}
 
