@@ -62,8 +62,8 @@ public class SuggestionService {
         return suggestionDAO.selectCommentList(boardno);
     }
 
-    // 댓글 등록
-    public int insertComment(String boardno, String content, String parentComno) {
-        return suggestionDAO.insertComment(boardno, content, parentComno);
+    // 댓글 등록 (writer: 로그인한 사람 이름)
+    public int insertComment(String boardno, String content, String parentComno, String writer) {
+        return suggestionDAO.insertComment(boardno, content, parentComno, writer);
     }
 }

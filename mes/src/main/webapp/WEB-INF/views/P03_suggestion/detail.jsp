@@ -167,6 +167,7 @@
                                 <c:if test="${c.depth > 0}">
                                     <span class="reply-icon">↳</span>
                                 </c:if>
+                                <span class="comment-writer">${c.writer}</span>
                                 <span class="comment-content-text">${c.content}</span>
                                 <span class="comment-time">
                                     ${c.ctimeStr}

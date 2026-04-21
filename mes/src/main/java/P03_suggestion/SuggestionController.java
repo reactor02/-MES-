@@ -249,7 +249,10 @@ public class SuggestionController extends HttpServlet {
                     parentComno = null;
                 }
 
-                suggestionService.insertComment(commentBoardno, commentContent, parentComno);
+                // 세션에서 로그인한 사람 이름 꺼내서 작성자로 저장
+                String writer = loginDto.getEname();
+
+                suggestionService.insertComment(commentBoardno, commentContent, parentComno, writer);
 
                 // 작성자 본인 외의 사람이 댓글 달면 complete 0 → 2(답변달림) 자동 변경
                 SuggestionDTO commentTarget = suggestionService.getDetail(commentBoardno);

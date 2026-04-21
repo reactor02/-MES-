@@ -233,7 +233,7 @@ public class SuggestionDAO {
     public List<CommentDTO> selectCommentList(String boardno) {
         List<CommentDTO> list = new ArrayList<>();
         String sql =
-            "SELECT comno, parent_comno, content, ctime," +
+            "SELECT comno, parent_comno, content, ctime, writer," +
             "       TO_CHAR(FROM_TZ(CAST(ctime AS TIMESTAMP), 'UTC') AT TIME ZONE 'Asia/Seoul', 'YYYY-MM-DD HH24:MI') AS ctime_str," +
             "       boardno, LEVEL - 1 AS depth " +
             "FROM comment_info " +
@@ -255,6 +255,7 @@ public class SuggestionDAO {
                     dto.setCtimeStr(rs.getString("ctime_str"));
                     dto.setBoardno(rs.getString("boardno"));
                     dto.setDepth(rs.getInt("depth"));
+                    dto.setWriter(rs.getString("writer"));
                     list.add(dto);
                 }
             }
@@ -264,7 +265,7 @@ public class SuggestionDAO {
         return list;
     }
 
-    public int insertComment(String boardno, String content, String parentComno) {
+    public int insertComment(String boardno, String content, String parentComno, String writer) {
         int result = 0;
         Connection conn = null;
         PreparedStatement ps = null;
@@ -281,13 +282,14 @@ public class SuggestionDAO {
             ps.close();
 
             ps = conn.prepareStatement(
-                "INSERT INTO comment_info (comno, content, ctime, mtime, boardno, parent_comno) " +
-                "VALUES (?, ?, SYSDATE, SYSDATE, ?, ?)"
+                "INSERT INTO comment_info (comno, content, ctime, mtime, boardno, parent_comno, writer) " +
+                "VALUES (?, ?, SYSDATE, SYSDATE, ?, ?, ?)"
             );
             ps.setString(1, comno);
             ps.setString(2, content);
             ps.setString(3, boardno);
             ps.setString(4, parentComno);
+            ps.setString(5, writer);
             result = ps.executeUpdate();
             conn.commit();
 
