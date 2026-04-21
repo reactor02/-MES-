@@ -11,6 +11,7 @@ public class CommentDTO {
     private String    boardno;
     private String    parentComno;
     private int       depth;
+    private String    writer;    // 작성자 이름 (로그인한 사람의 ename)
 
     public String    getComno()                          { return comno; }
     public void      setComno(String comno)              { this.comno = comno; }
@@ -26,4 +27,6 @@ public class CommentDTO {
     public void      setParentComno(String parentComno)  { this.parentComno = parentComno; }
     public int       getDepth()                          { return depth; }
     public void      setDepth(int depth)                 { this.depth = depth; }
+    public String    getWriter()                         { return writer; }
+    public void      setWriter(String writer)            { this.writer = writer; }
 }
