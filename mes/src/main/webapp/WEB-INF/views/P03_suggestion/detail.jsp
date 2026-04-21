@@ -19,10 +19,28 @@
 
 <%@ include file="/WEB-INF/views/P00_layout/header.jsp" %>
 
+<%--
+    Quill이 저장한 HTML 태그를 제거해서 순수 텍스트로 바꾸는 처리.
+    EL 문자열 리터럴은 \n 이스케이프를 해석하지 못하므로,
+    <c:set>의 body에 실제 개행문자(LF)를 넣어 줄바꿈 치환값으로 사용한다.
+--%>
+<c:set var="LF">
+</c:set>
+
+<c:set var="contentClean" value="${detail.content}"/>
+<c:set var="contentClean" value="${fn:replace(contentClean, '<br>',    LF)}"/>
+<c:set var="contentClean" value="${fn:replace(contentClean, '<br/>',   LF)}"/>
+<c:set var="contentClean" value="${fn:replace(contentClean, '<br />',  LF)}"/>
+<c:set var="contentClean" value="${fn:replace(contentClean, '</p>',    LF)}"/>
+<c:set var="contentClean" value="${fn:replace(contentClean, '<p>',     '')}"/>
+<c:set var="contentClean" value="${fn:replace(contentClean, '</div>',  LF)}"/>
+<c:set var="contentClean" value="${fn:replace(contentClean, '<div>',   '')}"/>
+<c:set var="contentClean" value="${fn:replace(contentClean, '&nbsp;',  ' ')}"/>
+
 <div class="layout_snb">
     <div class="snbContent"><%@ include file="/WEB-INF/views/P00_layout/snb.jsp" %></div>
     <div class="content">
-    <main class="sg">
+    <main class="sg sg-wide">
 
     <div id="page-suggest-detail">
         <div class="page-header-row">
@@ -44,8 +62,8 @@
                         삭제
                     </button>
                 </c:if>
-                <%-- auth 2 이상 + complete != 1 일 때 검토완료 버튼 표시 --%>
-                <c:if test="${dto.auth >= 2 && detail.complete != 1}">
+                <%-- 작성자 본인이 아니면서 auth 2 이상 + complete != 1 일 때 검토완료 버튼 표시 --%>
+                <c:if test="${!isOwner && dto.auth >= 2 && detail.complete != 1}">
                     <button class="btn btn-success btn-sm" id="btnComplete"
                             data-boardno="${detail.boardno}"
                             data-complete="${detail.complete}"
@@ -107,7 +125,28 @@
 
             <div class="form-group">
                 <label class="form-label">내용</label>
-                <textarea class="form-control" rows="6" readonly>${detail.content}</textarea>
+                <textarea class="form-control" rows="6" readonly>${contentClean}</textarea>
+            </div>
+
+            <%-- ===== 첨부파일 다운로드 영역 (등록 페이지의 첨부파일 위치와 동일) ===== --%>
+            <div class="form-group">
+                <label class="form-label">첨부파일</label>
+                <c:choose>
+                    <c:when test="${not empty detail.saveName}">
+                        <div class="file-download-wrap">
+                            <a class="btn btn-outline btn-sm"
+                               href="${pageContext.request.contextPath}/suggestion/download?save=${detail.saveName}&origin=${detail.originName}">
+                                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="vertical-align:middle;margin-right:4px;">
+                                    <path d="M7 1v8M3.5 5.5L7 9l3.5-3.5M2 12h10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                                ${detail.originName}
+                            </a>
+                        </div>
+                    </c:when>
+                    <c:otherwise>
+                        <input type="text" class="form-control" value="첨부된 파일이 없습니다." readonly>
+                    </c:otherwise>
+                </c:choose>
             </div>
         </div>
 

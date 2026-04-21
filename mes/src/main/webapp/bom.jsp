@@ -6,6 +6,9 @@
 
 <%@ page import="java.util.*"%>
 
+<c:set var="isSuperAdmin"
+	value="${not empty sessionScope.dto and sessionScope.dto.empid eq 'user_1001'}" />
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -49,7 +52,9 @@
 				<section class="bom-card">
 					<div class="bom-card-top">
 						<h2>BOM 코드 목록</h2>
-						<button type="button" class="bom-add-btn">+ BOM 등록</button>
+						<c:if test="${isSuperAdmin}">
+							<button type="button" class="bom-add-btn">+ BOM 등록</button>
+						</c:if>
 					</div>
 
 					<form class="bom-filter-row" method="get"
@@ -78,14 +83,13 @@
 									<th>BOM코드</th>
 									<th>제품명</th>
 									<th>분류</th>
-									<th>관리</th>
 								</tr>
 							</thead>
 							<tbody>
 								<c:choose>
 									<c:when test="${empty bomList}">
 										<tr>
-											<td colspan="4" class="bom-empty">조회된 BOM이 없습니다.</td>
+											<td colspan="3" class="bom-empty">조회된 BOM이 없습니다.</td>
 										</tr>
 									</c:when>
 									<c:otherwise>
@@ -102,12 +106,6 @@
 													<c:if test="${bom.g_id == 30}">완제품</c:if>
 													<c:if test="${bom.g_id == 20}">반제품</c:if>
 													<c:if test="${bom.g_id == 10}">원자재</c:if>
-												</td>
-												<td>
-													<button type="button" class="bom-edit-btn"
-														data-bom-id="${bom.bom_id}"
-														data-item-name="${fn:escapeXml(bom.item_name)}"
-														data-g-id="${bom.g_id}">수정</button>
 												</td>
 											</tr>
 										</c:forEach>
@@ -135,10 +133,11 @@
 		</div>
 	</div>
 
-	<div class="add_item_modal" id="addItemModal" style="display: none;">
-		<div class="add_item_modal_popup">
-			<form action="${pageContext.request.contextPath}/BomAddController"
-				method="post">
+	<c:if test="${isSuperAdmin}">
+		<div class="add_item_modal" id="addItemModal" style="display: none;">
+			<div class="add_item_modal_popup">
+				<form action="${pageContext.request.contextPath}/BomAddController"
+					method="post">
 				<input type="hidden" id="next_bom_id" value="${nextBomId}">
 
 				<h3 class="add_item_modal_title">BOM 등록</h3>
@@ -175,9 +174,10 @@
 					<button type="submit" class="add_item_save_btn"
 						id="saveAddItemModal">등록</button>
 				</div>
-			</form>
+				</form>
+			</div>
 		</div>
-	</div>
+	</c:if>
 
 	<div class="edit_item_modal" style="display: none;">
 		<div class="edit_item_modal_popup">

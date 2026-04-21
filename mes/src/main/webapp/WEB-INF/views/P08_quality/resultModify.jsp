@@ -72,6 +72,7 @@
 			                    <input type="radio" name="status" value="50" <c:if test="${qcInfo.qcStatus == 50}">checked</c:if>> 보류
 			                </label>
 			            </div>
+			            
 					</div>
 		
 		            <!-- 작업 -->

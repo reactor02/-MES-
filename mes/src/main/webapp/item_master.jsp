@@ -5,6 +5,9 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <%@ page import="java.util.*"%>
 
+<c:set var="isSuperAdmin"
+	value="${not empty sessionScope.dto and sessionScope.dto.empid eq 'user_1001'}" />
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -44,7 +47,9 @@
 						<h1>품목 마스터</h1>
 						<p>제품 및 원자재 품목 정보를 관리</p>
 					</div>
-					<button type="button" class="btn-add">+ 품목 등록</button>
+					<c:if test="${isSuperAdmin}">
+						<button type="button" class="btn-add">+ 품목 등록</button>
+					</c:if>
 				</div>
 
 				<div class="summary-cards">
@@ -71,14 +76,16 @@
 
 					<form class="filter-row" method="get"
 						action="${pageContext.request.contextPath}/itemmaster">
-						<input type="hidden" name="page" value="1">
-						<input type="hidden" name="size" value="${size}">
-
-						<select id="itemGroup" name="itemGroup" onchange="this.form.submit()">
+						<input type="hidden" name="page" value="1"> <input
+							type="hidden" name="size" value="${size}"> <select
+							id="itemGroup" name="itemGroup" onchange="this.form.submit()">
 							<option value="" <c:if test="${empty itemGroup}">selected</c:if>>선택</option>
-							<option value="30" <c:if test="${itemGroup eq '30'}">selected</c:if>>완제품</option>
-							<option value="20" <c:if test="${itemGroup eq '20'}">selected</c:if>>반제품</option>
-							<option value="10" <c:if test="${itemGroup eq '10'}">selected</c:if>>원자재</option>
+							<option value="30"
+								<c:if test="${itemGroup eq '30'}">selected</c:if>>완제품</option>
+							<option value="20"
+								<c:if test="${itemGroup eq '20'}">selected</c:if>>반제품</option>
+							<option value="10"
+								<c:if test="${itemGroup eq '10'}">selected</c:if>>원자재</option>
 						</select>
 
 						<div class="search-wrap">
@@ -113,20 +120,25 @@
 										<c:forEach var="item" items="${list}">
 											<tr data-g-id="${item.g_id}">
 												<td>${item.item_id}</td>
-												<td>
-													<c:choose>
+												<td><c:choose>
 														<c:when test="${not empty item.itemgroup_name}">
-															${item.itemgroup_name}
+															<c:choose>
+																<c:when test="${fn:toLowerCase(item.itemgroup_name) eq 'fin'}">완제품</c:when>
+																<c:when test="${fn:toLowerCase(item.itemgroup_name) eq 'semi'}">반제품</c:when>
+																<c:when test="${fn:toLowerCase(item.itemgroup_name) eq 'raw'}">원자재</c:when>
+																<c:otherwise>${item.itemgroup_name}</c:otherwise>
+															</c:choose>
 														</c:when>
 														<c:when test="${item.g_id == 30}">완제품</c:when>
 														<c:when test="${item.g_id == 20}">반제품</c:when>
 														<c:when test="${item.g_id == 10}">원자재</c:when>
 														<c:otherwise>-</c:otherwise>
-													</c:choose>
-												</td>
-												<td>${item.item_name}</td>
-												<td><fmt:formatNumber value="${item.safe_qty}" pattern="#,##0" /></td>
-												<td><fmt:formatNumber value="${item.pay}" pattern="#,##0" /></td>
+													</c:choose></td>
+												<td><span class="item-name-text">${item.item_name}</span></td>
+												<td><fmt:formatNumber value="${item.safe_qty}"
+														pattern="#,##0" /></td>
+												<td><fmt:formatNumber value="${item.pay}"
+														pattern="#,##0" /></td>
 												<td>${item.spec}</td>
 												<td>${item.unit}</td>
 												<td>
@@ -134,8 +146,7 @@
 														<button type="button" class="icon-btn edit"
 															data-item-id="${item.item_id}"
 															data-item-name="${fn:escapeXml(item.item_name)}"
-															data-g-id="${item.g_id}"
-															data-safe-qty="${item.safe_qty}"
+															data-g-id="${item.g_id}" data-safe-qty="${item.safe_qty}"
 															data-pay="${item.pay}"
 															data-spec="${fn:escapeXml(item.spec)}"
 															data-unit="${fn:escapeXml(item.unit)}">수정</button>
@@ -152,9 +163,7 @@
 							<c:forEach var="i" begin="1" end="${totalPage}">
 								<a
 									href="${pageContext.request.contextPath}/itemmaster?page=${i}&size=${size}&itemGroup=${itemGroup}&keyword=${keyword}"
-									class="${page == i ? 'active' : ''}">
-									${i}
-								</a>
+									class="${page == i ? 'active' : ''}"> ${i} </a>
 							</c:forEach>
 						</div>
 					</div>
@@ -170,41 +179,35 @@
 
 						<div class="edit_item_form_row">
 							<div class="edit_item_form_group code">
-								<label>품목코드</label>
-								<input id="edit_item_id" name="item_id"
+								<label>품목코드</label> <input id="edit_item_id" name="item_id"
 									class="edit_item_info readonly" type="text" readonly>
 							</div>
 
 							<div class="edit_item_form_group group">
 								<label>품목 그룹</label>
-								<select id="edit_g_id" name="g_id" class="edit_item_info">
-									<option value="30">완제품</option>
-									<option value="20">반제품</option>
-									<option value="10">원자재</option>
-								</select>
+								<input id="edit_g_id_display" class="edit_item_info readonly"
+									type="text" readonly>
+								<input id="edit_g_id" name="g_id" type="hidden">
 							</div>
 
 							<div class="edit_item_form_group small">
-								<label>안전재고</label>
-								<input type="number" id="edit_safe_qty"
+								<label>안전재고</label> <input type="number" id="edit_safe_qty"
 									name="safe_qty" class="edit_item_info" min="0">
 							</div>
 
 							<div class="edit_item_form_group small">
-								<label>단가</label>
-								<input type="text" id="edit_pay" name="pay"
+								<label>단가</label> <input type="text" id="edit_pay" name="pay"
 									class="edit_item_info" value="0">
 							</div>
 
 							<div class="edit_item_form_group small">
-								<label>규격</label>
-								<input type="text" id="edit_spec" name="spec"
+								<label>규격</label> <input type="text" id="edit_spec" name="spec"
 									class="edit_item_info">
 							</div>
 
 							<div class="edit_item_form_group small">
-								<label>단위</label>
-								<select id="edit_unit" name="unit" class="edit_item_info">
+								<label>단위</label> <select id="edit_unit" name="unit"
+									class="edit_item_info">
 									<option value="L">L</option>
 									<option value="m">m</option>
 									<option value="cm">cm</option>
@@ -236,75 +239,54 @@
 		</div>
 	</div>
 
-	<div class="add_item_modal" id="addItemModal" style="display: none;">
-		<div class="add_item_modal_popup">
-			<form action="${pageContext.request.contextPath}/itemMasterAdd"
-				method="post">
+	<c:if test="${isSuperAdmin}">
+		<div class="add_item_modal" id="addItemModal" style="display: none;">
+			<div class="add_item_modal_popup">
+				<form action="${pageContext.request.contextPath}/itemMasterAdd"
+					method="post">
 
 				<h3 class="add_item_modal_title">품목 등록</h3>
 
 				<div class="add_item_form_row">
 					<div class="add_item_form_group code">
-						<label>품목코드</label>
-						<input type="text" id="add_item_id"
-							class="add_item_info" name="item_id" readonly>
+						<label>품목코드</label> <input type="text" id="add_item_id"
+							class="add_item_info readonly" name="item_id" readonly>
 					</div>
 
 					<div class="add_item_form_group group">
-						<label>품목 그룹</label>
-						<select id="add_g_id" class="add_item_info" name="g_id">
+						<label>품목 그룹</label> <select id="add_g_id" class="add_item_info"
+							name="g_id">
 							<option value="30">완제품</option>
 							<option value="20">반제품</option>
 							<option value="10">원자재</option>
-						</select>
-						<input type="hidden" id="add_itemgroup_name"
+						</select> <input type="hidden" id="add_itemgroup_name"
 							name="itemgroup_name" value="">
 					</div>
 
 					<div class="add_item_form_group small">
-						<label>안전재고</label>
-						<input type="number" id="add_safe_qty"
+						<label>안전재고</label> <input type="number" id="add_safe_qty"
 							class="add_item_info" name="safe_qty" min="0" value="0">
 					</div>
 
 					<div class="add_item_form_group small">
-						<label>단가</label>
-						<input type="text" id="add_pay"
+						<label>단가</label> <input type="text" id="add_pay"
 							class="add_item_info" name="pay" value="0">
 					</div>
 
 					<div class="add_item_form_group small">
-						<label>규격</label>
-						<select id="add_spec" class="add_item_info" name="spec">
-							<option value="">선택</option>
-							<c:forEach var="i" begin="3" end="10">
-								<option value="${i}">${i}</option>
-							</c:forEach>
-							<c:forEach var="i" begin="20" end="100" step="10">
-								<option value="${i}">${i}</option>
-							</c:forEach>
-							<option value="1000">1000</option>
-						</select>
+						<label>규격</label> <input type="text" id="add_spec"
+							class="add_item_info" name="spec" placeholder="규격을 입력하세요">
 					</div>
 
 					<div class="add_item_form_group small">
-						<label>단위</label>
-						<select id="add_unit" class="add_item_info" name="unit">
-							<option value="">선택</option>
-							<option value="L">L</option>
-							<option value="m">m</option>
-							<option value="cm">cm</option>
-							<option value="장">장</option>
-							<option value="EA">EA</option>
-							<option value="mL">mL</option>
-						</select>
+						<label>단위</label> <input type="text" id="add_unit"
+							class="add_item_info" name="unit" placeholder="단위를 입력하세요">
 					</div>
 				</div>
 
 				<div class="add_item_form_row second">
 					<div class="add_item_form_group name-group">
-						<label>품목명</label>
-						<input type="text" id="add_item_name"
+						<label>품목명</label> <input type="text" id="add_item_name"
 							name="item_name" class="add_item_info" placeholder="품목명을 입력하세요">
 					</div>
 				</div>
@@ -316,9 +298,10 @@
 						id="saveAddItemModal">등록</button>
 				</div>
 
-			</form>
+				</form>
+			</div>
 		</div>
-	</div>
+	</c:if>
 
 	<script>
 		window.itemListForCode = [

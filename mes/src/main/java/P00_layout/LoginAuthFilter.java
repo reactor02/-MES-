@@ -1,6 +1,7 @@
 package P00_layout;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -56,7 +57,8 @@ public class LoginAuthFilter implements Filter {
         // 세션 없으면 로그인 페이지로
         if (session == null) {
             System.out.println("세션 없음 -> 로그인 페이지 이동");
-            resp.sendRedirect(req.getContextPath() + "/login");
+//            resp.sendRedirect(req.getContextPath() + "/login");
+            alertAndRedirect(resp, req.getContextPath() + "/login", "로그인 후 이용 가능합니다.");
             return;
         }
 
@@ -65,7 +67,8 @@ public class LoginAuthFilter implements Filter {
         // 로그인 안 되어 있으면 로그인 페이지로
         if (!"true".equals(login)) {
             System.out.println("로그인 [FAIL] : [" + path + "]");
-            resp.sendRedirect(req.getContextPath() + "/login");
+//            resp.sendRedirect(req.getContextPath() + "/login");
+            alertAndRedirect(resp, req.getContextPath() + "/login", "로그인 후 이용 가능합니다.");
             return;
         }
 
@@ -73,7 +76,8 @@ public class LoginAuthFilter implements Filter {
         Integer auth = (Integer) session.getAttribute("auth");
         if (auth == null) {
             System.out.println("auth 없음 -> 접근 불가");
-            resp.sendError(HttpServletResponse.SC_FORBIDDEN, "권한 정보가 없습니다.");
+//            resp.sendError(HttpServletResponse.SC_FORBIDDEN, "권한 정보가 없습니다.");
+            alertAndBack(resp, "권한 정보가 없습니다. 다시 로그인해주세요.");
             return;
         }
 
@@ -81,7 +85,8 @@ public class LoginAuthFilter implements Filter {
 
         if (requiredAuth > 0 && auth < requiredAuth) {
             System.out.println("권한 부족 : 현재 auth=" + auth + ", 필요 auth=" + requiredAuth + ", path=" + path);
-            resp.sendError(HttpServletResponse.SC_FORBIDDEN, "접근 권한이 없습니다.");
+//            resp.sendError(HttpServletResponse.SC_FORBIDDEN, "접근 권한이 없습니다.");
+            alertAndBack(resp, "권한이 없어 접근할 수 없습니다.");
             return;
         }
 
@@ -124,5 +129,38 @@ public class LoginAuthFilter implements Filter {
 
         // 제한 없음
         return 0;
+    }
+
+    private void alertAndRedirect(HttpServletResponse resp, String moveUrl, String msg) throws IOException {
+        resp.setContentType("text/html; charset=UTF-8");
+        resp.setCharacterEncoding("UTF-8");
+
+        PrintWriter out = resp.getWriter();
+        out.println("<script>");
+        out.println("alert('" + escapeJs(msg) + "');");
+        out.println("location.href='" + moveUrl + "';");
+        out.println("</script>");
+        out.flush();
+    }
+
+    private void alertAndBack(HttpServletResponse resp, String msg) throws IOException {
+        resp.setContentType("text/html; charset=UTF-8");
+        resp.setCharacterEncoding("UTF-8");
+
+        PrintWriter out = resp.getWriter();
+        out.println("<script>");
+        out.println("alert('" + escapeJs(msg) + "');");
+        out.println("history.back();");
+        out.println("</script>");
+        out.flush();
+    }
+
+    private String escapeJs(String str) {
+        if (str == null) return "";
+        return str.replace("\\", "\\\\")
+                  .replace("'", "\\'")
+                  .replace("\"", "\\\"")
+                  .replace("\r", "")
+                  .replace("\n", "\\n");
     }
 }

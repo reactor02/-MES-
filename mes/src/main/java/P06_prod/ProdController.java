@@ -36,13 +36,24 @@ public class ProdController extends HttpServlet {
                 try { size = Integer.parseInt(request.getParameter("size")); } catch (Exception e) {}
                 try { page = Integer.parseInt(request.getParameter("page")); } catch (Exception e) {}
 
+                String keyword   = request.getParameter("keyword");
+                String startDate = request.getParameter("startDate");
+                String endDate   = request.getParameter("endDate");
+
                 ProdDTO planDTO = new ProdDTO();
                 planDTO.setSize(size);
                 planDTO.setPage(page);
+                planDTO.setKeyword(keyword);
+                planDTO.setStartDate(startDate);
+                planDTO.setEndDate(endDate);
 
                 Map map = prodService.getPlanList(planDTO);
                 map.put("size", size);
                 map.put("page", page);
+                // 페이지네이션 링크에서 검색 조건 유지용
+                map.put("keyword",   keyword   != null ? keyword   : "");
+                map.put("startDate", startDate != null ? startDate : "");
+                map.put("endDate",   endDate   != null ? endDate   : "");
                 request.setAttribute("map", map);
 
                 request.setAttribute("groupList", prodService.getGroupList());
@@ -129,6 +140,25 @@ public class ProdController extends HttpServlet {
         if (pathInfo == null) pathInfo = "/list";
 
         switch (pathInfo) {
+
+            /* ── 등록 ──────────────────────────────────────────── */
+            case "/insert": {
+                ProdDTO dto = new ProdDTO();
+                dto.setItemId(request.getParameter("itemId"));
+                dto.setEmpId (request.getParameter("empId"));
+
+                try { dto.setPlanQty(Integer.parseInt(request.getParameter("planQty"))); } catch (Exception e) { e.printStackTrace(); }
+                try { dto.setPlanSdate(Date.valueOf(request.getParameter("planSdate"))); } catch (Exception e) { e.printStackTrace(); }
+                try { dto.setPlanEdate(Date.valueOf(request.getParameter("planEdate"))); } catch (Exception e) { e.printStackTrace(); }
+
+                String newPlanId = prodService.insertPlan(dto);
+                if (newPlanId != null) {
+                    response.sendRedirect("/mes/prod/detail?planId=" + newPlanId);
+                } else {
+                    response.sendRedirect("/mes/prod/list");
+                }
+                break;
+            }
 
             /* ── 수정 ──────────────────────────────────────────── */
             case "/update": {

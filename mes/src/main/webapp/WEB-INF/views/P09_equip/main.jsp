@@ -108,33 +108,33 @@
 				            	<div class="color success"></div>
 				            	<div class="typeName">정상</div>
 			            	</div>
-			            	<div class="typeTag">
+			            	<div class="typeTag tooltip tooltipTop" data-msg="정상 범위 ±10%">
 				            	<div class="color warning"></div>
-				            	<div class="typeName">정상</div>
+				            	<div class="typeName">경고</div>
 			            	</div>
-			            	<div class="typeTag">
+			            	<div class="typeTag tooltip tooltipTop" data-msg="정상 범위 미만 혹은 초과">
 				            	<div class="color danger"></div>
-				            	<div class="typeName">정상</div>
+				            	<div class="typeName">위험</div>
 			            	</div>
 			            </div>
 		        	</div>
 		            <div class= cardClean>
-			            <div class="cardSmall temp warning">
+			            <div class="cardSmall temp warning tooltip" data-msg="정상 온도 : 20℃ ~ 24℃">
 				            <p>온도</p>
-				            <strong>21.1</strong>
+				            <strong>20.1</strong>
 				            <p>(단위 : ℃)</p>
 				        </div>
-				        <div class="cardSmall humid">
+				        <div class="cardSmall humid tooltip" data-msg="정상 습도 : 40% RH ~ 60% RH">
 				            <p>습도</p>
 				            <strong>51.2</strong>
 				            <p>(단위 : % RH)</p>
 				        </div>
-				        <div class="cardSmall press">
+				        <div class="cardSmall press tooltip" data-msg="정상 차압 : +10Pa ~ +15Pa">
 				            <p>차압</p>
 				            <strong>+12</strong>
 				            <p>(단위 : Pa)</p>
 				        </div>
-				        <div class="cardSmall clean">
+				        <div class="cardSmall clean tooltip" data-msg="정상 청정도 : ~35.2만/m²">
 				            <p>청정도</p>
 				            <strong>30.5</strong>
 				            <p>(단위 : 만/m²)</p>

@@ -138,15 +138,14 @@ public class Item_masterDAO {
 			String stockId = "sto_" + nextStockNum;
 
 			String stockQuery = "";
-			stockQuery += "INSERT INTO stock (stock_id, item_id, stock_no, safe_no, deleted) ";
-			stockQuery += "VALUES (?, ?, ?, ?, ?)";
+			stockQuery += "INSERT INTO stock (stock_id, item_id, stock_no, deleted) ";
+			stockQuery += "VALUES (?, ?, ?, ?)";
 
 			psStock = conn.prepareStatement(stockQuery);
 			psStock.setString(1, stockId);
 			psStock.setString(2, item_masterDTO.getItem_id());
 			psStock.setInt(3, 0);
-			psStock.setInt(4, item_masterDTO.getSafe_qty());
-			psStock.setString(5, "N");
+			psStock.setString(4, "N");
 
 			int stockResult = psStock.executeUpdate();
 

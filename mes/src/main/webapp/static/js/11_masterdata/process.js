@@ -1,59 +1,111 @@
-const process_modal_btn = document.querySelector('.process-primary-btn'); // 공정 단계 등록
-const process_step_modal = document.querySelector('.process-step-modal');
+const processStepModal = document.getElementById("processStepModal");
+const processAddModal = document.getElementById("processAddModal");
+const processEditModal = document.getElementById("processEditModal");
 
-// 공정 단계 등록 버튼 클릭 시
-process_modal_btn.addEventListener('click', function() {
-	console.log('클릭 됨');
-	process_step_modal.style.display = 'flex';
+const openProcessStepModal = document.getElementById("openProcessStepModal");
+const closeProcessStepModal = document.getElementById("closeProcessStepModal");
+const openProcessAddModal = document.getElementById("openProcessAddModal");
+const closeProcessAddModal = document.getElementById("closeProcessAddModal");
+const closeProcessEditModal = document.getElementById("closeProcessEditModal");
+
+const editProcessId = document.getElementById("editProcessId");
+const editProcessType = document.getElementById("editProcessType");
+const editProcessName = document.getElementById("editProcessName");
+const editProcessInfo = document.getElementById("editProcessInfo");
+const editProcessModalTitleText = document.getElementById("editProcessModalTitleText");
+
+function openModal(modalElement) {
+	if (!modalElement) {
+		return;
+	}
+
+	modalElement.classList.add("is-open");
+	modalElement.style.display = "flex";
+}
+
+function closeModal(modalElement) {
+	if (!modalElement) {
+		return;
+	}
+
+	modalElement.classList.remove("is-open");
+	modalElement.style.display = "none";
+}
+
+if (openProcessStepModal) {
+	openProcessStepModal.addEventListener("click", function() {
+		openModal(processStepModal);
+	});
+}
+
+if (closeProcessStepModal) {
+	closeProcessStepModal.addEventListener("click", function() {
+		closeModal(processStepModal);
+	});
+}
+
+if (openProcessAddModal) {
+	openProcessAddModal.addEventListener("click", function() {
+		openModal(processAddModal);
+	});
+}
+
+if (closeProcessAddModal) {
+	closeProcessAddModal.addEventListener("click", function() {
+		closeModal(processAddModal);
+	});
+}
+
+if (closeProcessEditModal) {
+	closeProcessEditModal.addEventListener("click", function() {
+		closeModal(processEditModal);
+	});
+}
+
+document.querySelectorAll(".process-icon-btn.edit").forEach(function(button) {
+	button.addEventListener("click", function() {
+		if (editProcessId) {
+			editProcessId.value = button.dataset.processId || "";
+		}
+
+		if (editProcessType) {
+			editProcessType.value = button.dataset.processType || "wo";
+		}
+
+		if (editProcessName) {
+			editProcessName.value = button.dataset.processName || "";
+		}
+
+		if (editProcessInfo) {
+			editProcessInfo.value = button.dataset.processInfo || "";
+		}
+
+		if (editProcessModalTitleText) {
+			editProcessModalTitleText.textContent = button.dataset.processName || "공정";
+		}
+
+		openModal(processEditModal);
+	});
 });
 
-// 공정명 검색 시 검색 필터
-const process_search_text = document.querySelector('.process-search input');//검색창 인풋
-const process_search_btn = document.querySelector('.process-primary-btn.small');//검색 버튼
-const process_rows = document.querySelectorAll('.process-table tbody tr');//공정 목록 줄들
+[processStepModal, processAddModal, processEditModal].forEach(function(modalElement) {
+	if (!modalElement) {
+		return;
+	}
 
-process_search_btn.addEventListener('click', function() {
-	const keyword = process_search_text.value.trim();
-
-	process_rows.forEach(function(row) {
-		const processNameCell = row.querySelector('td:nth-child(2)');
-		const processNameText = processNameCell.textContent.trim();
-
-		if (keyword === "" || processNameText.includes(keyword)) {
-			row.style.display = "";
-		} else {
-			row.style.display = "none";
+	modalElement.addEventListener("click", function(event) {
+		if (event.target === modalElement) {
+			closeModal(modalElement);
 		}
 	});
 });
 
-//공정 취소 클릭 시
-const process_step_cancel_btn = document.querySelector('.process-step-cancel-btn');
-process_step_cancel_btn.addEventListener('click',function(){
-	process_step_modal.style.display = 'none';
-});
+document.addEventListener("keydown", function(event) {
+	if (event.key !== "Escape") {
+		return;
+	}
 
-//공정 수정 클릭 시
-const process_edit_modal = document.querySelector('.process-edit-modal');
-const process_icon_btn_edit = document.querySelectorAll('.process-table .process-icon-btn.edit');
-
-const editProcessId = document.getElementById('editProcessId');
-const editProcessName = document.getElementById('editProcessName');
-const editProcessInfo = document.getElementById('editProcessInfo');
-const editProcessModalTitleText = document.getElementById('editProcessModalTitleText');
-const closeProcessEditModal = document.getElementById('closeProcessEditModal');
-
-process_icon_btn_edit.forEach(function(btn) {
-	btn.addEventListener('click', function() {
-		editProcessId.value = btn.dataset.processId;
-		editProcessName.value = btn.dataset.processName;
-		editProcessInfo.value = btn.dataset.processInfo;
-		editProcessModalTitleText.textContent = btn.dataset.processName;
-
-		process_edit_modal.style.display = 'flex';
-	});
-});
-
-closeProcessEditModal.addEventListener('click', function() {
-	process_edit_modal.style.display = 'none';
+	closeModal(processStepModal);
+	closeModal(processAddModal);
+	closeModal(processEditModal);
 });
