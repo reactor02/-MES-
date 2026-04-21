@@ -217,15 +217,33 @@ public class SuggestionDAO {
         return result;
     }
 
+    // 건의사항 삭제: FK 제약(FK_COMMENT_SUGGESTION) 때문에 자식(댓글)부터 먼저 삭제
     public int delete(String boardno) {
         int result = 0;
-        String sql = "DELETE FROM suggestion WHERE boardno = ?";
-        try (Connection conn = getConn();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        Connection conn = null;
+        PreparedStatement ps = null;
+        try {
+            conn = getConn();
+            conn.setAutoCommit(false);
+
+            // 1. 자식 테이블(comment_info) 먼저 삭제
+            ps = conn.prepareStatement("DELETE FROM comment_info WHERE boardno = ?");
+            ps.setString(1, boardno);
+            ps.executeUpdate();
+            ps.close();
+
+            // 2. 부모 테이블(suggestion) 삭제
+            ps = conn.prepareStatement("DELETE FROM suggestion WHERE boardno = ?");
             ps.setString(1, boardno);
             result = ps.executeUpdate();
+
+            conn.commit();
         } catch (Exception e) {
+            try { if (conn != null) conn.rollback(); } catch (Exception ex) { ex.printStackTrace(); }
             e.printStackTrace();
+        } finally {
+            try { if (ps   != null) ps.close();   } catch (Exception e) { e.printStackTrace(); }
+            try { if (conn != null) conn.close(); } catch (Exception e) { e.printStackTrace(); }
         }
         return result;
     }
