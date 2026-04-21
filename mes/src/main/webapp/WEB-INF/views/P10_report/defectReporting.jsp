@@ -147,30 +147,43 @@
 
 
 
-					<div class="box-type3 radius">
-						<h3>부적합 보고서</h3>
-						<div class="short-box">
-							<c:forEach var="d" items="${ defect_report }">
-								<div>
-									<a
-										href="http://localhost:8080/mes/defectreporting?defect_id=${ d.defect_id }&solution=${ d.solution }&qc_qty=100&qc_clear=${ 100 - (d.defect_cnt) }&qc_id=${ d.qc_id }&dtype_name=${ d.dtype_name }&qc_edate=${ d.qc_edate }&defect_cnt=${ d.defect_cnt }">${ d.defect_id }
-										: ${ d.defect_cnt } : ${ d.dtype_name } : ${ d.solution } : ${ d.qc_id }
-										: ${ d.woid } : ${ d.qc_sdate } :${ d.qc_edate } : ${ d.defect_cnt }
-										:</a>
-									<div class='buttonMain small'>${ d.solution }</div>
-								</div>
-							</c:forEach>
-						</div>
+					<div class="box-type3 radius shadow" style="height : 500px;">
+    <h3>부적합 보고서 (품질 이슈)</h3>
+    <div class="short-box" style="padding: 10px;">
+        <c:forEach var="d" items="${defect_report}">
+            <div class="issue-item" style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #eee;">
+                
+                <!-- 1. 분류 및 내용 (클릭 시 상세페이지 이동) -->
+                <div style="flex: 2;">
+                    <a href="defectreporting?defect_id=${d.defect_id}&solution=${d.solution}&qc_qty=100&qc_clear=${100 - d.defect_cnt}&qc_id=${d.qc_id}&dtype_name=${d.dtype_name}&qc_edate=${d.qc_edate}&defect_cnt=${d.defect_cnt}" 
+                       style="text-decoration: none; color: inherit;">
+                        <span style="font-weight: bold; color: #e74c3c;">[품질]</span> 
+                        ${d.dtype_name} - ${d.defect_id} (검사ID: ${d.qc_id})
+                    </a>
+                </div>
 
+                <!-- 2. 발생 날짜 -->
+                <div style="flex: 1; text-align: center; color: #666;">
+                    <fmt:formatDate value="${d.qc_edate}" pattern="yyyy-MM-dd HH:mm" />
+                </div>
 
-						<form method="get" action="defectreporting">
-							<div class="next">
-								<c:forEach var="m" begin="1" end="${ page_no }">
-									<button name="d_btn" value="${ m  }" class="buttonMain small">${ m }</button>
-								</c:forEach>
-							</div>
-						</form>
-					</div>
+                <!-- 3. 조치 상태 버튼 -->
+                <div style="flex: 0.5; text-align: right;">
+                    <c:choose>
+                        <c:when test="${not empty d.solution}">
+                            <span class="buttonMain small" style="background: #3498db; border: none; padding: 5px 10px; color: #fff; border-radius: 4px;">조치완료</span>
+                        </c:when>
+                        <c:otherwise>
+                            <span class="buttonMain small" style="background: #e74c3c; border: none; padding: 5px 10px; color: #fff; border-radius: 4px;">미조치</span>
+                        </c:otherwise>
+                    </c:choose>
+                </div>
+            </div>
+        </c:forEach>
+    </div>
+
+   
+</div>
 
 
 				</div>
